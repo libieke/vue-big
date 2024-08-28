@@ -1,20 +1,22 @@
-import Vue from 'vue'
-import App from './App'
-import router from './router'
-import iView from 'iview';
-import './assets/less/index.less';
-import * as echarts from 'echarts';
-import img from './lib/img'
-import utils from "./lib/utils";
+import Vue from "vue";
+import "normalize.css/normalize.css";
+import App from "./App";
+import router from "./router";
+import iView from "iview";
+import ElementUI from "element-ui";
+import "element-ui/lib/theme-chalk/index.css";
+import "@/styles/index.scss";
+import "@/icons"; // icon
+
+import * as echarts from "echarts";
 
 Vue.prototype.$echarts = function (el) {
-    return echarts.init(el, null, {renderer: 'svg'})
-}
-Vue.prototype.$images = img
+  return echarts.init(el, null, { renderer: "svg" });
+};
 Vue.config.productionTip = false;
 Vue.use(iView);
-Vue.use(utils)
+Vue.use(ElementUI);
 new Vue({
   router,
-  render: h => h(App)
-}).$mount('#app')
+  render: (h) => h(App),
+}).$mount("#app");

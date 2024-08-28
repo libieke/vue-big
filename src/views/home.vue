@@ -1,5 +1,6 @@
 <template>
-  <div style="height: 100%">
+  <div style="height: 100%; background: #00102a">
+    <div class="top-time">{{ NowTime }}</div>
     <div class="header">
       <div class="selectRange">
         <Menu
@@ -25,32 +26,34 @@
           <MenuItem name="alarmAnalysis"> 报警分析 </MenuItem>
           <MenuItem name="maintainSettings"> 维护设置 </MenuItem>
         </Menu>
+        <!-- <el-menu
+          mode="horizontal"
+          @on-select="(name) => $route.name !== name && $router.push(name)"
+          :active-name="$route.name"
+        >
+          <el-menu-item class="menu-item" name="operationAtatus">
+            运行状况
+          </el-menu-item>
+          <el-menu-item name="productionInformation"> 生产信息 </el-menu-item>
+          <el-menu-item name="productAnalysis"> 生产分析 </el-menu-item>
+        </el-menu>
+      </div>
+      <div class="header-title">nichicon IOT SYSTEM</div>
+      <div class="selectRange">
+        <el-menu
+          mode="horizontal"
+          @on-select="(name) => $route.name !== name && $router.push(name)"
+          :active-name="$route.name"
+        >
+          <el-menu-item name="alarmHistory"> 报警历史 </el-menu-item>
+          <el-menu-item name="alarmAnalysis"> 报警分析 </el-menu-item>
+          <el-menu-item name="maintainSettings"> 维护设置 </el-menu-item>
+        </el-menu>
+      </div> -->
       </div>
     </div>
-    <Modal
-      v-model="modal"
-      title="选择时间"
-      :mask-closable="false"
-      @on-ok="getMonthBetween(startTime, endTime)"
-    >
-      <DatePicker
-        @on-change="pickStartDate"
-        :options="optionStart"
-        type="date"
-        placeholder="选择开始日期"
-        style="width: 200px"
-      ></DatePicker>
-      <span style="padding: 0 20px; color: #75deef">至</span>
-      <DatePicker
-        @on-change="pickEndDate"
-        :options="optionEnd"
-        type="date"
-        placeholder="选择结束日期"
-        style="width: 200px"
-      ></DatePicker>
-    </Modal>
     <div class="page">
-      <router-view v-if="flag" :selectRangeDate="selectRangeDate"></router-view>
+      <router-view></router-view>
     </div>
   </div>
 </template>
@@ -60,266 +63,92 @@ export default {
   name: "",
   data() {
     return {
-      activeName: "month", // 默认显示近一月
-      modal: false,
-      flag: false,
-      selectRangeDate: [],
-      startTime: "",
-      endTime: "",
-      optionStart: {
-        disabledDate(date) {
-          // 禁止选择今天之后的日期
-          return date && date.valueOf() > Date.now() - 86400000;
-        },
-      },
-      optionEnd: {},
-      resizeFn: null,
+      NowTime: "",
     };
   },
   mounted() {
-    window.addEventListener("resize", this.resizeFn);
-    this.handleSelect(this.activeName); // 默认显示近一个月
+    console.log("this.router :>> ", this.$route);
+    this.getTime();
   },
   methods: {
-    pickStartDate(date) {
-      // 选择开始时间的回调
-      this.startTime = date;
-      this.optionEnd = {
-        disabledDate(d) {
-          // 禁止选择开始时间之前的日期
-          return d && d.valueOf() < new Date(date).valueOf() - 86400000;
-        },
-      };
+    // 展示时间
+    nowTime() {
+      var d = new Date();
+      var _year = d.getFullYear();
+      var _month = d.getMonth();
+      var _date = d.getDate();
+      var _week = d.getDay();
+      var _h = d.getHours();
+      var _m = d.getMinutes();
+      var _s = d.getSeconds();
+      var week = [
+        "星期日",
+        "星期一",
+        "星期二",
+        "星期三",
+        "星期四",
+        "星期五",
+        "星期六",
+      ];
+      var y = _year + "-" + (_month + 1) + "-" + _date + "" + "   ";
+      var w = week[_week] + "   ";
+      var h =
+        this.changeNum(_h) +
+        ":" +
+        this.changeNum(_m) +
+        ":" +
+        this.changeNum(_s);
+      this.NowTime = y + w + h;
     },
-    pickEndDate(date) {
-      // 选择结束时间的回调
-      this.endTime = date;
+    getTime() {
+      var _this = this;
+      setInterval(function () {
+        _this.nowTime();
+      }, 1000);
     },
-    getMonthBetween(start, end) {
-      // 获取开始时间和结束时间之内的所有月份
-      this.selectRangeDate = [];
-      let s = start.split("-"); // 字符串装换数组
-      let e = end.split("-");
-      let date = new Date();
-      let min = date.setFullYear(s[0], s[1] - 1); // 设置最小时间
-      let max = date.setFullYear(e[0], e[1] - 1); // 设置最大时间
-      let curr = min;
-      while (curr <= max) {
-        // 循环添加月份
-        var month = curr.getMonth();
-        var arr = [curr.getFullYear(), month + 1];
-        this.selectRangeDate.push(arr);
-        curr.setMonth(month + 1);
-      }
-    },
-    getDays(day) {
-      // 获取天数
-      let arr = [];
-      for (let i = -day; i < 0; i++) {
-        // 循环添加天数
-        let today = new Date(); // 获取今天
-        let targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * i;
-        today.setTime(targetday_milliseconds); //设置i天前的时间
-        let tYear = today.getFullYear();
-        let tMonth = today.getMonth();
-        let tDate = today.getDate();
-        let date = [tYear, tMonth + 1, tDate];
-        arr.push(date);
-      }
-      return arr;
-    },
-    handleSelect(name) {
-      switch (name) {
-        case "day":
-          break;
-        case "week":
-          this.selectRangeDate = this.getDays(7); // 获取近一周的天数
-          this.flag = true;
-
-          break;
-        case "month":
-          this.selectRangeDate = this.getDays(30); // 获取近一个月的天数
-          this.flag = true;
-          break;
-        case "filter":
-          this.modal = true;
-          break;
-        default:
-          break;
-      }
+    changeNum(num) {
+      return num >= 10 ? num : "0" + num;
     },
   },
 };
 </script>
 
-<style lang="less">
-.ivu-modal {
-  .ivu-modal-content {
-    background: #071332;
-
-    .ivu-modal-header {
-      border-bottom: 1px solid #1a3c58;
-
-      .ivu-modal-header-inner {
-        color: #75deef;
-      }
-    }
-
-    .ivu-modal-body {
-      text-align: center;
-
-      .ivu-icon {
-        color: #75deef;
-      }
-
-      .ivu-modal-confirm-body {
-        padding-left: 0;
-        color: #75deef;
-      }
-
-      .ivu-input {
-        background-color: rgba(0, 0, 0, 0);
-        border: 1px solid #1a3c58;
-        color: #75deef;
-
-        &::-webkit-input-placeholder {
-          /* WebKit, Blink, Edge */
-          color: #75deef;
-        }
-
-        &::-moz-placeholder {
-          /* Mozilla Firefox 4 to 18 */
-          color: #75deef;
-        }
-
-        &::-moz-placeholder {
-          /* Mozilla Firefox 19+ */
-          color: #75deef;
-        }
-
-        &::-ms-input-placeholder {
-          /* Internet Explorer 10-11 */
-          color: #75deef;
-        }
-      }
-
-      .ivu-picker-panel-body {
-        background: #071332;
-
-        .ivu-date-picker-header {
-          color: #75deef;
-          border-bottom: 1px solid #1a3c58;
-        }
-
-        .ivu-date-picker-cells-cell {
-          color: #75deef;
-
-          &:hover em {
-            background: #1a3c58;
-          }
-        }
-
-        .ivu-date-picker-cells-cell-disabled {
-          background: rgba(0, 0, 0, 0);
-          color: #eee;
-        }
-
-        .ivu-date-picker-cells-focused em {
-          box-shadow: 0 0 0 1px #1a3c58 inset;
-
-          &::after {
-            background: #1a3c58;
-          }
-        }
-      }
-    }
-
-    .ivu-modal-footer {
-      border-top: 1px solid #1a3c58;
-
-      .ivu-btn-primary {
-        color: #75deef;
-        background: #1a3c58;
-      }
-
-      .ivu-btn-text {
-        color: #ddd;
-
-        &:hover {
-          color: #75deef;
-          background: #1a3c58;
-        }
-      }
-    }
-  }
+<style lang="scss" scoped>
+.top-time {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 24px;
+  font-size: 12px;
+  color: #bbd8de;
+  padding: 0 20px;
+  background-color: #09161a;
 }
 
 .header {
-  height: 80px;
+  height: 60px;
   background: #03044a;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
 
-  &-title {
-    color: #75deef;
+  .header-title {
+    color: #fff;
     font-size: 30px;
+    font-weight: 700;
+    padding-bottom: 10px;
   }
 
   .selectRange {
     display: flex;
+    justify-content: center;
     align-items: center;
     width: 33%;
     height: 100%;
+    color: #fff;
 
-    .ivu-menu-horizontal {
-      height: 60px;
-      background-color: pink;
-
-      &::after {
-        height: 0;
-      }
-
-      .ivu-menu-item-active {
-        border-bottom: 2px solid #264e5e;
-      }
-
-      .ivu-menu-item,
-      .ivu-menu-submenu {
-        color: black;
-        margin: 0 20px;
-
-        &:hover {
-          border-bottom: 2px solid #264e5e;
-        }
-      }
-
-      .ivu-select-dropdown {
-        background: #09102e;
-
-        .ivu-menu-item {
-          color: #75deef;
-          &:hover {
-            border-bottom: 2px solid #264e5e;
-            background-color: rgba(255, 255, 255, 0);
-          }
-        }
-      }
-
-      .ivu-menu-submenu-title {
-        i {
-          margin-right: 0;
-        }
-
-        .ivu-icon-ios-arrow-down {
-          display: none;
-        }
-      }
-    }
+    // .menu-item {
+    // }
   }
-}
-
-.page {
-  height: calc(~"100% - 80px");
 }
 </style>

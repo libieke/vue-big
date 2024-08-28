@@ -1,0 +1,481 @@
+em {
+  font-style: normal
+}
+
+li, ul {
+  list-style: none
+}
+
+img {
+  border: 0;
+  vertical-align: middle
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0
+}
+
+.font-12 {
+  font-size: 12px
+}
+
+.font-13 {
+  font-size: 13px
+}
+
+.font-14 {
+  font-size: 14px
+}
+
+.font-15 {
+  font-size: 15px
+}
+
+.font-16 {
+  font-size: 16px
+}
+
+.font-18 {
+  font-size: 18px
+}
+
+.font-20 {
+  font-size: 20px
+}
+
+.font-22 {
+  font-size: 22px
+}
+
+.font-24 {
+  font-size: 24px
+}
+
+.font-26 {
+  font-size: 26px
+}
+
+.height-unset {
+  height: auto !important
+}
+
+.h-100p {
+  height: 100% !important
+}
+
+.w-100p {
+  width: 100% !important
+}
+
+.w-50p {
+  width: 50% !important
+}
+
+.no-scroll {
+  overflow: hidden
+}
+
+.auto-scroll {
+  overflow: auto
+}
+
+.relative {
+  position: relative !important
+}
+
+.pointer {
+  cursor: pointer
+}
+
+.flex{
+  display: flex;
+}
+
+.flex-s{
+  display: flex;
+  justify-content: space-between;
+}
+
+.align-center{
+  align-items: center;
+}
+
+.flex-wrap{
+  flex-wrap: wrap;
+}
+
+.inline-block {
+  display: inline-block
+}
+
+.none {
+  display: none
+}
+
+.block {
+  display: block
+}
+
+.hide {
+  display: none !important
+}
+
+.show {
+  display: block !important
+}
+
+.bold {
+  font-weight: 600 !important
+}
+
+.thin {
+  font-weight: 300 !important
+}
+
+.hidden {
+  visibility: hidden
+}
+
+.pull-right {
+  float: right !important
+}
+
+.pull-left {
+  float: left !important
+}
+
+.text-left {
+  text-align: left
+}
+
+.text-right {
+  text-align: right
+}
+
+.text-center {
+  text-align: center
+}
+
+.text-justify {
+  text-align: justify
+}
+
+.text-nowrap {
+  white-space: nowrap
+}
+
+.text-nowrap, .text-nowrap2 {
+  text-overflow: ellipsis;
+  overflow: hidden
+}
+
+.text-nowrap2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2
+}
+
+.clearfix:after {
+  display: block;
+  content: "";
+  clear: both;
+  overflow: hidden;
+  height: 0
+}
+
+.padding-bottom-5 {
+  padding-bottom: 5px
+}
+
+.padding-bottom-10 {
+  padding-bottom: 10px !important
+}
+
+.padding-bottom-15 {
+  padding-bottom: 15px !important
+}
+
+.padding-bottom-20 {
+  padding-bottom: 20px !important
+}
+
+.padding-bottom-25 {
+  padding-bottom: 25px !important
+}
+
+.padding-bottom-30 {
+  padding-bottom: 30px !important
+}
+
+.padding-bottom-40 {
+  padding-bottom: 40px !important
+}
+
+.padding-top-5 {
+  padding-top: 5px !important
+}
+
+.padding-top-10 {
+  padding-top: 10px !important
+}
+
+.padding-top-15 {
+  padding-top: 15px !important
+}
+
+.padding-top-20 {
+  padding-top: 20px !important
+}
+
+.padding-top-25 {
+  padding-top: 25px !important
+}
+
+.padding-top-30 {
+  padding-top: 30px !important
+}
+
+.padding-top-40 {
+  padding-top: 40px !important
+}
+
+.padding-right-5 {
+  padding-right: 5px !important
+}
+
+.padding-right-10 {
+  padding-right: 10px !important
+}
+
+.padding-right-15 {
+  padding-right: 15px !important
+}
+
+.padding-right-20 {
+  padding-right: 20px !important
+}
+
+.padding-right-25 {
+  padding-right: 25px !important
+}
+
+.padding-right-30 {
+  padding-right: 30px !important
+}
+
+.padding-left-5 {
+  padding-left: 5px !important
+}
+
+.padding-left-10 {
+  padding-left: 10px !important
+}
+
+.padding-left-15 {
+  padding-left: 15px !important
+}
+
+.padding-left-20 {
+  padding-left: 20px !important
+}
+
+.padding-left-25 {
+  padding-left: 25px !important
+}
+
+.padding-left-30 {
+  padding-left: 30px !important
+}
+
+.padding-lr-5 {
+  padding: 0 5px !important
+}
+
+.padding-lr-10 {
+  padding: 0 10px !important
+}
+
+.padding-lr-15 {
+  padding: 0 15px !important
+}
+
+.padding-lr-20 {
+  padding: 0 20px !important
+}
+
+.padding-lr-25 {
+  padding: 0 25px !important
+}
+
+.padding-lr-30 {
+  padding: 0 30px !important
+}
+
+.no-padding {
+  padding: 0 !important
+}
+
+.margin-bottom-0 {
+  margin-bottom: 0
+}
+
+.margin-bottom-5 {
+  margin-bottom: 5px
+}
+
+.margin-bottom-10 {
+  margin-bottom: 10px !important
+}
+
+.margin-bottom-15 {
+  margin-bottom: 15px !important
+}
+
+.margin-bottom-20 {
+  margin-bottom: 20px !important
+}
+
+.margin-bottom-25 {
+  margin-bottom: 25px !important
+}
+
+.margin-bottom-30 {
+  margin-bottom: 30px !important
+}
+
+.margin-bottom-40 {
+  margin-bottom: 40px !important
+}
+
+.margin-top-0 {
+  margin-top:0 !important
+}
+.margin-top-5 {
+  margin-top: 5px !important
+}
+
+.margin-top-10 {
+  margin-top: 10px !important
+}
+
+.margin-top-15 {
+  margin-top: 15px !important
+}
+
+.margin-top-20 {
+  margin-top: 20px !important
+}
+
+.margin-top-25 {
+  margin-top: 25px !important
+}
+
+.margin-top-30 {
+  margin-top: 30px !important
+}
+
+.margin-top-40 {
+  margin-top: 40px !important
+}
+
+.margin-right-5 {
+  margin-right: 5px !important
+}
+
+.margin-right-10 {
+  margin-right: 10px !important
+}
+
+.margin-right-15 {
+  margin-right: 15px !important
+}
+
+.margin-right-20 {
+  margin-right: 20px !important
+}
+
+.margin-right-25 {
+  margin-right: 25px !important
+}
+
+.margin-right-30 {
+  margin-right: 30px !important
+}
+
+.margin-left-5 {
+  margin-left: 5px !important
+}
+
+.margin-left-10 {
+  margin-left: 10px !important
+}
+
+.margin-left-15 {
+  margin-left: 15px !important
+}
+
+.margin-left-20 {
+  margin-left: 20px !important
+}
+
+.margin-left-25 {
+  margin-left: 25px !important
+}
+
+.margin-left-30 {
+  margin-left: 30px !important
+}
+
+.no-margin {
+  margin: 0 !important
+}
+
+.center {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  align-items: center
+}
+
+.this-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%)
+}
+.mlr10{
+  margin: 0 10px;
+}
+.bg-white{
+  background: #fff;
+}
+
+.borderBorder {
+  width: 100%;
+  border: 1px solid #ebeef5;
+}
+.borderBorder thead {
+  background: #fcfcfc;
+}
+
+.borderBorder td,
+.borderBorder th {
+  border-bottom: 1px solid #ebeef5;
+  padding: 15px;
+  font-size: 14px;
+}
+
+.borderBorder td {
+  padding-bottom: 0;
+}
+
