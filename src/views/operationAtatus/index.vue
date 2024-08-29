@@ -28,8 +28,12 @@
         </span>
       </div>
     </div>
-    <div class="content-box">
-      <div class="item-box" v-for="(item, index) in dataList" :key="index">
+    <div class="content-box" id="cardW">
+      <div
+        :class="['item-box', showMoreCard == true ? 'width30' : 'width10']"
+        v-for="(item, index) in dataList"
+        :key="index"
+      >
         <div class="top-box">
           <div class="left">
             <div class="left-text">卷取</div>
@@ -84,8 +88,9 @@
         </div>
       </div>
     </div>
-    <div v-show="total > 0" class="pagination">
+    <div v-if="showMoreCard" class="pagination">
       <SmallPagination
+        v-show="total > 0"
         :total="total"
         :page.sync="listQuery.pageNum"
         :limit.sync="listQuery.pageSize"
@@ -100,11 +105,11 @@
 
 <script>
 import SmallPagination from "@/components/SmallPagination";
-
 export default {
   name: "operationAtatus",
   data() {
     return {
+      showMoreCard: true,
       total: 20,
       hideOnSinglePage: false,
       listQuery: {
@@ -121,7 +126,65 @@ export default {
   methods: {
     // 全展示
     showMore() {
-      console.log("全展示");
+      if (this.showMoreCard) {
+        this.showMoreCard = false;
+        document.getElementById("cardW").style.zoom = 0.5;
+        console.log("object :>> ", document.getElementById("cardW").style);
+        this.dataList = [
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+          {
+            num: "9000",
+            text: "良品数",
+          },
+        ];
+      } else {
+        this.showMoreCard = true;
+        document.getElementById("cardW").style.zoom = 1;
+        this.getList();
+      }
     },
     // 页面数据
     getList() {
@@ -211,14 +274,13 @@ export default {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  padding: 20px;
+  padding: 20px 0;
 
   .item-box {
-    // width: 400px;
-    width: 24%;
+    width: 400px;
     height: 340px;
     padding: 12px;
-    margin: 12px;
+    margin: 10px;
     background: linear-gradient(
         180deg,
         rgba(8, 92, 203, 0.7) 0%,
@@ -228,28 +290,21 @@ export default {
     border-radius: 16px 16px 16px 16px;
     border: 2px solid #003b7a;
 
-    &:nth-child(4n) {
-      margin-right: 0;
-    }
-    &:nth-child(4n + 1) {
-      margin-left: 0;
-    }
-    &:first-child {
-      margin-left: 0;
-    }
-
     .top-box {
       padding: 10px 0;
       border-bottom: 1px solid #fff;
     }
   }
 
+  .width30 {
+    width: 23%;
+  }
+  .width10 {
+    width: 10%;
+  }
   .item-content {
-    margin: 20px;
+    padding: 20px;
 
-    .item {
-      margin: 20px 0;
-    }
     .content-title {
       font-size: 20px;
       color: #7bb0e7;

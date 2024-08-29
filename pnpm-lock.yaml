@@ -20,6 +20,9 @@ importers:
       iview:
         specifier: ^3.5.4
         version: 3.5.4(vue@2.7.16)
+      node-sass:
+        specifier: '9'
+        version: 9.0.0
       normalize.css:
         specifier: ^8.0.1
         version: 8.0.1
@@ -41,16 +44,16 @@ importers:
     devDependencies:
       '@vue/cli-plugin-babel':
         specifier: ~4.5.0
-        version: 4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))(core-js@3.38.1)(vue@2.7.16)
+        version: 4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))(core-js@3.38.1)(vue@2.7.16)
       '@vue/cli-plugin-eslint':
         specifier: ~4.5.0
-        version: 4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@6.8.0)
+        version: 4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@6.8.0)
       '@vue/cli-plugin-router':
         specifier: ~4.5.0
-        version: 4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))
+        version: 4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))
       '@vue/cli-service':
         specifier: ~4.5.0
-        version: 4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
+        version: 4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
       '@vue/cli-shared-utils':
         specifier: ^5.0.8
         version: 5.0.8(encoding@0.1.13)
@@ -66,12 +69,9 @@ importers:
       eslint-plugin-vue:
         specifier: ^6.2.2
         version: 6.2.2(eslint@6.8.0)
-      node-sass:
-        specifier: ^8.0.0
-        version: 8.0.0
       sass-loader:
         specifier: ^10.4.1
-        version: 10.5.2(node-sass@8.0.0)(webpack@4.47.0)
+        version: 10.5.2(node-sass@9.0.0)(webpack@4.47.0)
       vue-template-compiler:
         specifier: ^2.6.11
         version: 2.7.16
@@ -3902,9 +3902,9 @@ packages:
   node-releases@2.0.18:
     resolution: {integrity: sha512-d9VeXT4SJ7ZeOqGX6R5EM022wpL+eWPooLI+5UpWn2jCT1aosUQEhQP214x33Wkwx3JQMvIm+tIoVOdodFS40g==}
 
-  node-sass@8.0.0:
-    resolution: {integrity: sha512-jPzqCF2/e6JXw6r3VxfIqYc8tKQdkj5Z/BDATYyG6FL6b/LuYBNFGFVhus0mthcWifHm/JzBpKAd+3eXsWeK/A==}
-    engines: {node: '>=14'}
+  node-sass@9.0.0:
+    resolution: {integrity: sha512-yltEuuLrfH6M7Pq2gAj5B6Zm7m+gdZoG66wTqG6mIZV/zijq3M2OO2HswtT6oBspPyFhHDcaxWpsBm0fRNDHPg==}
+    engines: {node: '>=16'}
     deprecated: Node Sass is no longer supported. Please use `sass` or `sass-embedded` instead.
     hasBin: true
 
@@ -6914,11 +6914,11 @@ snapshots:
 
   '@vue/cli-overlay@4.5.19': {}
 
-  '@vue/cli-plugin-babel@4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))(core-js@3.38.1)(vue@2.7.16)':
+  '@vue/cli-plugin-babel@4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))(core-js@3.38.1)(vue@2.7.16)':
     dependencies:
       '@babel/core': 7.25.2
       '@vue/babel-preset-app': 4.5.19(@babel/core@7.25.2)(core-js@3.38.1)(vue@2.7.16)
-      '@vue/cli-service': 4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
+      '@vue/cli-service': 4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
       '@vue/cli-shared-utils': 4.5.19
       babel-loader: 8.3.0(@babel/core@7.25.2)(webpack@4.47.0)
       cache-loader: 4.1.0(webpack@4.47.0)
@@ -6931,9 +6931,9 @@ snapshots:
       - webpack-cli
       - webpack-command
 
-  '@vue/cli-plugin-eslint@4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@6.8.0)':
+  '@vue/cli-plugin-eslint@4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))(eslint@6.8.0)':
     dependencies:
-      '@vue/cli-service': 4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
+      '@vue/cli-service': 4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
       '@vue/cli-shared-utils': 4.5.19
       eslint: 6.8.0
       eslint-loader: 2.2.1(eslint@6.8.0)(webpack@4.47.0)
@@ -6946,16 +6946,16 @@ snapshots:
       - webpack-cli
       - webpack-command
 
-  '@vue/cli-plugin-router@4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))':
+  '@vue/cli-plugin-router@4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))':
     dependencies:
-      '@vue/cli-service': 4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
+      '@vue/cli-service': 4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
       '@vue/cli-shared-utils': 4.5.19
 
-  '@vue/cli-plugin-vuex@4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))':
+  '@vue/cli-plugin-vuex@4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))':
     dependencies:
-      '@vue/cli-service': 4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
+      '@vue/cli-service': 4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)
 
-  '@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)':
+  '@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16)':
     dependencies:
       '@intervolga/optimize-cssnano-plugin': 1.0.6(webpack@4.47.0)
       '@soda/friendly-errors-webpack-plugin': 1.8.1(webpack@4.47.0)
@@ -6964,8 +6964,8 @@ snapshots:
       '@types/webpack': 4.41.39
       '@types/webpack-dev-server': 3.11.6(debug@4.3.6)
       '@vue/cli-overlay': 4.5.19
-      '@vue/cli-plugin-router': 4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))
-      '@vue/cli-plugin-vuex': 4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))
+      '@vue/cli-plugin-router': 4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))
+      '@vue/cli-plugin-vuex': 4.5.19(@vue/cli-service@4.5.19(@vue/compiler-sfc@3.4.38)(lodash@4.17.21)(sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0))(vue-template-compiler@2.7.16)(vue@2.7.16))
       '@vue/cli-shared-utils': 4.5.19
       '@vue/component-compiler-utils': 3.3.0(lodash@4.17.21)
       '@vue/preload-webpack-plugin': 1.1.2(html-webpack-plugin@3.2.0(webpack@4.47.0))(webpack@4.47.0)
@@ -7014,7 +7014,7 @@ snapshots:
       webpack-merge: 4.2.2
     optionalDependencies:
       '@vue/compiler-sfc': 3.4.38
-      sass-loader: 10.5.2(node-sass@8.0.0)(webpack@4.47.0)
+      sass-loader: 10.5.2(node-sass@9.0.0)(webpack@4.47.0)
       vue-loader-v16: vue-loader@16.8.3(@vue/compiler-sfc@3.4.38)(vue@2.7.16)(webpack@4.47.0)
       vue-template-compiler: 2.7.16
     transitivePeerDependencies:
@@ -10485,7 +10485,7 @@ snapshots:
 
   node-releases@2.0.18: {}
 
-  node-sass@8.0.0:
+  node-sass@9.0.0:
     dependencies:
       async-foreach: 0.1.3
       chalk: 4.1.2
@@ -11450,7 +11450,7 @@ snapshots:
       scss-tokenizer: 0.4.3
       yargs: 17.7.2
 
-  sass-loader@10.5.2(node-sass@8.0.0)(webpack@4.47.0):
+  sass-loader@10.5.2(node-sass@9.0.0)(webpack@4.47.0):
     dependencies:
       klona: 2.0.6
       loader-utils: 2.0.4
@@ -11459,7 +11459,7 @@ snapshots:
       semver: 7.6.3
       webpack: 4.47.0
     optionalDependencies:
-      node-sass: 8.0.0
+      node-sass: 9.0.0
 
   sax@1.2.4: {}
 

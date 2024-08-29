@@ -2,7 +2,6 @@
   <defs>
     <linearGradient id="color1">
       <stop offset="0" stop-color="#fff" />
-      <!-- <stop offset="1" stop-color="#fff" /> -->
       <stop offset="1" stop-color="#14CC8F" />
     </linearGradient>
   </defs>

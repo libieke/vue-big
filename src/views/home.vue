@@ -1,5 +1,8 @@
 <template>
-  <div style="height: 100%; background: #00102a" class="unselectable-text">
+  <div
+    style="height: 100%; height: 100%; background: #00102a"
+    class="unselectable-text"
+  >
     <div class="top-time">{{ NowTime }}</div>
     <div class="header">
       <div class="selectRange">
@@ -35,17 +38,17 @@
 </template>
 
 <script>
-import { parseTime } from "@/utils";
+import parseTime from "@/utils";
 
 export default {
-  name: "",
+  name: "home",
   data() {
     return {
       NowTime: "",
     };
   },
   mounted() {
-    this.getTime();
+    // this.getTime();
   },
   methods: {
     getTime() {
