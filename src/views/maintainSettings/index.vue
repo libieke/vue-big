@@ -1,5 +1,5 @@
 <template>
-  <div class="">维护设置</div>
+  <div class="color">维护设置</div>
 </template>
 
 <script>
@@ -23,4 +23,8 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.color {
+  color: #fff;
+}
+</style>

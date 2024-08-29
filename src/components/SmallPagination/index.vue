@@ -2,6 +2,7 @@
   <div :class="{ hidden: hidden }" class="pagination-container">
     <el-pagination
       :background="background"
+      :small="small"
       :current-page.sync="currentPage"
       :page-size.sync="pageSize"
       :layout="layout"
@@ -18,10 +19,10 @@
 import { scrollTo } from "@/utils/scroll-to";
 
 export default {
-  name: "Pagination",
+  name: "SmallPagination",
   props: {
     total: {
-      required: true,
+      required: false,
       type: Number,
     },
     page: {
@@ -40,7 +41,7 @@ export default {
     },
     layout: {
       type: String,
-      default: "total, sizes, prev, pager, next, jumper",
+      default: " prev, pager, next",
     },
     background: {
       type: Boolean,
@@ -48,7 +49,7 @@ export default {
     },
     small: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     autoScroll: {
       type: Boolean,
@@ -97,7 +98,7 @@ export default {
 <style scoped>
 .pagination-container {
   background: transparent;
-  padding: 20px 0;
+  /* padding: 20px 0; */
 }
 .pagination-container.hidden {
   display: none;

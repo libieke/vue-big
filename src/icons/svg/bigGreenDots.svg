@@ -1,1 +1,10 @@
-<svg t="1724833641350"  class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3057" width="20" height="20"><path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="#23c28d" p-id="3058"></path></svg>
+<svg width="200px" height="200px">
+  <defs>
+    <linearGradient id="color1">
+      <stop offset="0" stop-color="#fff" />
+      <!-- <stop offset="1" stop-color="#fff" /> -->
+      <stop offset="1" stop-color="#14CC8F" />
+    </linearGradient>
+  </defs>
+  <ellipse cx="100" cy="100" rx="100" ry="100" style="fill:url(#color1)" />
+</svg>

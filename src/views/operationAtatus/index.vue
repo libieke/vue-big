@@ -1,5 +1,5 @@
 <template>
-  <div class="win-box">
+  <div class="win-box unselectable-text">
     <div class="top-box">
       <div class="left">
         <div class="left-text">设备状态</div>
@@ -29,46 +29,145 @@
       </div>
     </div>
     <div class="content-box">
-      <div class="item-box">
+      <div class="item-box" v-for="(item, index) in dataList" :key="index">
         <div class="top-box">
           <div class="left">
             <div class="left-text">卷取</div>
             <div class="left-text">S9528</div>
-            <div class="svg-container font-20" @click="repairHandle">
-              <svg-icon icon-class="work" />
+            <div class="right">
+              <span class="svg-container font-20">
+                <svg-icon icon-class="work" />
+              </span>
             </div>
           </div>
-          <div class="right">
+          <div>
             <span class="svg-container font-20">
               <svg-icon icon-class="bigGreenDots" />
             </span>
           </div>
         </div>
+        <div class="item-content">
+          <div class="item">
+            <div class="content-title">生产信息</div>
+            <div class="item-info">
+              <div class="item-goods">
+                <div class="item-num">{{ item.num }}</div>
+                <div class="item-text">{{ item.text }}</div>
+              </div>
+              <div class="item-goods">
+                <div class="item-num">9000</div>
+                <div class="item-text">良品数</div>
+              </div>
+              <div class="item-goods">
+                <div class="item-num">9000</div>
+                <div class="item-text">良品数</div>
+              </div>
+            </div>
+          </div>
+          <div class="item">
+            <div style="margin-top: 30px" class="content-title">稼动数据</div>
+            <div class="item-info">
+              <div class="item-goods">
+                <div class="item-num">9000</div>
+                <div class="item-text">良品数</div>
+              </div>
+              <div class="item-goods">
+                <div class="item-num">9000</div>
+                <div class="item-text">良品数</div>
+              </div>
+              <div class="item-goods">
+                <div class="item-num">9000</div>
+                <div class="item-text">良品数</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
+    <div v-show="total > 0" class="pagination">
+      <SmallPagination
+        :total="total"
+        :page.sync="listQuery.pageNum"
+        :limit.sync="listQuery.pageSize"
+        :hide-on-single-page="hideOnSinglePage"
+        :background="true"
+        :small="true"
+        @pagination="getList"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import SmallPagination from "@/components/SmallPagination";
+
 export default {
+  name: "operationAtatus",
   data() {
-    return {};
+    return {
+      total: 20,
+      hideOnSinglePage: false,
+      listQuery: {
+        pageNum: 1, // pageNum
+        pageSize: 8, // pageSize
+      },
+      dataList: [],
+    };
   },
-  computed: {},
+  components: { SmallPagination },
+  mounted() {
+    this.getList();
+  },
   methods: {
     // 全展示
-    showMore() {},
-    // 修理
-    repairHandle() {},
+    showMore() {
+      console.log("全展示");
+    },
+    // 页面数据
+    getList() {
+      console.log("页面数据");
+      this.dataList = [
+        {
+          num: "9000",
+          text: "良品数",
+        },
+        {
+          num: "9000",
+          text: "良品数",
+        },
+        {
+          num: "9000",
+          text: "良品数",
+        },
+        {
+          num: "9000",
+          text: "良品数",
+        },
+        {
+          num: "9000",
+          text: "良品数",
+        },
+        {
+          num: "9000",
+          text: "良品数",
+        },
+        {
+          num: "9000",
+          text: "良品数",
+        },
+        {
+          num: "9000",
+          text: "良品数",
+        },
+      ];
+    },
   },
-  mounted() {},
-  components: {},
 };
 </script>
 
 <style lang="scss" scoped>
 .win-box {
-  padding: 14px 20px;
+  padding: 13px 24px 0;
 }
 .marginR-5 {
   margin-right: 5px;
@@ -78,41 +177,126 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin: 10px 20px 0;
+  color: #fff;
+
   .left {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    color: #fff;
 
     .left-text {
-      font-size: 16px;
+      font-size: 24px;
       margin-right: 20px;
     }
     .state {
       display: flex;
       align-items: center;
-      // justify-content: space-between;
-      border: 1px solid #002652;
       border-radius: 4px;
-      margin: 0 8px;
+      border: 1px solid #003b7a;
+      margin: 0 16px;
       padding: 4px;
-      font-size: 14px;
+      font-size: 22px;
     }
   }
   .right {
     cursor: pointer;
+    color: #fff;
+    &:hover {
+      color: red;
+    }
   }
 }
-.item-box {
-  width: 240px;
-  height: 230px;
-  border: 1px solid #002856;
-  border-radius: 6px;
-  padding: 12px;
-  .top-box {
-    padding: 10px;
-    border-bottom: 1px solid #fff;
+.content-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 20px;
+
+  .item-box {
+    // width: 400px;
+    width: 24%;
+    height: 340px;
+    padding: 12px;
+    margin: 12px;
+    background: linear-gradient(
+        180deg,
+        rgba(8, 92, 203, 0.7) 0%,
+        rgba(2, 28, 69, 0.1) 21%
+      ),
+      rgba(32, 124, 219, 0.1);
+    border-radius: 16px 16px 16px 16px;
+    border: 2px solid #003b7a;
+
+    &:nth-child(4n) {
+      margin-right: 0;
+    }
+    &:nth-child(4n + 1) {
+      margin-left: 0;
+    }
+    &:first-child {
+      margin-left: 0;
+    }
+
+    .top-box {
+      padding: 10px 0;
+      border-bottom: 1px solid #fff;
+    }
   }
+
+  .item-content {
+    margin: 20px;
+
+    .item {
+      margin: 20px 0;
+    }
+    .content-title {
+      font-size: 20px;
+      color: #7bb0e7;
+    }
+    .item-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .item-goods {
+        &:nth-child(2) {
+          padding: 0 44px;
+          border-right: 1px solid #fff;
+          border-left: 1px solid #fff;
+        }
+        .item-num {
+          color: #fff;
+          font-size: 24px;
+          padding-bottom: 10px;
+        }
+        .item-text {
+          font-size: 14px;
+          color: #6b7a8d;
+        }
+      }
+    }
+  }
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  background: transparent;
+}
+::v-deep .el-pagination {
+  margin: -20px auto;
+}
+// prev和next箭头的样式
+::v-deep .el-pagination .btn-next,
+::v-deep .el-pagination .btn-prev {
+  background: #003c7c !important;
+  background-color: transparent !important;
+}
+// prev和next箭头disabled的样式
+::v-deep .el-pagination button:disabled {
+  background-color: transparent !important;
+}
+// active的页码样式
+::v-deep .el-pager li.active {
+  color: #003c7c !important;
 }
 </style>

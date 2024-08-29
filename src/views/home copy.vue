@@ -26,6 +26,30 @@
           <MenuItem name="alarmAnalysis"> 报警分析 </MenuItem>
           <MenuItem name="maintainSettings"> 维护设置 </MenuItem>
         </Menu>
+          <!-- <el-menu
+          mode="horizontal"
+          @on-select="(name) => $route.name !== name && $router.push(name)"
+          :active-name="$route.name"
+        >
+          <el-menu-item class="menu-item" name="operationAtatus">
+            运行状况
+          </el-menu-item>
+          <el-menu-item name="productionInformation"> 生产信息 </el-menu-item>
+          <el-menu-item name="productAnalysis"> 生产分析 </el-menu-item>
+        </el-menu>
+      </div>
+      <div class="header-title">nichicon IOT SYSTEM</div>
+      <div class="selectRange">
+        <el-menu
+          mode="horizontal"
+          @on-select="(name) => $route.name !== name && $router.push(name)"
+          :active-name="$route.name"
+        >
+          <el-menu-item name="alarmHistory"> 报警历史 </el-menu-item>
+          <el-menu-item name="alarmAnalysis"> 报警分析 </el-menu-item>
+          <el-menu-item name="maintainSettings"> 维护设置 </el-menu-item>
+        </el-menu>
+      </div> -->
       </div>
     </div>
   </div>

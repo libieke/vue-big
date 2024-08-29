@@ -13,7 +13,7 @@ export function parseTime(time, cFormat) {
   if (arguments.length === 0 || !time) {
     return null;
   }
-  const format = cFormat || "{y}-{m}-{d} {h}:{i}:{s}";
+  const format = cFormat || "{y}-{m}-{d} {a} {h}:{i}:{s}";
   let date;
   if (typeof time === "object") {
     date = time;
@@ -47,7 +47,15 @@ export function parseTime(time, cFormat) {
     const value = formatObj[key];
     // Note: getDay() returns 0 on Sunday
     if (key === "a") {
-      return ["日", "一", "二", "三", "四", "五", "六"][value];
+      return [
+        "星期日",
+        "星期一",
+        "星期二",
+        "星期三",
+        "星期四",
+        "星期五",
+        "星期六",
+      ][value];
     }
     return value.toString().padStart(2, "0");
   });

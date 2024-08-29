@@ -1,0 +1,11 @@
+<svg width="10" height="10">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="white" />
+      <stop offset="100%" stop-color="white" />
+      <stop offset="100%" stop-color="#14CC8F" />
+    </linearGradient>
+  </defs>
+  <path d="M512 512m-512 0a512 512 0 1 0 1024 0 512 512 0 1 0-1024 0Z" fill="url(#gradient)"
+    p-id="3058" />
+</svg>
