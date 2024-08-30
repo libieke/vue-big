@@ -80,7 +80,7 @@
               <div class="item-text">weq</div>
             </div>
           </div>
-          <div class="btn-contro">控制图</div>
+          <div class="btn-contro" @click="controlFn()">控制图</div>
         </div>
       </div>
     </div>
@@ -189,26 +189,44 @@ export default {
         },
       },
       // 根据接口和设计稿设置表头
-      tableColumn: [
-        {
-          prop: "date",
-          label: "年份",
-        },
-        {
-          prop: "orderType",
-          label: "机型",
-        },
-        {
-          prop: "orderType1",
-          label: "编号",
-        },
-        {
-          prop: "orderType2",
-          label: "工程",
-        },
-      ],
+      // tableColumn: [
+      //   {
+      //     prop: "date",
+      //     label: "年份",
+      //   },
+      //   {
+      //     prop: "orderType",
+      //     label: "机型",
+      //   },
+      //   {
+      //     prop: "orderType1",
+      //     label: "编号",
+      //   },
+      //   {
+      //     prop: "orderType2",
+      //     label: "工程",
+      //   },
+      // ],
 
       // 图表
+      tableColumn: [
+        {
+          prop: "ranking",
+          label: "排名",
+        },
+        {
+          prop: "realName",
+          label: "客户名称",
+        },
+        {
+          prop: "compare",
+          label: "较上周",
+        },
+        {
+          prop: "salesVolume",
+          label: "销售额(元)",
+        },
+      ],
       chartOptions: {
         yData: [],
         xData: [],
@@ -223,19 +241,69 @@ export default {
     handleQuery() {
       this.listQuery.pageNum = 1;
     },
+    // 控制图
+    controlFn() {},
     getList() {
       this.list = [
         {
-          date: "年份",
+          ranking: "1",
+          realName: "种植户",
+          compare: "下降",
+          salesVolume: "1234",
         },
         {
-          orderType: "机型",
+          ranking: "2",
+          realName: "种植户",
+          compare: "下降",
+          salesVolume: "1234",
         },
         {
-          orderType1: "编号",
+          ranking: "3",
+          realName: "种植户",
+          compare: "下降",
+          salesVolume: "1234",
         },
         {
-          orderType1: "编号",
+          ranking: "4",
+          realName: "种植户",
+          compare: "下降",
+          salesVolume: "1234",
+        },
+        {
+          ranking: "5",
+          realName: "种植户",
+          compare: "下降",
+          salesVolume: "1234",
+        },
+        {
+          ranking: "6",
+          realName: "种植户",
+          compare: "下降",
+          salesVolume: "1234",
+        },
+        {
+          ranking: "7",
+          realName: "种植户",
+          compare: "下降",
+          salesVolume: "1234",
+        },
+        {
+          ranking: "8",
+          realName: "种植户",
+          compare: "下降",
+          salesVolume: "1234",
+        },
+        {
+          ranking: "9",
+          realName: "种植户",
+          compare: "下降",
+          salesVolume: "1234",
+        },
+        {
+          ranking: "10",
+          realName: "种植户",
+          compare: "下降",
+          salesVolume: "1234",
         },
       ];
     },
@@ -245,7 +313,15 @@ export default {
       this.listQuery.endDate = e[1];
     },
     // 数据导出
-    outQuery() {},
+    outQuery() {
+      require.ensure([], () => {
+        const { export_json_to_excel } = require("@/excel/Export2Excel");
+        const fieldName = this.tableColumn.flatMap((item) => item.label);
+        const filterVal = this.tableColumn.flatMap((item) => item.prop);
+        const data = this.list.map((v) => filterVal.map((j) => v[j]));
+        export_json_to_excel(fieldName, data, "用户列表");
+      });
+    },
   },
 };
 </script>
@@ -305,7 +381,11 @@ export default {
     }
     .btn-contro {
       width: 168px;
-      height: 56px;
+      height: 58px;
+      text-align: center;
+      line-height: 58px;
+      color: #ffffff;
+      margin: 58px auto 0;
       background: #1266b9;
       border-radius: 8px 8px 8px 8px;
     }

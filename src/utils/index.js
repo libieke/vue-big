@@ -1,6 +1,4 @@
-/**
- * Created by PanJiaChen on 16/11/18.
- */
+
 
 /**
  * Parse the time to string
@@ -13,6 +11,7 @@ export function parseTime(time, cFormat) {
   if (arguments.length === 0 || !time) {
     return null;
   }
+  // 要展示的时间内容
   const format = cFormat || "{y}-{m}-{d} {a} {h}:{i}:{s}";
   let date;
   if (typeof time === "object") {
