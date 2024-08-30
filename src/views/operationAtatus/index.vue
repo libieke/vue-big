@@ -1,54 +1,38 @@
 <template>
-  <div class="win-box unselectable-text">
+  <div class="win-box">
     <div class="top-box">
       <div class="left">
         <div class="left-text">设备状态</div>
         <div class="state">
           <span class="marginR-5">运行</span>
-          <span class="svg-container font-10">
-            <svg-icon icon-class="greenDots" />
-          </span>
+          <span class="point green"> </span>
         </div>
         <div class="state">
           <span class="marginR-5">停机</span>
-          <span class="svg-container font-10">
-            <svg-icon icon-class="redDots" />
-          </span>
+          <span class="point yellow"> </span>
         </div>
         <div class="state">
           <span class="marginR-5">故障</span>
-          <span class="svg-container font-10">
-            <svg-icon icon-class="yellowDots" />
-          </span>
+          <span class="point red"> </span>
         </div>
       </div>
       <div class="right" @click="showMore">
-        <span class="svg-container font-20">
+        <span class="svg-container font-28">
           <svg-icon icon-class="square" />
         </span>
       </div>
     </div>
     <div class="content-box" id="cardW">
-      <div
-        :class="['item-box', showMoreCard == true ? 'width30' : 'width10']"
-        v-for="(item, index) in dataList"
-        :key="index"
-      >
+      <div class="item-box" v-for="(item, index) in dataList" :key="index">
         <div class="top-box">
-          <div class="left">
-            <div class="left-text">卷取</div>
-            <div class="left-text">S9528</div>
-            <div class="right">
-              <span class="svg-container font-20">
-                <svg-icon icon-class="work" />
-              </span>
+          <div class="left text-green">
+            <div class="left-text1">卷取</div>
+            <div class="left-text1">S9528</div>
+            <div>
+              <img src="@/assets/images/respect.png" />
             </div>
           </div>
-          <div>
-            <span class="svg-container font-20">
-              <svg-icon icon-class="bigGreenDots" />
-            </span>
-          </div>
+          <div class="pointBig green"></div>
         </div>
         <div class="item-content">
           <div class="item">
@@ -58,9 +42,15 @@
                 <div class="item-num">{{ item.num }}</div>
                 <div class="item-text">{{ item.text }}</div>
               </div>
+              <div class="line">
+                <el-divider direction="vertical"></el-divider>
+              </div>
               <div class="item-goods">
                 <div class="item-num">9000</div>
                 <div class="item-text">良品数</div>
+              </div>
+              <div class="line">
+                <el-divider direction="vertical"></el-divider>
               </div>
               <div class="item-goods">
                 <div class="item-num">9000</div>
@@ -75,9 +65,15 @@
                 <div class="item-num">9000</div>
                 <div class="item-text">良品数</div>
               </div>
+              <div class="line">
+                <el-divider direction="vertical"></el-divider>
+              </div>
               <div class="item-goods">
                 <div class="item-num">9000</div>
                 <div class="item-text">良品数</div>
+              </div>
+              <div class="line">
+                <el-divider direction="vertical"></el-divider>
               </div>
               <div class="item-goods">
                 <div class="item-num">9000</div>
@@ -105,6 +101,7 @@
 
 <script>
 import SmallPagination from "@/components/SmallPagination";
+
 export default {
   name: "operationAtatus",
   data() {
@@ -230,17 +227,54 @@ export default {
 
 <style lang="scss" scoped>
 .win-box {
-  padding: 13px 24px 0;
+  padding: 5px 26px 0;
 }
-.marginR-5 {
-  margin-right: 5px;
+// 公共样式
+.text-green {
+  color: #14cc8f;
+}
+.text-red {
+  color: #eb5042;
+}
+.text-yellow {
+  color: #ffc232;
 }
 
+.marginR-5 {
+  margin-right: 8px;
+}
+.point {
+  width: 16px;
+  height: 16px;
+  border-radius: 12px 12px 12px 12px;
+}
+.pointBig {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+// 圆点样式
+.green {
+  background: linear-gradient(0, rgba(255, 255, 255, 0) 65%, #ffffff 91%),
+    #14cc8f;
+  border-radius: 20px 20px 20px 20px;
+  border: 1px solid #14cc8f;
+}
+.yellow {
+  background: linear-gradient(0, rgba(255, 255, 255, 0) 65%, #ffffff 91%),
+    #ffc232;
+  border: 1px solid #ffc232;
+}
+.red {
+  background: linear-gradient(0, rgba(255, 255, 255, 0) 65%, #ffffff 91%),
+    #eb5042;
+  border: 1px solid #eb5042;
+}
 .top-box {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 10px 20px 0;
+  margin: 0 20px 0;
   color: #fff;
 
   .left {
@@ -249,8 +283,9 @@ export default {
     justify-content: space-evenly;
 
     .left-text {
-      font-size: 24px;
-      margin-right: 20px;
+      font-size: 32px;
+      margin-right: 40px;
+      font-weight: 500;
     }
     .state {
       display: flex;
@@ -258,7 +293,8 @@ export default {
       border-radius: 4px;
       border: 1px solid #003b7a;
       margin: 0 16px;
-      padding: 4px;
+      padding: 6px 9px;
+      font-weight: 500;
       font-size: 22px;
     }
   }
@@ -266,7 +302,7 @@ export default {
     cursor: pointer;
     color: #fff;
     &:hover {
-      color: red;
+      color: #00d8f4;
     }
   }
 }
@@ -274,13 +310,13 @@ export default {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  padding: 20px 0;
+  padding: 10px 0;
 
   .item-box {
-    width: 400px;
-    height: 340px;
+    width: 442px;
+    height: 400px;
     padding: 12px;
-    margin: 10px;
+    margin: 12px;
     background: linear-gradient(
         180deg,
         rgba(8, 92, 203, 0.7) 0%,
@@ -292,41 +328,46 @@ export default {
 
     .top-box {
       padding: 10px 0;
-      border-bottom: 1px solid #fff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      .left {
+        justify-content: space-between;
+        margin-right: 0;
+        font-weight: 500;
+        .left-text1 {
+          font-size: 32px;
+          padding-right: 14px;
+        }
+      }
     }
   }
 
-  .width30 {
-    width: 23%;
-  }
-  .width10 {
-    width: 10%;
-  }
   .item-content {
     padding: 20px;
 
     .content-title {
-      font-size: 20px;
-      color: #7bb0e7;
+      font-size: 24px;
+      color: #7fb5ed;
     }
     .item-info {
       display: flex;
       align-items: center;
       justify-content: space-between;
       .item-goods {
-        &:nth-child(2) {
-          padding: 0 44px;
-          border-right: 1px solid #fff;
-          border-left: 1px solid #fff;
-        }
         .item-num {
-          color: #fff;
-          font-size: 24px;
+          color: #dbfaff;
+          font-size: 36px;
           padding-bottom: 10px;
         }
         .item-text {
-          font-size: 14px;
-          color: #6b7a8d;
+          font-size: 22px;
+          color: #ffffff;
+        }
+      }
+      .line {
+        opacity: 0.1;
+        .el-divider--vertical {
+          margin-top: 10px;
+          height: 56px;
         }
       }
     }
@@ -337,9 +378,9 @@ export default {
   justify-content: center;
   background: transparent;
 }
-::v-deep .el-pagination {
-  margin: -20px auto;
-}
+// ::v-deep .el-pagination {
+//   margin: -15px auto;
+// }
 // prev和next箭头的样式
 ::v-deep .el-pagination .btn-next,
 ::v-deep .el-pagination .btn-prev {

@@ -8,13 +8,16 @@ import "element-ui/lib/theme-chalk/index.css";
 import "@/styles/index.scss";
 import "@/icons"; // icon
 
-import * as echarts from "echarts";
+// import * as echarts from "echarts";
 
-Vue.prototype.$echarts = function (el) {
-  return echarts.init(el, null, { renderer: "svg" });
-};
+import VScaleScreen from "v-scale-screen";
+
+// Vue.prototype.$echarts = function (el) {
+//   return echarts.init(el, null, { renderer: "svg" });
+// };
 Vue.config.productionTip = false;
 Vue.use(iView);
+Vue.use(VScaleScreen);
 Vue.use(ElementUI);
 new Vue({
   router,
