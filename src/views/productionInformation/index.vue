@@ -53,25 +53,31 @@
           >
         </el-form-item>
       </el-form>
-      <!-- <BarChart :chartOptions="chartOptions"></BarChart> -->
+      <BarChart
+        :chartOptions="chartOptions"
+        height="400px"
+        style="margin-bottom: 10px"
+      ></BarChart>
       <div class="content-box">
         <div class="left-box">
-          <custom-table
-            :fetch-loading="listLoading"
-            :data="list"
-            :loading-text="loadingText"
-            :table-column="tableColumn"
-            :selection="false"
-          >
-          </custom-table>
-          <pagination
-            v-show="total > 0"
-            :total="total"
-            :page.sync="listQuery.pageNum"
-            :limit.sync="listQuery.pageSize"
-            :hide-on-single-page="hideOnSinglePage"
-            @pagination="getList"
-          />
+          <div class="table-box">
+            <custom-table
+              :fetch-loading="listLoading"
+              :data="list"
+              :loading-text="loadingText"
+              :table-column="tableColumn"
+              :selection="false"
+            >
+            </custom-table>
+            <pagination
+              v-show="total > 0"
+              :total="total"
+              :page.sync="listQuery.pageNum"
+              :limit.sync="listQuery.pageSize"
+              :hide-on-single-page="hideOnSinglePage"
+              @pagination="getList"
+            />
+          </div>
         </div>
         <div class="right-box">
           <div class="right-item">
@@ -110,7 +116,7 @@ export default {
       hideOnSinglePage: false,
       listQuery: {
         pageNum: 1, // pageNum
-        pageSize: 20, // pageSize
+        pageSize: 10, // pageSize
         orderType: null,
         orderType1: null,
         orderType2: null,
@@ -227,6 +233,7 @@ export default {
           label: "销售额(元)",
         },
       ],
+      // echarts数据
       chartOptions: {
         yData: [],
         xData: [],
@@ -235,6 +242,7 @@ export default {
   },
   created() {
     this.getList();
+    console.log("this. :>> ", this.chartOptions);
   },
   methods: {
     // 搜索
@@ -306,6 +314,24 @@ export default {
           salesVolume: "1234",
         },
       ];
+      this.chartOptions.yData = [
+        "20210126",
+        "20210127",
+        "20210128",
+        "20210129",
+        "20210130",
+        "20210131",
+        "20210201",
+      ];
+      this.chartOptions.xData = [
+        "190828",
+        "240898",
+        "235073",
+        "225906",
+        "199583",
+        "174498",
+        "234296",
+      ];
     },
     // 时间处理
     changeTime(e) {
@@ -343,9 +369,11 @@ export default {
   .left-box {
     width: 1488px;
     height: 463px;
+    text-align: center;
     background: rgba(32, 124, 219, 0.1);
     border-radius: 16px 16px 16px 16px;
     border: 2px solid #003b7a;
+    overflow: hidden;
   }
   .right-box {
     width: 324px;

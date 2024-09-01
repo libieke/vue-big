@@ -167,8 +167,7 @@ export function export_json_to_excel(th, jsonData, defaultTitle) {
   var wb = new Workbook(),
     ws = sheet_from_array_of_arrays(data);
 
-  var ws = XLSX.utils.json_to_sheet(dataList);
-  ws["!cols"] = colsconfig; //设置列属性
+  var ws = XLSX.utils.json_to_sheet(data);
   Object.keys(ws).forEach((key) => {
     //设置单元格属性
     if (key.indexOf("!") < 0) {

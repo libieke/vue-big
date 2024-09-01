@@ -3,8 +3,22 @@
   <el-table
     v-loading="fetchLoading && data.length == 0"
     :data="data"
-    border
     ref="table"
+    :header-cell-style="{
+      background: '#000',
+      borderColor: '#003b7a',
+      color: '#fff',
+    }"
+    :row-style="{
+      height: '20px',
+      background: '#000',
+      borderColor: '#003b7a',
+      color: '#fff',
+    }"
+    :cell-style="{
+      padding: '5px',
+      borderColor: '#003b7a',
+    }"
     :show-summary="showSummary"
     :summary-method="getSummaries"
     :element-loading-text="loadingText"
@@ -112,13 +126,13 @@ export default {
     },
     toggleSelection(rows) {
       if (rows) {
-        rows.forEach(row => {
+        rows.forEach((row) => {
           this.$refs.table.toggleRowSelection(row);
         });
       } else {
         this.$refs.table.clearSelection();
       }
-    }
+    },
   },
 };
 </script>
@@ -127,10 +141,14 @@ export default {
   .has-gutter {
     color: #1d2129;
     th {
-      background: #fcfcfc;
+      background: #003b7a;
+    }
+    tr {
+      background: #003b7a;
     }
   }
 }
+
 ::v-deep .el-table__body {
   width: 100% !important;
 }

@@ -33,5 +33,6 @@ export default {
 .bg-white {
   // padding: 0 40px;
   min-height: calc(100vh - 90px);
+  overflow: hidden;
 }
 </style>

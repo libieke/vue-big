@@ -3,7 +3,8 @@
 </template>
 
 <script>
-import echarts from "echarts";
+import * as echarts from "echarts";
+
 export default {
   props: {
     chartOptions: {
@@ -36,19 +37,31 @@ export default {
       var myChart = echarts.init(this.$refs.barChart);
       // 指定图表的配置项和数据
       var option = {
+        // backgroundColor: "#0f375f",
         tooltip: {
           trigger: "axis",
           axisPointer: {
             type: "shadow",
+            label: {
+              show: true,
+            },
           },
         },
         grid: {
-          top: "0",
-          right: "2%",
+          top: "10%",
+          right: "5%",
+          left: "5%",
           bottom: "10%",
         },
+        legend: {
+          data: ["销售水量", "主营业务"],
+          top: "15%",
+          textStyle: {
+            color: "#ffffff",
+          },
+        },
         xAxis: {
-          type: "value",
+          type: "category",
           boundaryGap: [0, 0.01],
           axisLine: {
             show: true, //是否显示
@@ -56,17 +69,10 @@ export default {
               color: "#999", //x轴颜色
             },
           },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: "#ededed", //y轴参考线颜色
-              type: "dashed", //y轴虚线。可选'solid' 'dashed' 'dotted'
-            },
-          },
         },
         color: ["#0052d9", "#b5c7ff"],
         yAxis: {
-          type: "category",
+          type: "value",
           axisLine: {
             show: true, //是否显示
             lineStyle: {
@@ -76,8 +82,8 @@ export default {
           axisLabel: {
             align: "left",
             width: 100,
-            margin: 40,
-            color: "#666",
+            margin: 60,
+            color: "#fff",
           },
           data: this.chartOptions.yData,
         },

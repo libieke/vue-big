@@ -9,7 +9,7 @@ import "@/styles/index.scss";
 import "@/icons"; // icon
 
 // import * as echarts from "echarts";
-
+// 屏幕适配
 import VScaleScreen from "v-scale-screen";
 
 // Vue.prototype.$echarts = function (el) {
