@@ -23,7 +23,12 @@
       </div>
     </div>
     <div class="content-box" id="cardW">
-      <div class="item-box" v-for="(item, index) in dataList" :key="index">
+      <div
+        class="item-box"
+        v-for="(item, index) in dataList"
+        :key="index"
+        @click="toDetials(item)"
+      >
         <div class="top-box">
           <div class="left text-green">
             <div class="left-text1">卷取</div>
@@ -182,6 +187,21 @@ export default {
         document.getElementById("cardW").style.zoom = 1;
         this.getList();
       }
+    },
+    // 页面详情
+    toDetials(item) {
+      console.log('object :>> ', item);
+      // if (row.shopGoodStatus === 1 && status !== "detail") {
+      //   this.$message.warning("已上架商品无法编辑");
+      //   return false;
+      // }
+      // this.$router.push({
+      //   path: "/agentProject/components/newGoods",
+      //   query: {
+      //     id: row.goodsId ? row.goodsId : "",
+      //     status: status ? status : "",
+      //   },
+      // });
     },
     // 页面数据
     getList() {

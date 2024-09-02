@@ -40,16 +40,18 @@ export default {
         // backgroundColor: "rgba(32, 124, 219, 0.1)",
         title: {
           text: this.chartOptions.title,
-          left: "0",
-          top: "0",
+          x: 5,
+          top: 0,
           textStyle: {
             fontWeight: "500",
-            fontSize: "24px",
+            fontSize: 24,
             color: "#FFFFFF",
           },
         },
         tooltip: {
-          trigger: "axis",
+          show: true,
+          borderWidth: 1,
+          extraCssText: "box-shadow: 0 0 5px rgba(0, 0, 0, 1)",
           axisPointer: {
             type: "shadow",
             label: {
@@ -58,21 +60,24 @@ export default {
           },
         },
         grid: {
-          top: 40,
-          bottom: 24,
-          left: 32,
-          right: 32,
+          left: -35,
+          top: "15%",
+          bottom: 20,
+          right: 10,
+          containLabel: true,
         },
         xAxis: {
-          type: "category",
-          boundaryGap: [0, 0.01],
+          // type: "category",
           axisLine: {
-            show: true, //是否显示
-            lineStyle: {
-              color: "#fff", //x轴颜色
-              width: "2px",
-              typ: "dashed",
+            show: false,
+          },
+          axisLabel: {
+            textStyle: {
+              color: "#5c6076",
             },
+          },
+          axisTick: {
+            show: false,
           },
         },
         color: ["#0052d9", "#b5c7ff"],
@@ -84,7 +89,7 @@ export default {
           axisLabel: {
             align: "left",
             width: 100,
-            margin: 60,
+            margin: 50,
             color: "#fff",
           },
           data: this.chartOptions.yData,
@@ -92,7 +97,28 @@ export default {
         series: [
           {
             type: "bar",
+            name: "linedemo",
+            tooltip:{
+                show:true
+            },
+            animation:false,
+            barWidth:40,
+            hoverAnimation:false,
             data: this.chartOptions.xData,
+          },
+          {
+            type: "line",
+            name: "距离",
+            smooth: true,
+            hoverAnimation: false,
+            data: this.chartOptions.xData,
+            lineStyle: {
+              normal: {
+                width: 1,
+                color: "#fff",
+                opacity: 1,
+              },
+            },
           },
         ],
       };

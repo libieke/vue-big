@@ -57,15 +57,17 @@
             "
           />
           <span v-else>
-            <span v-if="item.formatter">{{
-              item.formatter(
-                scope.row,
-                scope.column,
-                scope.row[scope.column.property],
-                scope.$index
-              )
-            }}</span>
-            <span v-else>{{ scope.row[scope.column.property] }}</span>
+            <span v-if="item.formatter"
+              >{{
+                item.formatter(
+                  scope.row,
+                  scope.column,
+                  scope.row[scope.column.property],
+                  scope.$index
+                )
+              }}
+            </span>
+            <span v-else>{{ scope.row[scope.column.property] }} </span>
           </span>
         </template>
       </el-table-column>
@@ -105,10 +107,6 @@ export default {
     getSummaries: {
       type: Function,
     },
-    // height: {
-    //   type: String,
-    //   default: "410px",
-    // },
     maxHeight: {
       type: String,
       default: "410px",
@@ -140,7 +138,6 @@ export default {
   mounted() {
     this.autoScroll();
   },
-
   beforeDestroy() {
     this.autoScroll(true);
   },
@@ -165,7 +162,6 @@ export default {
       }
     },
     // 自动轮播效果
-
     autoScroll(stop) {
       const table = this.$refs.tableScroll;
       // 拿到表格中承载数据的div元素
@@ -180,19 +176,14 @@ export default {
           divData.scrollTop += 1;
           // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
           if (
-            divData.clientHeight + divData.scrollTop ==
+            divData.clientHeight + divData.scrollTop >=
             divData.scrollHeight
           ) {
             // 重置table距离顶部距离
-            divData.scrollTop = 0;
-            // 重置table距离顶部距离。值=(滚动到底部时，距离顶部的大小) - 整个高度/2
-            // divData.scrollTop = divData.scrollTop - divData.scrollHeight / 2
+            // divData.scrollTop = 0;
+            this.data = [...this.data, ...this.data];
           }
-          // else {
-          // this.data.push(this.data[0]); // 将数组的第一个元素添加到数组的
-          // this.data.shift(); //删除数组的第一个元素
-          // }
-        }, 50); // 滚动速度
+        }, 45); // 滚动速度
       }
     },
   },

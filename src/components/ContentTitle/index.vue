@@ -1,6 +1,6 @@
 <template>
   <div class="padding-left-40 padding-right-40">
-    <h2 class="font-14">{{ title }}</h2>
+    <!-- <h2 class="font-14">{{ title }}</h2> -->
     <div class="bg-white"><slot /></div>
   </div>
 </template>
@@ -10,7 +10,7 @@ export default {
   props: {
     title: {
       type: String,
-      required: true,
+      // required: true,
       default: "",
     },
     padding: {
