@@ -67,6 +67,15 @@
             :table-column="tableColumn"
             :selection="false"
           >
+            <template v-slot:actionColumn>
+              <el-table-column label="操作" align="center" width="200">
+                <template slot-scope="{ row }">
+                  <span class="pointer blue mlr10" @click="handleUpdate(row)"
+                    >重置</span
+                  >
+                </template>
+              </el-table-column>
+            </template>
           </custom-table>
         </div>
       </div>
