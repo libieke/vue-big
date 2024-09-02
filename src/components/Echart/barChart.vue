@@ -37,7 +37,17 @@ export default {
       var myChart = echarts.init(this.$refs.barChart);
       // 指定图表的配置项和数据
       var option = {
-        // backgroundColor: "#0f375f",
+        // backgroundColor: "rgba(32, 124, 219, 0.1)",
+        title: {
+          text: this.chartOptions.title,
+          left: "0",
+          top: "0",
+          textStyle: {
+            fontWeight: "500",
+            fontSize: "24px",
+            color: "#FFFFFF",
+          },
+        },
         tooltip: {
           trigger: "axis",
           axisPointer: {
@@ -48,17 +58,10 @@ export default {
           },
         },
         grid: {
-          top: "10%",
-          right: "5%",
-          left: "5%",
-          bottom: "10%",
-        },
-        legend: {
-          data: ["销售水量", "主营业务"],
-          top: "15%",
-          textStyle: {
-            color: "#ffffff",
-          },
+          top: 40,
+          bottom: 24,
+          left: 32,
+          right: 32,
         },
         xAxis: {
           type: "category",
@@ -66,7 +69,9 @@ export default {
           axisLine: {
             show: true, //是否显示
             lineStyle: {
-              color: "#999", //x轴颜色
+              color: "#fff", //x轴颜色
+              width: "2px",
+              typ: "dashed",
             },
           },
         },
@@ -74,10 +79,7 @@ export default {
         yAxis: {
           type: "value",
           axisLine: {
-            show: true, //是否显示
-            lineStyle: {
-              color: "#999", //x轴颜色
-            },
+            show: false, //是否显示
           },
           axisLabel: {
             align: "left",

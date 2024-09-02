@@ -1,83 +1,89 @@
 <template>
   <ContentTitle title="">
     <div class="agent-container padding-top-20">
-      <el-form
-        ref="queryForm"
-        class="search-form"
-        size="small"
-        inline
-        :model="listQuery"
-      >
-        <el-form-item
-          v-for="(val, key, index) in listQueryFormModel"
-          :key="index"
-          :label="val.label"
-          :prop="key"
+      <div class="relative">
+        <el-form
+          ref="queryForm"
+          class="search-form"
+          size="medium"
+          inline
+          :model="listQuery"
         >
-          <el-select
-            v-if="val.type == 'select'"
-            v-model="listQuery[key]"
-            :placeholder="val.placeholder"
-            :clearable="val.clearable ? val.clearable : true"
+          <el-form-item
+            v-for="(val, key, index) in listQueryFormModel"
+            :key="index"
+            :label="val.label"
+            :prop="key"
           >
-            <el-option
-              v-for="(item, optionIndex) in val.options"
-              :key="optionIndex"
-              :label="item[val.optionLable]"
-              :value="item[val.optionValue]"
-            />
-          </el-select>
-          <el-date-picker
-            v-if="val.type == 'picker'"
-            v-model="value"
-            type="daterange"
-            :placeholder="val.placeholder"
-            range-separator="——"
-            format="yyyy-dd"
-            value-format="yyyy-dd"
-            :picker-options="{
-              disabledDate: (time) => {
-                return time.getTime() > Date.now() - 3600 * 1000 * 24;
-              },
-            }"
-            @change="changeTime"
+            <el-select
+              v-if="val.type == 'select'"
+              v-model="listQuery[key]"
+              :placeholder="val.placeholder"
+              :clearable="val.clearable ? val.clearable : true"
+            >
+              <el-option
+                v-for="(item, optionIndex) in val.options"
+                :key="optionIndex"
+                :label="item[val.optionLable]"
+                :value="item[val.optionValue]"
+              />
+            </el-select>
+            <el-date-picker
+              v-if="val.type == 'picker'"
+              v-model="value"
+              type="daterange"
+              :placeholder="val.placeholder"
+              range-separator="——"
+              format="yyyy-dd"
+              value-format="yyyy-dd"
+              :picker-options="{
+                disabledDate: (time) => {
+                  return time.getTime() > Date.now() - 3600 * 1000 * 24;
+                },
+              }"
+              @change="changeTime"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" size="medium" @click="handleQuery"
+              >查询</el-button
+            >
+            <el-button type="primary" size="medium" @click="outQuery"
+              >数据导出</el-button
+            >
+          </el-form-item>
+        </el-form>
+        <div class="positonBtn">
+          <div class="tab-text">维度切换</div>
+          <el-radio-group
+            v-model="radio1"
+            size="medium"
+            fill="#00D8F4"
+            @input="changeTab"
           >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" size="mini" @click="handleQuery"
-            >查询</el-button
-          >
-          <el-button type="primary" size="mini" @click="outQuery"
-            >数据导出</el-button
-          >
-        </el-form-item>
-      </el-form>
-      <BarChart
-        :chartOptions="chartOptions"
-        height="400px"
-        style="margin-bottom: 10px"
-      ></BarChart>
+            <el-radio-button label="日期"></el-radio-button>
+            <el-radio-button label="批次"></el-radio-button>
+          </el-radio-group>
+        </div>
+      </div>
+      <div class="chartStyle">
+        <BarChart
+          :chartOptions="chartOptions"
+          height="350px"
+          style="margin-bottom: 10px"
+        ></BarChart>
+      </div>
       <div class="content-box">
         <div class="left-box">
-          <div class="table-box">
-            <custom-table
-              :fetch-loading="listLoading"
-              :data="list"
-              :loading-text="loadingText"
-              :table-column="tableColumn"
-              :selection="false"
-            >
-            </custom-table>
-            <pagination
-              v-show="total > 0"
-              :total="total"
-              :page.sync="listQuery.pageNum"
-              :limit.sync="listQuery.pageSize"
-              :hide-on-single-page="hideOnSinglePage"
-              @pagination="getList"
-            />
-          </div>
+          <custom-table
+            :fetch-loading="listLoading"
+            :data="list"
+            :loading-text="loadingText"
+            :table-column="tableColumn"
+            :selection="false"
+          >
+          </custom-table>
         </div>
         <div class="right-box">
           <div class="right-item">
@@ -86,7 +92,9 @@
               <div class="item-text">weq</div>
             </div>
           </div>
-          <div class="btn-contro" @click="controlFn()">控制图</div>
+          <div v-if="isShowCountry" class="btn-contro" @click="controlFn()">
+            控制图
+          </div>
         </div>
       </div>
     </div>
@@ -96,13 +104,11 @@
 <script>
 import ContentTitle from "@/components/ContentTitle/index";
 import CustomTable from "@/components/CustomTable";
-import Pagination from "@/components/Pagination";
 import BarChart from "@/components/Echart/barChart";
 export default {
   components: {
     ContentTitle,
     CustomTable,
-    Pagination,
     BarChart,
   },
   data() {
@@ -110,13 +116,11 @@ export default {
       value: "",
       loadingText: "加载中...",
       list: [],
+      isShowCountry: false, // 控制按钮限隐
       listLoading: false,
       // 自定义Pagination的参数
-      total: 10,
       hideOnSinglePage: false,
       listQuery: {
-        pageNum: 1, // pageNum
-        pageSize: 10, // pageSize
         orderType: null,
         orderType1: null,
         orderType2: null,
@@ -191,30 +195,9 @@ export default {
         startDate: {
           type: "picker",
           label: "日期",
-          // placeholder: "请选择年份",
         },
       },
       // 根据接口和设计稿设置表头
-      // tableColumn: [
-      //   {
-      //     prop: "date",
-      //     label: "年份",
-      //   },
-      //   {
-      //     prop: "orderType",
-      //     label: "机型",
-      //   },
-      //   {
-      //     prop: "orderType1",
-      //     label: "编号",
-      //   },
-      //   {
-      //     prop: "orderType2",
-      //     label: "工程",
-      //   },
-      // ],
-
-      // 图表
       tableColumn: [
         {
           prop: "ranking",
@@ -233,6 +216,8 @@ export default {
           label: "销售额(元)",
         },
       ],
+      // tab
+      radio1: "日期",
       // echarts数据
       chartOptions: {
         yData: [],
@@ -242,32 +227,40 @@ export default {
   },
   created() {
     this.getList();
-    console.log("this. :>> ", this.chartOptions);
   },
   methods: {
     // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
     },
+    // tab切换
+    changeTab(e) {
+      if (e === "日期") {
+        console.log("按日期展示");
+      } else if (e === "批次") {
+        console.log("按批次展示");
+      }
+    },
     // 控制图
     controlFn() {},
     getList() {
+      // this.isShowCountry = true;
       this.list = [
         {
           ranking: "1",
-          realName: "种植户",
+          realName: "dsad",
           compare: "下降",
           salesVolume: "1234",
         },
         {
           ranking: "2",
-          realName: "种植户",
+          realName: "种植f户",
           compare: "下降",
           salesVolume: "1234",
         },
         {
           ranking: "3",
-          realName: "种植户",
+          realName: "打发",
           compare: "下降",
           salesVolume: "1234",
         },
@@ -314,6 +307,7 @@ export default {
           salesVolume: "1234",
         },
       ];
+      this.chartOptions.title = "生产计数";
       this.chartOptions.yData = [
         "20210126",
         "20210127",
@@ -360,15 +354,33 @@ export default {
     .positonBtn {
       position: absolute;
       right: 0;
-      top: 2px;
+      display: flex;
+      align-items: center;
+      bottom: 40px;
+      .tab-text {
+        font-size: 20px;
+        color: #ffffff;
+        padding-right: 8px;
+      }
     }
   }
 }
+.chartStyle {
+  width: 100%;
+  height: 400px;
+  margin-top: -10px;
+  padding: 24px 20px;
+  background: #00102a;
+  border-radius: 16px 16px 16px 16px;
+  border: 2px solid #003b7a;
+}
 .content-box {
   display: flex;
+  margin-top: 24px;
   .left-box {
     width: 1488px;
     height: 463px;
+    padding: 24px;
     text-align: center;
     background: rgba(32, 124, 219, 0.1);
     border-radius: 16px 16px 16px 16px;

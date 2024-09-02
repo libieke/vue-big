@@ -48,10 +48,40 @@
   box-sizing: content-box;
 }
 
-.el-table{
+.el-table {
   background-color: #003b7a;
 }
 
-.el-table::before{
+.el-table::before {
+  width: 0;
+}
+
+.el-input__inner {
+  color: #fff;
+  border-radius: 4px 4px 4px 4px;
+  border: 2px solid #00539F;
+  background: linear-gradient(0, rgba(0, 83, 159, 0.5) 0%, rgba(0, 30, 57, 0) 100%);
+}
+
+.el-range-editor--medium .el-range-input {
+  background: transparent;
+}
+
+.el-form-item__label {
+  color: #fff;
+}
+
+.el-date-editor .el-range-separator {
+  color: #fff;
+  padding-right: 20px;
+}
+
+.el-table--border::after,
+.el-table--group::after,
+.el-table::before {
+  display: none;
+}
+
+.el-table colgroup col[name="gutter"] {
   width: 0;
 }
