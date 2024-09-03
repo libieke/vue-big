@@ -181,8 +181,9 @@ export default {
             divData.scrollHeight
           ) {
             // 重置table距离顶部距离
-            // divData.scrollTop = 0;
-            this.data = [...this.data, ...this.data];
+            divData.scrollTop = 0;
+            this.data;
+            // this.data = [...this.data, ...this.data];
           }
         }, 45); // 滚动速度
       }

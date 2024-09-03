@@ -75,19 +75,6 @@
         </div>
       </div>
     </div>
-    <el-dialog
-      width="600px"
-      title="重置维护时间"
-      :visible.sync="config.visible"
-      custom-class="custom-dialog"
-      append-to-body
-      :close-on-click-modal="false"
-      top="15vh"
-    >
-      <div class="woList">
-        <div></div>
-      </div>
-    </el-dialog>
   </ContentTitle>
 </template>
 
@@ -207,6 +194,8 @@ export default {
       chartOptions: {
         yData: [],
         xData: [],
+        title: "",
+        subtext: "",
       },
     };
   },

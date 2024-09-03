@@ -1,5 +1,3 @@
-
-
 /**
  * Parse the time to string
  * @param {(Object|string|number)} time
