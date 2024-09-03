@@ -61,14 +61,9 @@ export default {
           },
         ],
         tooltip: {
-          show: true,
-          borderWidth: 1,
-          extraCssText: "box-shadow: 0 0 5px rgba(0, 0, 0, 1)",
+          trigger: "axis",
           axisPointer: {
             type: "shadow",
-            label: {
-              show: true,
-            },
           },
         },
         grid: {
@@ -79,9 +74,9 @@ export default {
           containLabel: true,
         },
         xAxis: {
-          // type: "category",
+          type: "category",
           // boundaryGap: [0, 0.01],
-          boundaryGap: true,
+          // boundaryGap: true,
           axisLine: {
             show: true,
             lineStyle: {
@@ -103,43 +98,95 @@ export default {
           },
           data: this.chartOptions.xData,
         },
-        color: ["#207CDB", "#b5c7ff"],
-        yAxis: {
-          // type: "value",
-          min: 0,
-          show: true,
-          axisLine: {
-            show: false, //是否显示
-          },
-          alignTicks: true,
-          position: "left",
-          axisLabel: {
-            textStyle: {
-              color: "#6d7b8e",
-              fontSize: 20,
-            },
-          },
-          splitLine: {
+        // color: ["#207CDB", "#EB5042"],
+        yAxis: [
+          {
+            type: "value",
+            min: 0,
             show: true,
-            lineStyle: {
-              type: "dashed",
-              width: 1,
-              color: "#fff",
+            axisLine: {
+              show: true, //是否显示
+              lineStyle: {
+                color: "#fff",
+              },
+            },
+            alignTicks: true,
+            position: "left",
+            axisLabel: {
+              textStyle: {
+                color: "#6d7b8e",
+                fontSize: 20,
+              },
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                type: "dashed",
+                width: 1,
+                color: "#fff",
+              },
+            },
+            // data: this.chartOptions.yData,
+          },
+          {
+            type: "value",
+            name: "个数",
+            min: 0,
+            position: "right",
+            axisLine: {
+              show: false, //是否显示
+            },
+            splitLine: {
+              show: true,
+              lineStyle: {
+                type: "dashed",
+                width: 1,
+                color: "#fff",
+              },
+            },
+            axisLabel: {
+              textStyle: {
+                color: "#6d7b8e",
+                fontSize: 20,
+              },
             },
           },
-          // data: this.chartOptions.yData,
-        },
+        ],
         series: [
           {
             type: "bar",
-            name: "linedemo",
+            name: "bar",
             tooltip: {
               show: true,
             },
             animation: false,
             barWidth: 40,
+            itemStyle: {
+              color: "#207CDB",
+            },
             hoverAnimation: false,
+
             data: this.chartOptions.yData,
+          },
+          {
+            type: "line",
+            yAxisIndex: 1,
+            name: "报警次数",
+            smooth: true,
+            symbol: "circle",
+            hoverAnimation: false,
+            symbolSize: 10,
+            data: this.chartOptions.lineData,
+            itemStyle: {
+              normal: {
+                color: "#EB5042",
+                lineStyle: {
+                  color: "#EB5042",
+                  width: 3,
+                  opacity: 1,
+                },
+              },
+            },
           },
         ],
       };

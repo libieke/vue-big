@@ -24,7 +24,24 @@
   margin: 0 auto;
 }
 
+.el-dialog__header {
+  height: 95px;
+  line-height: 95px;
+  padding: 0;
+  margin: 0 35px;
+  border-bottom: 1px solid #006EB7;
+}
+
+.el-dialog__title {
+  font-weight: 500;
+  font-size: 32px;
+  color: #FFFFFF;
+  padding-left: 16px;
+  border-left: 8px solid #00D8F4;
+}
+
 // refine element ui upload
+
 .upload-container {
   .el-upload {
     width: 100%;

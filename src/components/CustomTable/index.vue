@@ -115,6 +115,7 @@ export default {
   data() {
     return {
       scrolltimer: null,
+      // data: this.data,
     };
   },
   computed: {

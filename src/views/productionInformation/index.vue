@@ -324,7 +324,8 @@ export default {
         },
       ];
       this.chartOptions.title = "生产计数";
-      this.chartOptions.yData = [
+      this.chartOptions.subtext = "(个)";
+      this.chartOptions.xData = [
         "20210126",
         "20210127",
         "20210128",
@@ -333,7 +334,7 @@ export default {
         "20210131",
         "20210201",
       ];
-      this.chartOptions.xData = [
+      this.chartOptions.yData = [
         "134",
         "321",
         "323",

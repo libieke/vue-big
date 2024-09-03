@@ -190,18 +190,18 @@ export default {
     },
     // 页面详情
     toDetials(item) {
-      console.log('object :>> ', item);
+      console.log("object :>> ", item);
       // if (row.shopGoodStatus === 1 && status !== "detail") {
       //   this.$message.warning("已上架商品无法编辑");
       //   return false;
       // }
-      // this.$router.push({
-      //   path: "/agentProject/components/newGoods",
-      //   query: {
-      //     id: row.goodsId ? row.goodsId : "",
-      //     status: status ? status : "",
-      //   },
-      // });
+      this.$router.push({
+        path: "/productionInformation",
+        // query: {
+        //   id: row.goodsId ? row.goodsId : "",
+        //   status: status ? status : "",
+        // },
+      });
     },
     // 页面数据
     getList() {

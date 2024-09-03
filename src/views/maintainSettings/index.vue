@@ -1,5 +1,5 @@
 <template>
-  <ContentTitle title="">
+  <ContentTitle>
     <div class="agent-container padding-top-20">
       <div class="relative">
         <el-form
@@ -70,7 +70,7 @@
             <template v-slot:actionColumn>
               <el-table-column label="操作" align="center" width="200">
                 <template slot-scope="{ row }">
-                  <span class="pointer blue mlr10" @click="handleUpdate(row)"
+                  <span class="pointer blue mlr10" @click="handleReset(row)"
                     >重置</span
                   >
                 </template>
@@ -79,6 +79,38 @@
           </custom-table>
         </div>
       </div>
+      <el-dialog
+        width="790px"
+        title="重置维护时间"
+        :visible.sync="visible"
+        custom-class="custom-dialog"
+        append-to-body
+        :close-on-click-modal="false"
+        top="15vh"
+      >
+        <div class="reset-box">
+          <div class="text">输入密码确认</div>
+          <el-form
+            v-if="visible"
+            ref="formDatas"
+            v-loading="loading"
+            :model="formDatas"
+          >
+            <el-form-item prop="passWord">
+              <el-input
+                v-model="formDatas.passWord"
+                clearable
+                placeholder="请输入密码"
+                maxlength="320"
+              />
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="handleCancel2">取 消</el-button>
+            <el-button type="primary" @click="handleSubmit2">确 定</el-button>
+          </div>
+        </div>
+      </el-dialog>
     </div>
   </ContentTitle>
 </template>
@@ -187,6 +219,11 @@ export default {
           label: "销售额(元)",
         },
       ],
+      visible: false,
+      loading: false,
+      formDatas: {
+        passWord: null,
+      },
     };
   },
   created() {
@@ -196,6 +233,25 @@ export default {
     // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
+    },
+    // 重置按钮
+    handleReset(row) {
+      this.visible = true;
+    },
+    // 弹窗按钮
+    handleCancel2() {
+      // this.$refs.formDatas.resetFields();
+      this.visible = false;
+    },
+    handleSubmit2() {
+      this.$refs.formDatas.validate((valid) => {
+        if (valid) {
+        }
+      });
+    },
+    // 关闭新建&编辑弹框
+    handleClose() {
+      this.handleCancel2();
     },
     getList() {
       // this.isShowCountry = true;
@@ -344,6 +400,26 @@ export default {
         padding-right: 8px;
       }
     }
+  }
+}
+::v-deep .custom-dialog {
+  background: #061a40;
+  border-radius: 0px 0px 0px 0px;
+  border: 1px solid #00539f;
+}
+.reset-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  .text {
+    font-weight: 500;
+    font-size: 36px;
+    color: #ffffff;
+    margin-bottom: 32px;
+  }
+  .dialog-footer {
+    margin-top: 70px;
   }
 }
 .content-box {

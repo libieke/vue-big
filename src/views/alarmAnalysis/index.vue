@@ -56,11 +56,11 @@
         </el-form>
       </div>
       <div class="chartStyle">
-        <BarChart
+        <BLchart
           :chartOptions="chartOptions"
           height="350px"
           style="margin-bottom: 10px"
-        ></BarChart>
+        ></BLchart>
       </div>
       <div class="content-box">
         <div class="left-box">
@@ -75,18 +75,31 @@
         </div>
       </div>
     </div>
+    <el-dialog
+      width="600px"
+      title="重置维护时间"
+      :visible.sync="config.visible"
+      custom-class="custom-dialog"
+      append-to-body
+      :close-on-click-modal="false"
+      top="15vh"
+    >
+      <div class="woList">
+        <div></div>
+      </div>
+    </el-dialog>
   </ContentTitle>
 </template>
 
 <script>
 import ContentTitle from "@/components/ContentTitle/index";
 import CustomTable from "@/components/CustomTable";
-import BarChart from "@/components/Echart/barChart";
+import BLchart from "@/components/Echart/BLchart";
 export default {
   components: {
     ContentTitle,
     CustomTable,
-    BarChart,
+    BLchart,
   },
   data() {
     return {
@@ -206,7 +219,6 @@ export default {
       this.listQuery.pageNum = 1;
     },
     getList() {
-      // this.isShowCountry = true;
       this.list = [
         {
           ranking: "1",
@@ -269,16 +281,9 @@ export default {
           salesVolume: "1234",
         },
       ];
-      this.chartOptions.title = "生产计数";
-      this.chartOptions.yData = [
-        "20210126",
-        "20210127",
-        "20210128",
-        "20210129",
-        "20210130",
-        "20210131",
-        "20210201",
-      ];
+      this.chartOptions.title = "报警次数(个)";
+      this.chartOptions.subtext = "报警次数(%)";
+      this.chartOptions.yData = ["21", "33", "22", "41", "12", "13", "14"];
       this.chartOptions.xData = [
         "190828",
         "240898",
@@ -288,6 +293,7 @@ export default {
         "174498",
         "234296",
       ];
+      this.chartOptions.lineData = ["3", "6", "2", "0", "13", "11", "9"];
     },
     // 时间处理
     changeTime(e) {
