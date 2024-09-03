@@ -116,6 +116,7 @@ export default {
     return {
       scrolltimer: null,
       // data: this.data,
+      animate: false, //默认false
     };
   },
   computed: {
@@ -182,8 +183,6 @@ export default {
           ) {
             // 重置table距离顶部距离
             divData.scrollTop = 0;
-            this.data;
-            // this.data = [...this.data, ...this.data];
           }
         }, 45); // 滚动速度
       }

@@ -152,10 +152,10 @@
           </custom-table>
         </div>
       </el-dialog>
-      <!-- 新增维护项 -->
+      <!-- 新增/修改维护项 -->
       <el-dialog
         width="790px"
-        title="新增维护项"
+        :title="dioTitle"
         :visible.sync="visible2"
         custom-class="custom-dialog"
         append-to-body
@@ -168,6 +168,7 @@
             v-loading="loading"
             :model="dioFormData"
             :rules="rules"
+            label-width="100px"
           >
             <el-form-item label="维护项名称" prop="goodsName">
               <el-input
@@ -297,6 +298,15 @@ export default {
         {
           prop: "realName",
           label: "客户名称",
+          colCustomDemo: ({ column, row, rowIndex }) => {
+            return (
+              row.realName + `<el-button
+            style='color:#000;padding-left:50px'
+            @click="resetFn(row)"
+          >重置</el-button>`
+             
+            );
+          },
         },
         {
           prop: "compare",
@@ -313,6 +323,8 @@ export default {
         xData: [],
         title: "",
       },
+      // 弹窗
+      dioTitle: "新增维护项",
       visible: false,
       visible2: false,
       loading: false,
@@ -329,7 +341,7 @@ export default {
         goodsName: [
           { required: true, message: "请输出商品名称", trigger: "change" },
         ],
-        goodsDosageType: [
+        setNumber: [
           { required: true, message: "请选择剂型", trigger: "change" },
         ],
       },
@@ -339,6 +351,9 @@ export default {
     this.getList();
   },
   methods: {
+    resetFn() {
+      console.log("object :>> ", object);
+    },
     // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
@@ -366,15 +381,24 @@ export default {
       this.handleCancel2();
     },
 
-    handleEdit(row) {},
-    handleDel(row) {},
+    handleEdit(row) {
+      this.tableVisible = true;
+      this.visible2 = true;
+      this.dioTitle = "修改维护项";
+    },
+    handleDel(row) {
+      alert("删除");
+    },
 
     handAddSet() {
       this.visible2 = true;
+      this.dioTitle = "新增维护项";
     },
 
     handleSave() {},
-    handleCancel3() {},
+    handleCancel3() {
+      this.visible2 = false;
+    },
     // 页面数据
     getList() {
       this.list = [
