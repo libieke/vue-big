@@ -33,7 +33,7 @@
               v-model="value"
               type="daterange"
               :placeholder="val.placeholder"
-              range-separator="——"
+              range-separator="—"
               format="yyyy-dd"
               value-format="yyyy-dd"
               :picker-options="{

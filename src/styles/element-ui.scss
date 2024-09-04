@@ -17,6 +17,8 @@
 
 
 // to fixed https://github.com/ElemeFE/element/issues/2461
+
+// 弹窗样式
 .el-dialog {
   transform: none;
   left: 0;
@@ -36,9 +38,21 @@
   font-weight: 500;
   font-size: 32px;
   color: #FFFFFF;
+  line-height: 3;
   padding-left: 16px;
   border-left: 8px solid #00D8F4;
 }
+
+.el-dialog__headerbtn {
+  font-size: 30px;
+  top: 34px;
+
+  .el-dialog__close {
+    color: #fff;
+  }
+}
+
+
 
 // refine element ui upload
 
@@ -67,6 +81,7 @@
 
 .el-table {
   background-color: #003b7a;
+  font-size: 22px;
 }
 
 .el-table::before {

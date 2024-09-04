@@ -46,29 +46,17 @@
         :width="item.width ? item.width : null"
       >
         <template slot-scope="scope">
-          <span
-            v-if="item.colCustomDemo"
-            v-html="
-              item.colCustomDemo({
-                column: scope.column,
-                row: scope.row,
-                rowIndex: scope.$index,
-              })
-            "
-          />
-          <span v-else>
-            <span v-if="item.formatter"
-              >{{
-                item.formatter(
-                  scope.row,
-                  scope.column,
-                  scope.row[scope.column.property],
-                  scope.$index
-                )
-              }}
-            </span>
-            <span v-else>{{ scope.row[scope.column.property] }} </span>
-          </span>
+          <template v-if="item.isBotton">
+            <div style="display: flex; justify-content: space-between">
+              <span style="padding-top: 7px"
+                >{{ scope.row[scope.column.property] }}
+              </span>
+              <div class="inner-btn" @click="resetFn(scope.row)">重置</div>
+            </div>
+          </template>
+          <template v-else>
+            <span>{{ scope.row[scope.column.property] }} </span>
+          </template>
         </template>
       </el-table-column>
       <slot name="actionColumn" />
@@ -163,6 +151,10 @@ export default {
         return "el-table__row--striped";
       }
     },
+    resetFn(row) {
+      this.$emit("resetFn", row);
+    },
+
     // 自动轮播效果
     autoScroll(stop) {
       const table = this.$refs.tableScroll;
@@ -182,9 +174,10 @@ export default {
             divData.scrollHeight
           ) {
             // 重置table距离顶部距离
+            // this.data.unshift(...this.data);
             divData.scrollTop = 0;
           }
-        }, 45); // 滚动速度
+        }, 30); // 滚动速度
       }
     },
   },
@@ -195,7 +188,14 @@ export default {
   animation: fadeOut 500ms linear;
 }
 
-@keyframes scroll {
+.inner-btn {
+  width: 80px;
+  height: 36px;
+  text-align: center;
+  line-height: 36px;
+  color: #00d8f4;
+  border-radius: 4px 4px 4px 4px;
+  border: 1px solid #00d8f4;
 }
 ::v-deep .el-table__header-wrapper {
   .has-gutter {

@@ -28,22 +28,6 @@
                 :value="item[val.optionValue]"
               />
             </el-select>
-            <el-date-picker
-              v-if="val.type == 'picker'"
-              v-model="value"
-              type="daterange"
-              :placeholder="val.placeholder"
-              range-separator="——"
-              format="yyyy-dd"
-              value-format="yyyy-dd"
-              :picker-options="{
-                disabledDate: (time) => {
-                  return time.getTime() > Date.now() - 3600 * 1000 * 24;
-                },
-              }"
-              @change="changeTime"
-            >
-            </el-date-picker>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" size="medium" @click="handleQuery"
@@ -60,6 +44,8 @@
       <div class="content-box">
         <div class="left-box">
           <custom-table
+            ref="tableScroll"
+            @resetFn="handleReset"
             :fetch-loading="listLoading"
             :data="list"
             maxHeight="828px"
@@ -67,15 +53,6 @@
             :table-column="tableColumn"
             :selection="false"
           >
-            <template v-slot:actionColumn>
-              <el-table-column label="操作" align="center" width="200">
-                <template slot-scope="{ row }">
-                  <span class="pointer blue mlr10" @click="handleReset(row)"
-                    >重置</span
-                  >
-                </template>
-              </el-table-column>
-            </template>
           </custom-table>
         </div>
       </div>
@@ -115,6 +92,7 @@
       <!-- 维护项设定 -->
       <el-dialog
         title="维护项设定"
+        width="1440px"
         :visible.sync="tableVisible"
         custom-class="custom-dialog"
         append-to-body
@@ -169,6 +147,7 @@
             :model="dioFormData"
             :rules="rules"
             label-width="100px"
+            label-position="left"
           >
             <el-form-item label="维护项名称" prop="goodsName">
               <el-input
@@ -294,23 +273,18 @@ export default {
         {
           prop: "ranking",
           label: "排名",
+          width: "530px",
         },
         {
           prop: "realName",
           label: "客户名称",
-          colCustomDemo: ({ column, row, rowIndex }) => {
-            return (
-              row.realName + `<el-button
-            style='color:#000;padding-left:50px'
-            @click="resetFn(row)"
-          >重置</el-button>`
-             
-            );
-          },
+          width: "339px",
+          isBotton: true,
         },
         {
           prop: "compare",
           label: "较上周",
+          width: "232px",
         },
         {
           prop: "salesVolume",
@@ -351,9 +325,6 @@ export default {
     this.getList();
   },
   methods: {
-    resetFn() {
-      console.log("object :>> ", object);
-    },
     // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
@@ -361,10 +332,11 @@ export default {
     // 重置按钮
     handleReset(row) {
       this.visible = true;
+      console.log("row :>> ", row);
     },
-    // 弹窗按钮
+    // 弹窗按钮-重置密码
     handleCancel2() {
-      // this.$refs.formDatas.resetFields();
+      this.$refs.formDatas.resetFields();
       this.visible = false;
     },
     handleSubmit2() {
@@ -373,6 +345,7 @@ export default {
         }
       });
     },
+    // 弹窗按钮-维护项设定打开
     handleSet() {
       this.tableVisible = true;
     },
@@ -380,7 +353,7 @@ export default {
     handleClose() {
       this.handleCancel2();
     },
-
+    // 弹窗按钮-打开
     handleEdit(row) {
       this.tableVisible = true;
       this.visible2 = true;
@@ -389,12 +362,12 @@ export default {
     handleDel(row) {
       alert("删除");
     },
-
+    // 弹窗按钮-新建打开
     handAddSet() {
       this.visible2 = true;
       this.dioTitle = "新增维护项";
     },
-
+    // 编辑/新建
     handleSave() {},
     handleCancel3() {
       this.visible2 = false;
