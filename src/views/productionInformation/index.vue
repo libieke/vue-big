@@ -54,7 +54,7 @@
             >
           </el-form-item>
         </el-form>
-        <div class="positonBtn">
+        <!-- <div class="positonBtn">
           <div class="tab-text">维度切换</div>
           <el-radio-group
             v-model="radio1"
@@ -65,7 +65,7 @@
             <el-radio-button label="日期"></el-radio-button>
             <el-radio-button label="批次"></el-radio-button>
           </el-radio-group>
-        </div>
+        </div> -->
       </div>
       <div class="chartStyle">
         <BarChart
@@ -87,7 +87,23 @@
         </div>
         <div class="right-box">
           <div class="right-item">
-            <div class="item-box" v-for="item in 4">
+            <div class="item-box">
+              <div class="item-num">0</div>
+              <div class="item-text">weq</div>
+            </div>
+            <div class="item-box">
+              <div class="item-num">0</div>
+              <div class="item-text">weq</div>
+            </div>
+            <div class="item-box">
+              <div class="item-num">0</div>
+              <div class="item-text">weq</div>
+            </div>
+            <div class="item-box">
+              <div class="item-num">0</div>
+              <div class="item-text">weq</div>
+            </div>
+            <div v-if="!isShowCountry" class="item-box">
               <div class="item-num">0</div>
               <div class="item-text">weq</div>
             </div>
@@ -217,7 +233,7 @@ export default {
         },
       ],
       // tab
-      radio1: "日期",
+      // radio1: "日期",
       // echarts数据
       chartOptions: {
         yData: [],
@@ -364,24 +380,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.agent-container {
-  .relative {
-    padding-right: 100px;
+// .agent-container {
+//   .relative {
+//     padding-right: 100px;
 
-    .positonBtn {
-      position: absolute;
-      right: 0;
-      display: flex;
-      align-items: center;
-      bottom: 40px;
-      .tab-text {
-        font-size: 20px;
-        color: #ffffff;
-        padding-right: 8px;
-      }
-    }
-  }
-}
+//     .positonBtn {
+//       position: absolute;
+//       right: 0;
+//       display: flex;
+//       align-items: center;
+//       bottom: 40px;
+//       .tab-text {
+//         font-size: 20px;
+//         color: #ffffff;
+//         padding-right: 8px;
+//       }
+//     }
+//   }
+// }
 .chartStyle {
   width: 100%;
   height: 400px;
@@ -417,7 +433,7 @@ export default {
         align-items: center;
         justify-content: center;
         width: 148px;
-        height: 160px;
+        height: 142px;
         font-size: 36px;
         color: #ffffff;
         background: rgba(32, 124, 219, 0.1);
@@ -429,6 +445,7 @@ export default {
         &:nth-child(n + 3) {
           margin-top: 18px;
         }
+
         .item-text {
           font-size: 22px;
           color: #ffffff;

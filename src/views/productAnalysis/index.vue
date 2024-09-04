@@ -12,9 +12,16 @@
           <el-form-item
             v-for="(val, key, index) in listQueryFormModel"
             :key="index"
-            :label="val.label"
+            :label="val.show ? val.label : ''"
             :prop="key"
           >
+            <el-input
+              v-if="(val.type == 'input') & (batchShow == true)"
+              v-model="listQuery[key]"
+              maxlength="50"
+              :placeholder="val.placeholder"
+              clearable
+            />
             <el-select
               v-if="val.type == 'select'"
               v-model="listQuery[key]"
@@ -29,10 +36,11 @@
               />
             </el-select>
             <el-date-picker
-              v-if="val.type == 'picker'"
+              v-if="(val.type == 'picker') & (dataShow == true)"
               v-model="value"
               type="daterange"
-              :placeholder="val.placeholder"
+              start-placeholder="请选择开始日期"
+              end-placeholder="请选择结束日期"
               range-separator="—"
               format="yyyy-dd"
               value-format="yyyy-dd"
@@ -54,6 +62,17 @@
             >
           </el-form-item>
         </el-form>
+        <div class="positonBtn">
+          <el-radio-group
+            v-model="radio1"
+            size="medium"
+            fill="#00D8F4"
+            @input="changeTab"
+          >
+            <el-radio-button label="日期"></el-radio-button>
+            <el-radio-button label="批次"></el-radio-button>
+          </el-radio-group>
+        </div>
       </div>
       <div class="chartStyle">
         <BarChart
@@ -72,6 +91,30 @@
             :selection="false"
           >
           </custom-table>
+        </div>
+        <div class="right-box">
+          <div class="right-item">
+            <div class="item-box">
+              <div class="item-num">0</div>
+              <div class="item-text">weq</div>
+            </div>
+            <div class="item-box">
+              <div class="item-num">0</div>
+              <div class="item-text">weq</div>
+            </div>
+            <div class="item-box">
+              <div class="item-num">0</div>
+              <div class="item-text">weq</div>
+            </div>
+            <div class="item-box">
+              <div class="item-num">0</div>
+              <div class="item-text">weq</div>
+            </div>
+            <div v-if="!isShowCountry" class="item-box">
+              <div class="item-num">0</div>
+              <div class="item-text">weq</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -99,10 +142,15 @@ export default {
         orderType: null,
         orderType1: null,
         orderType2: null,
-        orderType4: null,
         startDate: null,
         endDate: null,
+        pici: null,
       },
+      isShowCountry: false, // 控制按钮限隐
+      // tab
+      radio1: "日期",
+      dataShow: true,
+      batchShow: false,
       // 查询表单对象
       listQueryFormModel: {
         orderType: {
@@ -125,6 +173,7 @@ export default {
           ],
           optionLable: "typeName",
           optionValue: "typeCode",
+          show: true,
         },
         orderType1: {
           type: "select",
@@ -146,6 +195,7 @@ export default {
           ],
           optionLable: "typeName",
           optionValue: "typeCode",
+          show: true,
         },
         orderType2: {
           type: "select",
@@ -167,31 +217,18 @@ export default {
           ],
           optionLable: "typeName",
           optionValue: "typeCode",
+          show: true,
         },
         startDate: {
           type: "picker",
           label: "日期",
+          show: true,
         },
-        orderType4: {
-          type: "select",
-          label: "批次",
-          placeholder: "请选择批次号",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+        pici: {
+          type: "input",
+          label: "批次号",
+          placeholder: "请输入批次号",
+          show: false,
         },
       },
       // 根据接口和设计稿设置表头
@@ -227,6 +264,20 @@ export default {
     // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
+    },
+    // tab切换
+    changeTab(e) {
+      if (e === "日期") {
+        this.batchShow = false;
+        this.dataShow = true;
+        this.listQueryFormModel.startDate.show = true;
+        this.listQueryFormModel.pici.show = false;
+      } else if (e === "批次") {
+        this.dataShow = false;
+        this.batchShow = true;
+        this.listQueryFormModel.startDate.show = false;
+        this.listQueryFormModel.pici.show = true;
+      }
     },
     getList() {
       // this.isShowCountry = true;
@@ -332,6 +383,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.agent-container {
+  .relative {
+    padding-right: 100px;
+
+    .positonBtn {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      bottom: 40px;
+      top: 16px;
+      left: 46%;
+      .tab-text {
+        font-size: 20px;
+        color: #ffffff;
+        padding-right: 8px;
+      }
+    }
+  }
+}
+::v-deep .el-form-item {
+  &:nth-child(3) {
+    margin-right: 180px !important;
+  }
+}
 .chartStyle {
   width: 100%;
   height: 400px;
@@ -341,10 +416,24 @@ export default {
   border-radius: 16px 16px 16px 16px;
   border: 2px solid #003b7a;
 }
+// .content-box {
+//   display: flex;
+//   margin-top: 24px;
+//   .left-box {
+//     height: 463px;
+//     padding: 24px;
+//     text-align: center;
+//     background: rgba(32, 124, 219, 0.1);
+//     border-radius: 16px 16px 16px 16px;
+//     border: 2px solid #003b7a;
+//     overflow: hidden;
+//   }
+// }
 .content-box {
   display: flex;
   margin-top: 24px;
   .left-box {
+    width: 1488px;
     height: 463px;
     padding: 24px;
     text-align: center;
@@ -352,6 +441,50 @@ export default {
     border-radius: 16px 16px 16px 16px;
     border: 2px solid #003b7a;
     overflow: hidden;
+  }
+  .right-box {
+    width: 324px;
+    margin-left: 25px;
+    .right-item {
+      display: flex;
+      flex-wrap: wrap;
+
+      .item-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 148px;
+        height: 142px;
+        font-size: 36px;
+        color: #ffffff;
+        background: rgba(32, 124, 219, 0.1);
+        border-radius: 16px 16px 16px 16px;
+        border: 2px solid #003b7a;
+        &:nth-child(odd) {
+          margin-right: 24px;
+        }
+        &:nth-child(n + 3) {
+          margin-top: 18px;
+        }
+
+        .item-text {
+          font-size: 22px;
+          color: #ffffff;
+          opacity: 0.6;
+        }
+      }
+    }
+    .btn-contro {
+      width: 168px;
+      height: 58px;
+      text-align: center;
+      line-height: 58px;
+      color: #ffffff;
+      margin: 58px auto 0;
+      background: #1266b9;
+      border-radius: 8px 8px 8px 8px;
+    }
   }
 }
 </style>

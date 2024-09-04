@@ -12,9 +12,16 @@
           <el-form-item
             v-for="(val, key, index) in listQueryFormModel"
             :key="index"
-            :label="val.label"
+            :label="val.show ? val.label : ''"
             :prop="key"
           >
+            <el-input
+              v-if="(val.type == 'input') & (batchShow == true)"
+              v-model="listQuery[key]"
+              maxlength="50"
+              :placeholder="val.placeholder"
+              clearable
+            />
             <el-select
               v-if="val.type == 'select'"
               v-model="listQuery[key]"
@@ -29,10 +36,11 @@
               />
             </el-select>
             <el-date-picker
-              v-if="val.type == 'picker'"
+              v-if="(val.type == 'picker') & (dataShow == true)"
               v-model="value"
               type="daterange"
-              :placeholder="val.placeholder"
+              start-placeholder="请选择开始日期"
+              end-placeholder="请选择结束日期"
               range-separator="—"
               format="yyyy-dd"
               value-format="yyyy-dd"
@@ -51,6 +59,17 @@
             >
           </el-form-item>
         </el-form>
+        <div class="positonBtn">
+          <el-radio-group
+            v-model="radio1"
+            size="medium"
+            fill="#00D8F4"
+            @input="changeTab"
+          >
+            <el-radio-button label="日期"></el-radio-button>
+            <el-radio-button label="批次"></el-radio-button>
+          </el-radio-group>
+        </div>
       </div>
       <div class="content-box">
         <div class="left-box">
@@ -91,7 +110,12 @@ export default {
         orderType2: null,
         startDate: null,
         endDate: null,
+        pici: null,
       },
+      // tab
+      radio1: "日期",
+      dataShow: true,
+      batchShow: false,
       // 查询表单对象
       listQueryFormModel: {
         orderType: {
@@ -114,6 +138,7 @@ export default {
           ],
           optionLable: "typeName",
           optionValue: "typeCode",
+          show: true,
         },
         orderType1: {
           type: "select",
@@ -135,6 +160,7 @@ export default {
           ],
           optionLable: "typeName",
           optionValue: "typeCode",
+          show: true,
         },
         orderType2: {
           type: "select",
@@ -156,10 +182,18 @@ export default {
           ],
           optionLable: "typeName",
           optionValue: "typeCode",
+          show: true,
         },
         startDate: {
           type: "picker",
           label: "日期",
+          show: true,
+        },
+        pici: {
+          type: "input",
+          label: "批次号",
+          placeholder: "请输入批次号",
+          show: false,
         },
       },
       // 根据接口和设计稿设置表头
@@ -195,6 +229,20 @@ export default {
     // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
+    },
+    // tab切换
+    changeTab(e) {
+      if (e === "日期") {
+        this.batchShow = false;
+        this.dataShow = true;
+        this.listQueryFormModel.startDate.show = true;
+        this.listQueryFormModel.pici.show = false;
+      } else if (e === "批次") {
+        this.dataShow = false;
+        this.batchShow = true;
+        this.listQueryFormModel.startDate.show = false;
+        this.listQueryFormModel.pici.show = true;
+      }
     },
     getList() {
       this.list = [
@@ -349,6 +397,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.agent-container {
+  .relative {
+    padding-right: 100px;
+
+    .positonBtn {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      bottom: 40px;
+      top: 16px;
+      left: 46%;
+      .tab-text {
+        font-size: 20px;
+        color: #ffffff;
+        padding-right: 8px;
+      }
+    }
+  }
+}
+::v-deep .el-form-item {
+  &:nth-child(3) {
+    margin-right: 180px !important;
+  }
+}
 .chartStyle {
   width: 100%;
   height: 400px;
