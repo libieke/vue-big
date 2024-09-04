@@ -103,12 +103,12 @@
               <div class="item-num">0</div>
               <div class="item-text">weq</div>
             </div>
-            <div v-if="!isShowCountry" class="item-box">
+            <div v-if="isShowCountry" class="item-box">
               <div class="item-num">0</div>
               <div class="item-text">weq</div>
             </div>
           </div>
-          <div v-if="isShowCountry" class="btn-contro" @click="controlFn()">
+          <div v-if="!isShowCountry" class="btn-contro" @click="controlFn()">
             控制图
           </div>
         </div>

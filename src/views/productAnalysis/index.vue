@@ -75,11 +75,11 @@
         </div>
       </div>
       <div class="chartStyle">
-        <BarChart
+        <BLchart
           :chartOptions="chartOptions"
           height="350px"
           style="margin-bottom: 10px"
-        ></BarChart>
+        ></BLchart>
       </div>
       <div class="content-box">
         <div class="left-box">
@@ -124,12 +124,12 @@
 <script>
 import ContentTitle from "@/components/ContentTitle/index";
 import CustomTable from "@/components/CustomTable";
-import BarChart from "@/components/Echart/barChart";
+import BLchart from "@/components/Echart/BLchart";
 export default {
   components: {
     ContentTitle,
     CustomTable,
-    BarChart,
+    BLchart,
   },
   data() {
     return {
@@ -254,6 +254,8 @@ export default {
       chartOptions: {
         yData: [],
         xData: [],
+        title: "",
+        subtext: "",
       },
     };
   },
@@ -343,7 +345,9 @@ export default {
           salesVolume: "1234",
         },
       ];
-      this.chartOptions.title = "生产计数";
+      this.chartOptions.title = "不良计数(个)";
+      this.chartOptions.subtext = "不良计数(%)";
+
       this.chartOptions.yData = [
         "20210126",
         "20210127",
@@ -362,6 +366,7 @@ export default {
         "174498",
         "234296",
       ];
+      this.chartOptions.lineData = ["3", "6", "2", "0", "13", "11", "9"];
     },
     // 时间处理
     changeTime(e) {
