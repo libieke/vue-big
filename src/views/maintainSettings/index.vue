@@ -506,10 +506,12 @@ export default {
 .agent-container {
   .relative {
     padding-right: 100px;
-
+    height: 44px;
+    margin-bottom: 18px;
     .positonBtn {
       position: absolute;
       right: 0;
+      top: 15px;
       display: flex;
       align-items: center;
       bottom: 20px;
@@ -546,7 +548,7 @@ export default {
 }
 .content-box {
   display: flex;
-  margin-top: 24px;
+  // margin-top: 24px;
   .left-box {
     padding: 24px;
     text-align: center;

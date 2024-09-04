@@ -380,28 +380,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// .agent-container {
-//   .relative {
-//     padding-right: 100px;
+.agent-container {
+  .relative {
+    height: 44px;
+    margin-bottom: 18px;
+    //     padding-right: 100px;
 
-//     .positonBtn {
-//       position: absolute;
-//       right: 0;
-//       display: flex;
-//       align-items: center;
-//       bottom: 40px;
-//       .tab-text {
-//         font-size: 20px;
-//         color: #ffffff;
-//         padding-right: 8px;
-//       }
-//     }
+    //     .positonBtn {
+    //       position: absolute;
+    //       right: 0;
+    //       display: flex;
+    //       align-items: center;
+    //       bottom: 40px;
+    //       .tab-text {
+    //         font-size: 20px;
+    //         color: #ffffff;
+    //         padding-right: 8px;
+  }
+}
 //   }
 // }
 .chartStyle {
   width: 100%;
   height: 400px;
-  margin-top: -10px;
+  // margin-top: -10px;
   padding: 24px 20px;
   background: #00102a;
   border-radius: 16px 16px 16px 16px;

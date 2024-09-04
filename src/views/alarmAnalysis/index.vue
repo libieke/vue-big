@@ -355,13 +355,14 @@ export default {
 .agent-container {
   .relative {
     padding-right: 100px;
-
+    height: 44px;
+    margin-bottom: 18px;
     .positonBtn {
       position: absolute;
       display: flex;
       align-items: center;
       bottom: 40px;
-      top: 16px;
+      top: 19px;
       left: 46%;
       .tab-text {
         font-size: 20px;
@@ -379,7 +380,7 @@ export default {
 .chartStyle {
   width: 100%;
   height: 400px;
-  margin-top: -10px;
+  // margin-top: -10px;
   padding: 24px 20px;
   background: #00102a;
   border-radius: 16px 16px 16px 16px;
