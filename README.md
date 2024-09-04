@@ -1,4 +1,9 @@
 ```bash
+# 环境
+node v18.20.0
+npm 10.5.0
+pnpm 9.9.0
+vue -V @vue/cli 5.0.8
 # install dependencies
 pnpm install
 
