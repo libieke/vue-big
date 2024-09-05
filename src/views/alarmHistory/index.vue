@@ -42,8 +42,8 @@
               start-placeholder="请选择开始日期"
               end-placeholder="请选择结束日期"
               range-separator="—"
-              format="yyyy-dd"
-              value-format="yyyy-dd"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
               :picker-options="{
                 disabledDate: (time) => {
                   return time.getTime() > Date.now() - 3600 * 1000 * 24;
@@ -91,6 +91,8 @@
 <script>
 import ContentTitle from "@/components/ContentTitle/index";
 import CustomTable from "@/components/CustomTable";
+
+import * as API from "@/axios/common.js";
 export default {
   components: {
     ContentTitle,
@@ -105,11 +107,14 @@ export default {
       // 自定义Pagination的参数
       hideOnSinglePage: false,
       listQuery: {
-        orderType: null,
-        orderType1: null,
-        orderType2: null,
-        startDate: null,
-        endDate: null,
+        pageNum: 1, // pageNum
+        pageSize: 20, // pageSize
+        deviceId: null,
+        listDeviceType: null,
+        listDeviceVersion: null,
+        listDeviceAssetNumber: null,
+        startTime: null,
+        endTime: null,
         pici: null,
       },
       // tab
@@ -118,70 +123,31 @@ export default {
       batchShow: false,
       // 查询表单对象
       listQueryFormModel: {
-        orderType: {
+        listDeviceType: {
           type: "select",
           label: "工程",
           placeholder: "请选择工程",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "name",
+          optionValue: "id",
           show: true,
         },
-        orderType1: {
+        listDeviceVersion: {
           type: "select",
           label: "机型",
           placeholder: "请选择机型",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "name",
+          optionValue: "id",
           show: true,
         },
-        orderType2: {
+        listDeviceAssetNumber: {
           type: "select",
-          label: "机器编号",
+          label: "机号",
           placeholder: "请选择机号",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "name",
+          optionValue: "id",
           show: true,
         },
         startDate: {
@@ -199,20 +165,27 @@ export default {
       // 根据接口和设计稿设置表头
       tableColumn: [
         {
-          prop: "ranking",
-          label: "排名",
+          prop: "startTime",
+          label: "开始时间",
         },
         {
-          prop: "realName",
-          label: "客户名称",
+          prop: "endTime",
+          label: "结束时间",
+          formatter: (row) => {
+            return row.endTime == null ? "--" : row.endTime;
+          },
         },
         {
-          prop: "compare",
-          label: "较上周",
+          prop: "durationTime",
+          label: "持续时间",
         },
         {
-          prop: "salesVolume",
-          label: "销售额(元)",
+          prop: "deviceWarningName",
+          label: "报警代码",
+        },
+        {
+          prop: "remark",
+          label: "详情说明",
         },
       ],
       // echarts数据
@@ -224,11 +197,23 @@ export default {
   },
   created() {
     this.getList();
+    this.$nextTick(() => {
+      this.getTypeList();
+    });
   },
   methods: {
     // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
+      this.getList();
+    },
+    // 查询项list
+    getTypeList() {
+      API.listDeviceType().then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceType.options = res.data;
+        }
+      });
     },
     // tab切换
     changeTab(e) {
@@ -245,152 +230,17 @@ export default {
       }
     },
     getList() {
-      this.list = [
-        {
-          ranking: "1",
-          realName: "dsad",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "2",
-          realName: "种植f户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "3",
-          realName: "打发",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "4",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "5",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "7",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "8",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "9",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "10",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-      ];
-      this.chartOptions.title = "生产计数";
-      this.chartOptions.yData = [
-        "20210126",
-        "20210127",
-        "20210128",
-        "20210129",
-        "20210130",
-        "20210131",
-        "20210201",
-      ];
-      this.chartOptions.xData = [
-        "190828",
-        "240898",
-        "235073",
-        "225906",
-        "199583",
-        "174498",
-        "234296",
-      ];
+      this.listLoading = true;
+      API.getAlarmHis({
+        ...this.listQuery,
+      }).then((res) => {
+        this.list = res.data.list;
+      });
     },
     // 时间处理
     changeTime(e) {
-      this.listQuery.startDate = e[0];
-      this.listQuery.endDate = e[1];
+      this.listQuery.startTime = e[0];
+      this.listQuery.endTime = e[1];
     },
   },
 };
@@ -408,7 +258,7 @@ export default {
       align-items: center;
       bottom: 40px;
       top: 19px;
-      left: 46%;
+      left: 44.5%;
       .tab-text {
         font-size: 20px;
         color: #ffffff;

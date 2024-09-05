@@ -34,8 +34,8 @@
               type="daterange"
               :placeholder="val.placeholder"
               range-separator="—"
-              format="yyyy-dd"
-              value-format="yyyy-dd"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
               :picker-options="{
                 disabledDate: (time) => {
                   return time.getTime() > Date.now() - 3600 * 1000 * 24;

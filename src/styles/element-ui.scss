@@ -16,6 +16,7 @@
 }
 
 
+
 // to fixed https://github.com/ElemeFE/element/issues/2461
 
 // 弹窗样式
@@ -74,7 +75,16 @@
   }
 }
 
+.el-date-editor .el-range-input {
+  color: #fff !important;
+}
+
+.el-date-editor .el-range__icon {
+  color: #fff;
+}
+
 // to fix el-date-picker css style
+
 .el-range-separator {
   box-sizing: content-box;
 }

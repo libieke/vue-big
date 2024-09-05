@@ -191,11 +191,16 @@ export default {
 .inner-btn {
   width: 80px;
   height: 36px;
+  cursor: pointer;
   text-align: center;
   line-height: 36px;
   color: #00d8f4;
   border-radius: 4px 4px 4px 4px;
   border: 1px solid #00d8f4;
+  &:hover {
+    background-color: #888585;
+    color: #fff;
+  }
 }
 ::v-deep .el-table__header-wrapper {
   .has-gutter {

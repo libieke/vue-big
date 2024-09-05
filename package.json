@@ -21,6 +21,7 @@
     "v-scale-screen": "^1.0.3",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
+    "whatwg-fetch": "^3.6.20",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

@@ -4,26 +4,30 @@ function resolve(dir) {
   return path.join(__dirname, dir);
 }
 
+const port = process.env.port || process.env.npm_config_port || 8080; // dev port
+
 module.exports = {
   publicPath: "./",
   lintOnSave: false,
   devServer: {
-    port: 8080,
+    host: "10.12.58.168",
+    hot: true,
+    port: port,
     open: true,
     overlay: {
       warnings: false,
       errors: true,
     },
     // before: require('./mock/mock-server.js'),
-    // proxy: {
-    //   "/api": {
-    // target: ``,
-    // changeOrigin: true,
-    // pathRewrite: {
-    //   "^/api": "",
-    // },
-    //   },
-    // },
+    proxy: {
+      "/api": {
+        target: "http://10.12.58.160:8081/wire",
+        changeOrigin: true,
+        pathRewrite: {
+          "^/api": "",
+        },
+      },
+    },
   },
   configureWebpack: {
     resolve: {
