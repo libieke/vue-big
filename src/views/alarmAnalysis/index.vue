@@ -114,12 +114,15 @@ export default {
       list: [],
       listLoading: false,
       listQuery: {
-        orderType: null,
-        orderType1: null,
-        orderType2: null,
-        startDate: null,
-        endDate: null,
-        pici: null,
+        pageNum: 1, // pageNum
+        pageSize: 20, // pageSize
+        deviceId: null,
+        listDeviceType: null,
+        listDeviceVersion: null,
+        listDeviceAssetNumber: null,
+        startTime: null,
+        endTime: null,
+        pbatchNo: null,
       },
       // tab
       radio1: "日期",
@@ -127,70 +130,31 @@ export default {
       batchShow: false,
       // 查询表单对象
       listQueryFormModel: {
-        orderType: {
+        listDeviceType: {
           type: "select",
           label: "工程",
           placeholder: "请选择工程",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "name",
+          optionValue: "id",
           show: true,
         },
-        orderType1: {
+        listDeviceVersion: {
           type: "select",
           label: "机型",
           placeholder: "请选择机型",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "version",
+          optionValue: "version",
           show: true,
         },
-        orderType2: {
+        listDeviceAssetNumber: {
           type: "select",
           label: "机器编号",
-          placeholder: "请选择机号",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          placeholder: "请选择机器编号",
+          options: [],
+          optionLable: "assetNumber",
+          optionValue: "deviceId",
           show: true,
         },
         startDate: {
@@ -198,7 +162,7 @@ export default {
           label: "日期",
           show: true,
         },
-        pici: {
+        pbatchNo: {
           type: "input",
           label: "批次号",
           placeholder: "请输入批次号",
@@ -209,19 +173,27 @@ export default {
       tableColumn: [
         {
           prop: "ranking",
-          label: "排名",
+          label: "Top",
         },
         {
           prop: "realName",
-          label: "客户名称",
+          label: "报警代码",
         },
         {
           prop: "compare",
-          label: "较上周",
+          label: "次数",
         },
         {
           prop: "salesVolume",
-          label: "销售额(元)",
+          label: "次数比例",
+        },
+        {
+          prop: "salesVolume",
+          label: "持续时间",
+        },
+        {
+          prop: "salesVolume",
+          label: "报警详情",
         },
       ],
       // echarts数据
@@ -247,12 +219,15 @@ export default {
         this.batchShow = false;
         this.dataShow = true;
         this.listQueryFormModel.startDate.show = true;
-        this.listQueryFormModel.pici.show = false;
+        this.listQueryFormModel.pbatchNo.show = false;
+        this.listQuery.pbatchNo = "";
       } else if (e === "批次") {
         this.dataShow = false;
         this.batchShow = true;
         this.listQueryFormModel.startDate.show = false;
-        this.listQueryFormModel.pici.show = true;
+        this.listQueryFormModel.pbatchNo.show = true;
+        this.listQuery.startTime = "";
+        this.listQuery.endTime = "";
       }
     },
     getList() {
@@ -269,66 +244,19 @@ export default {
           compare: "下降",
           salesVolume: "1234",
         },
-        {
-          ranking: "3",
-          realName: "打发",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "4",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "5",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "7",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "8",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "9",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "10",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
       ];
       this.chartOptions.title = "报警次数(个)";
       this.chartOptions.subtext = "报警次数(%)";
       this.chartOptions.yData = ["21", "33", "22", "41", "12", "13", "14"];
       this.chartOptions.xData = [
-        "190828",
-        "240898",
-        "235073",
-        "225906",
-        "199583",
-        "174498",
-        "234296",
+        "+箔切",
+        "+引线供给错误",
+        "-箔切",
+        "电解纸切1",
+        "+箔切",
+        "+引线供给错误",
+        "-箔切",
+        "电解纸切1",
       ];
       this.chartOptions.lineData = ["3", "6", "2", "0", "13", "11", "9"];
     },
@@ -398,5 +326,8 @@ export default {
     border: 2px solid #003b7a;
     overflow: hidden;
   }
+}
+::v-deep .el-table {
+  height: 828px !important;
 }
 </style>

@@ -54,18 +54,6 @@
             >
           </el-form-item>
         </el-form>
-        <!-- <div class="positonBtn">
-          <div class="tab-text">维度切换</div>
-          <el-radio-group
-            v-model="radio1"
-            size="medium"
-            fill="#00D8F4"
-            @input="changeTab"
-          >
-            <el-radio-button label="日期"></el-radio-button>
-            <el-radio-button label="批次"></el-radio-button>
-          </el-radio-group>
-        </div> -->
       </div>
       <div class="chartStyle">
         <BarChart
@@ -89,23 +77,23 @@
           <div class="right-item">
             <div class="item-box">
               <div class="item-num">0</div>
-              <div class="item-text">weq</div>
+              <div class="item-text">OK总数</div>
             </div>
             <div class="item-box">
               <div class="item-num">0</div>
-              <div class="item-text">weq</div>
+              <div class="item-text">NG总数</div>
             </div>
             <div class="item-box">
               <div class="item-num">0</div>
-              <div class="item-text">weq</div>
+              <div class="item-text">OK总数总比例</div>
             </div>
             <div class="item-box">
               <div class="item-num">0</div>
-              <div class="item-text">weq</div>
+              <div class="item-text">NG总数总比例</div>
             </div>
             <div v-if="isShowCountry" class="item-box">
               <div class="item-num">0</div>
-              <div class="item-text">weq</div>
+              <div class="item-text">外观机返检数</div>
             </div>
           </div>
           <div v-if="!isShowCountry" class="btn-contro" @click="controlFn()">
@@ -121,6 +109,7 @@
 import ContentTitle from "@/components/ContentTitle/index";
 import CustomTable from "@/components/CustomTable";
 import BarChart from "@/components/Echart/barChart";
+import * as API from "@/axios/common.js";
 export default {
   components: {
     ContentTitle,
@@ -137,76 +126,43 @@ export default {
       // 自定义Pagination的参数
       hideOnSinglePage: false,
       listQuery: {
-        orderType: null,
-        orderType1: null,
-        orderType2: null,
-        startDate: null,
-        endDate: null,
+        pageNo: 0,
+        pageSize: 0,
+        startTime: "2024-09-05",
+        endTime: "2024-09-06",
+        deviceId: "TR_D300_117",
+        listDeviceType: null,
+        listDeviceVersion: null,
+        listDeviceAssetNumber: null,
       },
       // 查询表单对象
       listQueryFormModel: {
-        orderType: {
+        listDeviceType: {
           type: "select",
           label: "工程",
           placeholder: "请选择工程",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "name",
+          optionValue: "id",
+          show: true,
         },
-        orderType1: {
+        listDeviceVersion: {
           type: "select",
           label: "机型",
           placeholder: "请选择机型",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "version",
+          optionValue: "version",
+          show: true,
         },
-        orderType2: {
+        listDeviceAssetNumber: {
           type: "select",
           label: "机器编号",
-          placeholder: "请选择机号",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          placeholder: "请选择机器编号",
+          options: [],
+          optionLable: "assetNumber",
+          optionValue: "deviceId",
+          show: true,
         },
         startDate: {
           type: "picker",
@@ -216,25 +172,42 @@ export default {
       // 根据接口和设计稿设置表头
       tableColumn: [
         {
-          prop: "ranking",
-          label: "排名",
+          prop: "date",
+          label: "日期",
         },
         {
-          prop: "realName",
-          label: "客户名称",
+          prop: "sumNum",
+          label: "总数量",
         },
         {
-          prop: "compare",
-          label: "较上周",
+          prop: "gpNum",
+          label: "OK数量",
         },
         {
-          prop: "salesVolume",
-          label: "销售额(元)",
+          prop: "ngNum",
+          label: "NG数量",
+        },
+        {
+          prop: "gpRate",
+          label: "良品率",
+        },
+        {
+          prop: "ngRate",
+          label: "不良率",
+        },
+        {
+          prop: "ngNum",
+          label: "良品稼动率",
+        },
+        {
+          prop: "purate",
+          label: "生产稼动率",
+        },
+        {
+          prop: "pmtbf",
+          label: "MTBF",
         },
       ],
-      // tab
-      // radio1: "日期",
-      // echarts数据
       chartOptions: {
         yData: [],
         xData: [],
@@ -242,113 +215,83 @@ export default {
     };
   },
   created() {
-    const id = this.$route.query.id; // 接受页面路由跳转参数
+    // this.listQuery.deviceId = this.$route.query.id; // 接受页面路由跳转参数
+    // let id = this.listQuery.deviceId;
     this.getList();
-    if (id) {
-      // this.editState = true;
-      // this.topTitle = "编辑商品";
-      // this.goodsId = id;
-      // this.queryProxyInfo(id);
-    } else {
-      this.getList(id);
-    }
+    this.$nextTick(() => {
+      this.getListDeviceType();
+    });
+    // if (id) {
+    //   // this.editState = true;
+    //   // this.topTitle = "编辑商品";
+    //   // this.goodsId = id;
+    //   // this.queryProxyInfo(id);
+    // } else {
+    //   this.getList(id);
+    // }
   },
   methods: {
     // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
     },
-    // tab切换
-    changeTab(e) {
-      if (e === "日期") {
-        console.log("按日期展示");
-      } else if (e === "批次") {
-        console.log("按批次展示");
+    // 工程查询项list
+    getListDeviceType() {
+      API.listDeviceType().then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceType.options = res.data;
+        }
+      });
+    },
+    changeId(item) {
+      // 查询机型列表
+      let deviceTypeId = item.listDeviceType;
+      let version = item.listDeviceVersion;
+      if (!version) {
+        API.listDeviceVersion({ deviceTypeId: deviceTypeId }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceVersion.options = res.data;
+          }
+        });
+      } else if (version) {
+        // 查询机号列表
+        API.listDeviceAssetNumber({
+          deviceTypeId: deviceTypeId,
+          version: version,
+        }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+          }
+        });
       }
     },
+
     // 控制图
     controlFn() {},
-    async getList(id) {
-      // 获取详情
-      // const { code, data } = await shopGoodsDetail({
-      //   id,
-      // });
-      // if (code === 200) {
-      //   this.ruleForm = { ...this.ruleForm, ...data };
-      //   this.feedback(data);
-      // }
-      this.list = [
-        {
-          ranking: "1",
-          realName: "dsad",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "2",
-          realName: "种植f户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "3",
-          realName: "打发",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "4",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "5",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "7",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "8",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "9",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "10",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-      ];
+    getList(id) {
+      // 获取表格详情
+      API.getProdInfo({
+        ...this.listQuery,
+      }).then((res) => {
+        this.listLoading = true;
+        if (res.code == "200") {
+          this.list = res.data || [];
+          this.listLoading = false;
+        }
+        this.listLoading = false;
+      });
+
       this.chartOptions.title = "生产计数";
       this.chartOptions.subtext = "(个)";
       this.chartOptions.xData = [
-        "20210126",
-        "20210127",
-        "20210128",
-        "20210129",
-        "20210130",
-        "20210131",
-        "20210201",
+        "+箔切",
+        "+引线供给错误",
+        "-箔切",
+        "电解纸切1",
+        "+箔切",
+        "+引线供给错误",
+        "-箔切",
+        "电解纸切1",
       ];
       this.chartOptions.yData = [
         "134",
@@ -367,6 +310,13 @@ export default {
     },
     // 数据导出
     outQuery() {
+      // API.exportGetProdInfo({
+      //   ...this.listQuery,
+      // }).then((res) => {
+      //   if (res.code == 200) {
+      //     console.log("res :>> ", res);
+      //   }
+      // });
       require.ensure([], () => {
         const { export_json_to_excel } = require("@/excel/Export2Excel");
         const fieldName = this.tableColumn.flatMap((item) => item.label);
@@ -384,22 +334,10 @@ export default {
   .relative {
     height: 44px;
     margin-bottom: 18px;
-    //     padding-right: 100px;
-
-    //     .positonBtn {
-    //       position: absolute;
-    //       right: 0;
-    //       display: flex;
-    //       align-items: center;
-    //       bottom: 40px;
-    //       .tab-text {
-    //         font-size: 20px;
-    //         color: #ffffff;
-    //         padding-right: 8px;
+    padding-right: 8px;
   }
 }
-//   }
-// }
+
 .chartStyle {
   width: 100%;
   height: 400px;
@@ -436,7 +374,6 @@ export default {
         justify-content: center;
         width: 148px;
         height: 142px;
-        font-size: 36px;
         color: #ffffff;
         background: rgba(32, 124, 219, 0.1);
         border-radius: 16px 16px 16px 16px;
@@ -447,9 +384,12 @@ export default {
         &:nth-child(n + 3) {
           margin-top: 18px;
         }
-
+        .item-num {
+          font-size: 36px;
+          padding-bottom: 5px;
+        }
         .item-text {
-          font-size: 22px;
+          font-size: 20px;
           color: #ffffff;
           opacity: 0.6;
         }
@@ -466,5 +406,8 @@ export default {
       border-radius: 8px 8px 8px 8px;
     }
   }
+}
+::v-deep .el-table {
+  height: 410px !important;
 }
 </style>

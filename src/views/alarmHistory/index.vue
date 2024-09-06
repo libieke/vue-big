@@ -27,6 +27,7 @@
               v-model="listQuery[key]"
               :placeholder="val.placeholder"
               :clearable="val.clearable ? val.clearable : true"
+              @change="changeId(listQuery)"
             >
               <el-option
                 v-for="(item, optionIndex) in val.options"
@@ -115,12 +116,13 @@ export default {
         listDeviceAssetNumber: null,
         startTime: null,
         endTime: null,
-        pici: null,
+        pbatchNo: null,
       },
       // tab
       radio1: "日期",
       dataShow: true,
       batchShow: false,
+      deviceTypeId: null,
       // 查询表单对象
       listQueryFormModel: {
         listDeviceType: {
@@ -137,17 +139,17 @@ export default {
           label: "机型",
           placeholder: "请选择机型",
           options: [],
-          optionLable: "name",
-          optionValue: "id",
+          optionLable: "version",
+          optionValue: "version",
           show: true,
         },
         listDeviceAssetNumber: {
           type: "select",
-          label: "机号",
-          placeholder: "请选择机号",
+          label: "机器编号",
+          placeholder: "请选择机器编号",
           options: [],
-          optionLable: "name",
-          optionValue: "id",
+          optionLable: "assetNumber",
+          optionValue: "deviceId",
           show: true,
         },
         startDate: {
@@ -155,7 +157,7 @@ export default {
           label: "日期",
           show: true,
         },
-        pici: {
+        pbatchNo: {
           type: "input",
           label: "批次号",
           placeholder: "请输入批次号",
@@ -172,7 +174,7 @@ export default {
           prop: "endTime",
           label: "结束时间",
           formatter: (row) => {
-            return row.endTime == null ? "--" : row.endTime;
+            return row.endTime === "" ? "--" : row.endTime;
           },
         },
         {
@@ -198,7 +200,7 @@ export default {
   created() {
     this.getList();
     this.$nextTick(() => {
-      this.getTypeList();
+      this.getListDeviceType();
     });
   },
   methods: {
@@ -207,36 +209,68 @@ export default {
       this.listQuery.pageNum = 1;
       this.getList();
     },
-    // 查询项list
-    getTypeList() {
+    // 工程查询项list
+    getListDeviceType() {
       API.listDeviceType().then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceType.options = res.data;
         }
       });
     },
+    changeId(item) {
+      // 查询机型列表
+      let deviceTypeId = item.listDeviceType;
+      let version = item.listDeviceVersion;
+      if (!version) {
+        API.listDeviceVersion({ deviceTypeId: deviceTypeId }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceVersion.options = res.data;
+          }
+        });
+      } else if (version) {
+        // 查询机号列表
+        API.listDeviceAssetNumber({
+          deviceTypeId: deviceTypeId,
+          version: version,
+        }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+          }
+        });
+      }
+    },
+
     // tab切换
     changeTab(e) {
       if (e === "日期") {
         this.batchShow = false;
         this.dataShow = true;
         this.listQueryFormModel.startDate.show = true;
-        this.listQueryFormModel.pici.show = false;
+        this.listQueryFormModel.pbatchNo.show = false;
+        this.listQuery.pbatchNo = "";
       } else if (e === "批次") {
         this.dataShow = false;
         this.batchShow = true;
         this.listQueryFormModel.startDate.show = false;
-        this.listQueryFormModel.pici.show = true;
+        this.listQueryFormModel.pbatchNo.show = true;
+        this.listQuery.startTime = "";
+        this.listQuery.endTime = "";
       }
     },
+
     getList() {
-      this.listLoading = true;
       API.getAlarmHis({
         ...this.listQuery,
       }).then((res) => {
-        this.list = res.data.list;
+        this.listLoading = true;
+        if (res.code == "200") {
+          this.list = res.data.list || [];
+          this.listLoading = false;
+        }
+        this.listLoading = false;
       });
     },
+
     // 时间处理
     changeTime(e) {
       this.listQuery.startTime = e[0];
@@ -258,7 +292,7 @@ export default {
       align-items: center;
       bottom: 40px;
       top: 19px;
-      left: 44.5%;
+      left: 46%;
       .tab-text {
         font-size: 20px;
         color: #ffffff;
@@ -293,5 +327,8 @@ export default {
     border: 2px solid #003b7a;
     overflow: hidden;
   }
+}
+::v-deep .el-table {
+  height: 828px !important;
 }
 </style>

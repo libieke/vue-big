@@ -53,7 +53,16 @@
   }
 }
 
+// 遮罩层样式
+.el-loading-mask {
 
+  background-color: transparent;
+}
+
+.el-loading-spinner .el-loading-text {
+  font-size: 22px;
+  color: #fff;
+}
 
 // refine element ui upload
 

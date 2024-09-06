@@ -14,19 +14,20 @@ export function listDeviceType(data) {
     data,
   });
 }
-// 查询机号列表
-export function listDeviceAssetNumber(data) {
-  return request({
-    url: `/nk/tr/listDeviceAssetNumber`,
-    method: "post",
-    data,
-  });
-}
 
 // 查询机型列表
 export function listDeviceVersion(data) {
   return request({
     url: `/nk/tr/listDeviceVersion`,
+    method: "post",
+    data,
+  });
+}
+
+// 查询机号列表
+export function listDeviceAssetNumber(data) {
+  return request({
+    url: `/nk/tr/listDeviceAssetNumber`,
     method: "post",
     data,
   });
@@ -46,13 +47,13 @@ export function getBatch(data) {
  * @param {*} data
  * @returns
  */
-// export function getAlarmHis(data) {
-//   return request({
-//     url: `/nk/tr/getAlarmHis`,
-//     method: "post",
-//     data,
-//   });
-// }
+export function getHome(data) {
+  return request({
+    url: `/nk/getHome`,
+    method: "post",
+    data,
+  });
+}
 
 /**
  * 生产信息
@@ -60,22 +61,22 @@ export function getBatch(data) {
  * @returns
  */
 // 分页查询列表
-// export function getAlarmHis(data) {
-//   return request({
-//     url: `/nk/tr/getAlarmHis`,
-//     method: "post",
-//     data,
-//   });
-// }
+export function getProdInfo(data) {
+  return request({
+    url: `/nk/getProdInfo`,
+    method: "post",
+    data,
+  });
+}
 
 // 导出
-// export function getAlarmHis(data) {
-//   return request({
-//     url: `/nk/tr/getAlarmHis`,
-//     method: "post",
-//     data,
-//   });
-// }
+export function exportGetProdInfo(data) {
+  return request({
+    url: `/nk/export/getProdInfo`,
+    method: "post",
+    data,
+  });
+}
 
 /**
  * 生产分析

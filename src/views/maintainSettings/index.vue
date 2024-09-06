@@ -20,6 +20,7 @@
               v-model="listQuery[key]"
               :placeholder="val.placeholder"
               :clearable="val.clearable ? val.clearable : true"
+              @change="changeId(listQuery)"
             >
               <el-option
                 v-for="(item, optionIndex) in val.options"
@@ -64,6 +65,7 @@
         custom-class="custom-dialog"
         append-to-body
         :close-on-click-modal="false"
+        :before-close="handleClose"
         top="15vh"
       >
         <div class="reset-box">
@@ -138,6 +140,7 @@
         custom-class="custom-dialog"
         append-to-body
         :close-on-click-modal="false"
+        :before-close="handleClose"
         top="15vh"
       >
         <div class="reset-box">
@@ -149,28 +152,21 @@
             label-width="100px"
             label-position="left"
           >
-            <el-form-item label="维护项名称" prop="goodsName">
+            <el-form-item label="维护项名称" prop="partName">
               <el-input
-                v-model="dioFormData.goodsName"
+                v-model="dioFormData.partName"
                 clearable
                 placeholder="请输入维护项名称"
                 maxlength="320"
               />
             </el-form-item>
-            <el-form-item label="更换回数" prop="setNumber">
-              <el-select
-                v-model="dioFormData.setNumber"
-                placeholder="请选更换回数"
-                style="width: 100%"
+            <el-form-item label="更换回数" prop="timeNum">
+              <el-input
+                v-model="dioFormData.timeNum"
                 clearable
-              >
-                <!-- <el-option
-                  v-for="(item, i) in setNumber"
-                  :key="i"
-                  :label="item"
-                  :value="item"
-                ></el-option> -->
-              </el-select>
+                placeholder="请输入更换回数"
+                maxlength="320"
+              />
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -186,6 +182,8 @@
 <script>
 import ContentTitle from "@/components/ContentTitle/index";
 import CustomTable from "@/components/CustomTable";
+import * as API from "@/axios/common.js";
+import { REGEX_age } from "@/utils/checkUtils.js";
 export default {
   components: {
     ContentTitle,
@@ -198,97 +196,63 @@ export default {
       list: [],
       listLoading: false,
       listQuery: {
-        orderType: null,
-        orderType1: null,
-        orderType2: null,
+        pageNum: 1, // pageNum
+        pageSize: 20, // pageSize
+        listDeviceType: null,
+        listDeviceVersion: null,
+        listDeviceAssetNumber: null,
       },
       // 查询表单对象
       listQueryFormModel: {
-        orderType: {
+        listDeviceType: {
           type: "select",
           label: "工程",
           placeholder: "请选择工程",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "name",
+          optionValue: "id",
+          show: true,
         },
-        orderType1: {
+        listDeviceVersion: {
           type: "select",
           label: "机型",
           placeholder: "请选择机型",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "version",
+          optionValue: "version",
+          show: true,
         },
-        orderType2: {
+        listDeviceAssetNumber: {
           type: "select",
           label: "机器编号",
-          placeholder: "请选择机号",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          placeholder: "请选择机器编号",
+          options: [],
+          optionLable: "assetNumber",
+          optionValue: "deviceId",
+          show: true,
         },
       },
       // 根据接口和设计稿设置表头
       tableColumn: [
         {
           prop: "ranking",
-          label: "排名",
+          label: "名称",
           width: "530px",
         },
         {
           prop: "realName",
-          label: "客户名称",
+          label: "维护时间",
           width: "339px",
           isBotton: true,
         },
         {
           prop: "compare",
-          label: "较上周",
+          label: "更换回数",
           width: "232px",
         },
         {
           prop: "salesVolume",
-          label: "销售额(元)",
+          label: "更换进程",
         },
       ],
       // echarts数据
@@ -308,40 +272,132 @@ export default {
         setNumber: null,
       },
       dioFormData: {
-        goodsName: null,
-        setNumber: null,
+        partName: null,
+        timeNum: null,
       },
       rules: {
-        goodsName: [
-          { required: true, message: "请输出商品名称", trigger: "change" },
+        partName: [
+          { required: true, message: "请输入维护项名称", trigger: "change" },
         ],
-        setNumber: [
-          { required: true, message: "请选择剂型", trigger: "change" },
+        timeNum: [
+          { required: true, message: "请输入更换回数", trigger: "change" },
+          { pattern: REGEX_age, message: "请输入正整数" },
         ],
       },
     };
   },
   created() {
     this.getList();
+    this.$nextTick(() => {
+      this.getListDeviceType();
+    });
   },
   methods: {
     // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
+      this.getList();
     },
-    // 重置按钮
+    // 工程查询项list
+    getListDeviceType() {
+      //
+      API.listDeviceType().then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceType.options = res.data;
+        }
+      });
+    },
+    changeId(item) {
+      // 查询机型列表
+      let deviceTypeId = item.listDeviceType;
+      let version = item.listDeviceVersion;
+      if (!version) {
+        API.listDeviceVersion({ deviceTypeId: deviceTypeId }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceVersion.options = res.data;
+          }
+        });
+      } else if (version) {
+        // 查询机号列表
+        API.listDeviceAssetNumber({
+          deviceTypeId: deviceTypeId,
+          version: version,
+        }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+          }
+        });
+      }
+    },
+
+    // 重置按钮-时间
     handleReset(row) {
       this.visible = true;
       console.log("row :>> ", row);
+      // this.$confirm("是否要重置时间?", "提示", {
+      //   confirmButtonText: "确定",
+      //   cancelButtonText: "取消",
+      //   type: "warning",
+      // })
+      //   .then(() => {
+      //     API.resetServicingTime({}).then((res) => {
+      //       if (res.code === "200") {
+      //         this.$message.success("重置成功!");
+      //         this.getList();
+      //       } else {
+      //         this.$message.error("重置失败!");
+      //         this.getList();
+      //       }
+      //     });
+      //   })
+      //   .catch(() => {
+      //     this.$message({
+      //       type: "info",
+      //       message: "已取消",
+      //     });
+      //   });
     },
+    // 重置操作
     // 弹窗按钮-重置密码
     handleCancel2() {
-      this.$refs.formDatas.resetFields();
+      if (this.$refs.formDatas != undefined) this.$refs.formDatas.resetFields();
       this.visible = false;
     },
+    // 输入密码确认后提交重置借口
     handleSubmit2() {
       this.$refs.formDatas.validate((valid) => {
         if (valid) {
+          API.verifyPwd({
+            ...this.formDatas,
+          }).then((res) => {
+            if (res.code === "200") {
+              this.$confirm("是否要重置时间?", "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+              })
+                .then(() => {
+                  API.resetServicingTime({}).then((res) => {
+                    if (res.code === "200") {
+                      this.$message.success("重置成功!");
+                      this.getList();
+                    } else {
+                      this.$message.error("重置失败!");
+                      this.getList();
+                    }
+                  });
+                })
+                .catch(() => {
+                  this.$message({
+                    type: "info",
+                    message: "已取消",
+                  });
+                });
+            }
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
         }
       });
     },
@@ -352,6 +408,7 @@ export default {
     // 关闭新建&编辑弹框
     handleClose() {
       this.handleCancel2();
+      this.handleCancel3();
     },
     // 弹窗按钮-打开
     handleEdit(row) {
@@ -360,7 +417,28 @@ export default {
       this.dioTitle = "修改维护项";
     },
     handleDel(row) {
-      alert("删除");
+      this.$confirm("是否要删除该数据?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          API.removeProdLife({}).then((res) => {
+            if (res.code === "200") {
+              this.$message.success("删除成功!");
+              this.getList();
+            } else {
+              this.$message.error("删除失败!");
+              this.getList();
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消",
+          });
+        });
     },
     // 弹窗按钮-新建打开
     handAddSet() {
@@ -368,12 +446,57 @@ export default {
       this.dioTitle = "新增维护项";
     },
     // 编辑/新建
-    handleSave() {},
+    handleSave() {
+      this.$refs.dioFormData.validate((valid) => {
+        if (valid) {
+          const that = this;
+          if (that.dioTitle === "新增维护项") {
+            API.addProdLifeNum({ ...this.dioFormData }).then((res) => {
+              if (res.code === "200") {
+                that.getList();
+                that.$message.success("新建成功！");
+                that.visible2 = false;
+              }
+            });
+          }
+          if (that.dioTitle === "修改维护项") {
+            API.updateProdTimeNum({}).then((res) => {
+              if (res.code === "200") {
+                that.$message.success("编辑成功！");
+                that.getList();
+                that.visible2 = false;
+              }
+            });
+          }
+        }
+      });
+    },
     handleCancel3() {
       this.visible2 = false;
+      if (this.$refs.dioFormData != undefined)
+        this.$refs.dioFormData.resetFields();
     },
     // 页面数据
-    getList() {},
+    getList() {
+      this.list = [
+        {
+          ranking: "2",
+          realName: "种植f户",
+          compare: "下降",
+          salesVolume: "1234",
+        },
+      ];
+      // this.listLoading = true;
+      // API.getProdLifeNum({
+      //   ...this.listQuery,
+      // }).then((res) => {
+      //   if (res.code == "200") {
+      //     this.list = res.data || [];
+      //     this.listLoading = false;
+      //   }
+      //   this.listLoading = false;
+      // });
+    },
   },
 };
 </script>
@@ -436,5 +559,8 @@ export default {
 }
 .set-box {
   padding: 0 10px;
+}
+::v-deep .el-table {
+  height: 828px !important;
 }
 </style>

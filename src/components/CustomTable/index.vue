@@ -222,6 +222,7 @@ export default {
 }
 ::v-deep .el-table__header {
   width: 100% !important;
+  border-bottom: 1px solid #031a3c;
 }
 
 ::v-deep .el-table__empty-block {

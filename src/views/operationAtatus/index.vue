@@ -28,6 +28,7 @@
         v-for="(item, index) in dataList"
         :key="index"
         @click="toDetials(item)"
+        :v-loading="listLoading"
       >
         <div class="top-box">
           <div class="left text-green">
@@ -93,7 +94,7 @@
       <SmallPagination
         v-show="total > 0"
         :total="total"
-        :page.sync="listQuery.pageNum"
+        :page.sync="listQuery.pageNo"
         :limit.sync="listQuery.pageSize"
         :hide-on-single-page="hideOnSinglePage"
         :background="true"
@@ -106,17 +107,20 @@
 
 <script>
 import SmallPagination from "@/components/SmallPagination";
+import * as API from "@/axios/common.js";
 
 export default {
   name: "operationAtatus",
   data() {
     return {
       showMoreCard: true,
-      total: 20,
+      total: 0,
+      listLoading: false,
       hideOnSinglePage: false,
       listQuery: {
-        pageNum: 1, // pageNum
+        pageNo: 1, // pageNum
         pageSize: 8, // pageSize
+        prodLine: "tr",
       },
       dataList: [],
     };
@@ -133,46 +137,6 @@ export default {
         document.getElementById("cardW").style.zoom = 0.5;
         console.log("object :>> ", document.getElementById("cardW").style);
         this.dataList = [
-          {
-            num: "9000",
-            text: "良品数",
-          },
-          {
-            num: "9000",
-            text: "良品数",
-          },
-          {
-            num: "9000",
-            text: "良品数",
-          },
-          {
-            num: "9000",
-            text: "良品数",
-          },
-          {
-            num: "9000",
-            text: "良品数",
-          },
-          {
-            num: "9000",
-            text: "良品数",
-          },
-          {
-            num: "9000",
-            text: "良品数",
-          },
-          {
-            num: "9000",
-            text: "良品数",
-          },
-          {
-            num: "9000",
-            text: "良品数",
-          },
-          {
-            num: "9000",
-            text: "良品数",
-          },
           {
             num: "9000",
             text: "良品数",
@@ -205,6 +169,18 @@ export default {
     },
     // 页面数据
     getList() {
+      // 获取表格详情
+      API.getHome({
+        ...this.listQuery,
+      }).then((res) => {
+        this.listLoading = true;
+        if (res.code == "200") {
+          // this.dataList = res.data || [];
+          // this.listLoading = false;
+        }
+        this.listLoading = false;
+      });
+
       console.log("页面数据");
       this.dataList = [
         {

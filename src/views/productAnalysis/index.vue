@@ -96,23 +96,23 @@
           <div class="right-item">
             <div class="item-box">
               <div class="item-num">0</div>
-              <div class="item-text">weq</div>
+              <div class="item-text">OK总数</div>
             </div>
             <div class="item-box">
               <div class="item-num">0</div>
-              <div class="item-text">weq</div>
+              <div class="item-text">NG总数</div>
             </div>
             <div class="item-box">
               <div class="item-num">0</div>
-              <div class="item-text">weq</div>
+              <div class="item-text">OK总数总比例</div>
             </div>
             <div class="item-box">
               <div class="item-num">0</div>
-              <div class="item-text">weq</div>
+              <div class="item-text">NG总数总比例</div>
             </div>
             <div v-if="!isShowCountry" class="item-box">
               <div class="item-num">0</div>
-              <div class="item-text">weq</div>
+              <div class="item-text">外观机返检数</div>
             </div>
           </div>
         </div>
@@ -139,12 +139,15 @@ export default {
       listLoading: false,
       // 自定义Pagination的参数
       listQuery: {
-        orderType: null,
-        orderType1: null,
-        orderType2: null,
-        startDate: null,
-        endDate: null,
-        pici: null,
+        pageNum: 1, // pageNum
+        pageSize: 20, // pageSize
+        deviceId: null,
+        listDeviceType: null,
+        listDeviceVersion: null,
+        listDeviceAssetNumber: null,
+        startTime: null,
+        endTime: null,
+        pbatchNo: null,
       },
       isShowCountry: false, // 控制按钮限隐
       // tab
@@ -153,70 +156,31 @@ export default {
       batchShow: false,
       // 查询表单对象
       listQueryFormModel: {
-        orderType: {
+        listDeviceType: {
           type: "select",
           label: "工程",
           placeholder: "请选择工程",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "name",
+          optionValue: "id",
           show: true,
         },
-        orderType1: {
+        listDeviceVersion: {
           type: "select",
           label: "机型",
           placeholder: "请选择机型",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          options: [],
+          optionLable: "version",
+          optionValue: "version",
           show: true,
         },
-        orderType2: {
+        listDeviceAssetNumber: {
           type: "select",
           label: "机器编号",
-          placeholder: "请选择机号",
-          options: [
-            {
-              typeName: "全部",
-              typeCode: null,
-            },
-            {
-              typeName: "1",
-              typeCode: 0,
-            },
-            {
-              typeName: "2",
-              typeCode: 1,
-            },
-          ],
-          optionLable: "typeName",
-          optionValue: "typeCode",
+          placeholder: "请选择机器编号",
+          options: [],
+          optionLable: "assetNumber",
+          optionValue: "deviceId",
           show: true,
         },
         startDate: {
@@ -224,7 +188,7 @@ export default {
           label: "日期",
           show: true,
         },
-        pici: {
+        pbatchNo: {
           type: "input",
           label: "批次号",
           placeholder: "请输入批次号",
@@ -239,15 +203,15 @@ export default {
         },
         {
           prop: "realName",
-          label: "客户名称",
+          label: "不良项目",
         },
         {
           prop: "compare",
-          label: "较上周",
+          label: "数量",
         },
         {
           prop: "salesVolume",
-          label: "销售额(元)",
+          label: "比例",
         },
       ],
       // echarts数据
@@ -266,6 +230,7 @@ export default {
     // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
+      this.getList();
     },
     // tab切换
     changeTab(e) {
@@ -273,12 +238,15 @@ export default {
         this.batchShow = false;
         this.dataShow = true;
         this.listQueryFormModel.startDate.show = true;
-        this.listQueryFormModel.pici.show = false;
+        this.listQueryFormModel.pbatchNo.show = false;
+        this.listQuery.pbatchNo = "";
       } else if (e === "批次") {
         this.dataShow = false;
         this.batchShow = true;
         this.listQueryFormModel.startDate.show = false;
-        this.listQueryFormModel.pici.show = true;
+        this.listQueryFormModel.pbatchNo.show = true;
+        this.listQuery.startTime = "";
+        this.listQuery.endTime = "";
       }
     },
     getList() {
@@ -358,13 +326,14 @@ export default {
         "20210201",
       ];
       this.chartOptions.xData = [
-        "190828",
-        "240898",
-        "235073",
-        "225906",
-        "199583",
-        "174498",
-        "234296",
+        "+箔切",
+        "+引线供给错误",
+        "-箔切",
+        "电解纸切1",
+        "+箔切",
+        "+引线供给错误",
+        "-箔切",
+        "电解纸切1",
       ];
       this.chartOptions.lineData = ["3", "6", "2", "0", "13", "11", "9"];
     },
@@ -475,7 +444,8 @@ export default {
         }
 
         .item-text {
-          font-size: 22px;
+          padding-top: 5px;
+          font-size: 20px;
           color: #ffffff;
           opacity: 0.6;
         }
@@ -492,5 +462,8 @@ export default {
       border-radius: 8px 8px 8px 8px;
     }
   }
+}
+::v-deep .el-table {
+  height: 410px !important;
 }
 </style>

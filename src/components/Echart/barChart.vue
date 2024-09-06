@@ -61,14 +61,9 @@ export default {
           },
         ],
         tooltip: {
-          show: true,
-          borderWidth: 1,
-          extraCssText: "box-shadow: 0 0 5px rgba(0, 0, 0, 1)",
+          trigger: "axis",
           axisPointer: {
             type: "shadow",
-            label: {
-              show: true,
-            },
           },
         },
         grid: {

@@ -21,7 +21,7 @@ module.exports = {
     // before: require('./mock/mock-server.js'),
     proxy: {
       "/api": {
-        target: "http://10.12.58.160:8081/wire",
+        target: "http://10.12.58.53:8081/wire",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "",
