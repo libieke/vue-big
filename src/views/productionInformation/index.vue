@@ -310,20 +310,20 @@ export default {
     },
     // 数据导出
     outQuery() {
-      // API.exportGetProdInfo({
-      //   ...this.listQuery,
-      // }).then((res) => {
-      //   if (res.code == 200) {
-      //     console.log("res :>> ", res);
-      //   }
-      // });
-      require.ensure([], () => {
-        const { export_json_to_excel } = require("@/excel/Export2Excel");
-        const fieldName = this.tableColumn.flatMap((item) => item.label);
-        const filterVal = this.tableColumn.flatMap((item) => item.prop);
-        const data = this.list.map((v) => filterVal.map((j) => v[j]));
-        export_json_to_excel(fieldName, data, "用户列表");
+      API.exportGetProdInfo({
+        ...this.listQuery,
+      }).then((res) => {
+        if (res.code == 200) {
+          console.log("res :>> ", res);
+        }
       });
+      // require.ensure([], () => {
+      //   const { export_json_to_excel } = require("@/excel/Export2Excel");
+      //   const fieldName = this.tableColumn.flatMap((item) => item.label);
+      //   const filterVal = this.tableColumn.flatMap((item) => item.prop);
+      //   const data = this.list.map((v) => filterVal.map((j) => v[j]));
+      //   export_json_to_excel(fieldName, data, "用户列表");
+      // });
     },
   },
 };

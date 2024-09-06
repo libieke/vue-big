@@ -175,47 +175,11 @@ export default {
       }).then((res) => {
         this.listLoading = true;
         if (res.code == "200") {
-          // this.dataList = res.data || [];
-          // this.listLoading = false;
+          this.dataList = res.data || {};
+          this.listLoading = false;
         }
         this.listLoading = false;
       });
-
-      console.log("页面数据");
-      this.dataList = [
-        {
-          num: "9000",
-          text: "良品数",
-        },
-        {
-          num: "9000",
-          text: "良品数",
-        },
-        {
-          num: "9000",
-          text: "良品数",
-        },
-        {
-          num: "9000",
-          text: "良品数",
-        },
-        {
-          num: "9000",
-          text: "良品数",
-        },
-        {
-          num: "9000",
-          text: "良品数",
-        },
-        {
-          num: "9000",
-          text: "良品数",
-        },
-        {
-          num: "9000",
-          text: "良品数",
-        },
-      ];
     },
   },
 };
