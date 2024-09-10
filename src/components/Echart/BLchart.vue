@@ -1,10 +1,13 @@
 <template>
-  <div ref="barChart" :style="{ height: height, width: width }"></div>
+  <div
+    ref="barChart"
+    id="barChart"
+    :style="{ height: height, width: width }"
+  ></div>
 </template>
 
 <script>
 import * as echarts from "echarts";
-import { color } from "echarts/lib/export";
 
 export default {
   props: {
@@ -35,7 +38,13 @@ export default {
   },
   methods: {
     initEcharts() {
-      var myChart = echarts.init(this.$refs.barChart);
+      let myChart = echarts.getInstanceByDom(
+        document.getElementById("barChart")
+      );
+      if (myChart == null) {
+        myChart = echarts.init(document.getElementById("barChart"));
+      }
+
       // 指定图表的配置项和数据
       var option = {
         // backgroundColor: "rgba(32, 124, 219, 0.1)",
@@ -65,18 +74,20 @@ export default {
           axisPointer: {
             type: "shadow",
           },
+          textStyle: {
+            fontSize: 20,
+            color: "#000",
+          },
         },
         grid: {
           left: 15,
-          top: "15%",
+          top: "17%",
           bottom: 20,
           right: 15,
           containLabel: true,
         },
         xAxis: {
           type: "category",
-          // boundaryGap: [0, 0.01],
-          // boundaryGap: true,
           axisLine: {
             show: true,
             lineStyle: {
@@ -85,10 +96,9 @@ export default {
             },
           },
           axisLabel: {
-            textStyle: {
-              color: "#6d7b8e",
-              fontSize: 20,
-            },
+            color: "#6d7b8e",
+            fontSize: 20,
+            // interval: 0,
           },
           splitLine: {
             show: false,
@@ -98,14 +108,12 @@ export default {
           },
           data: this.chartOptions.xData,
         },
-        // color: ["#207CDB", "#EB5042"],
         yAxis: [
           {
             type: "value",
-            min: 0,
             show: true,
             axisLine: {
-              show: true, //是否显示
+              show: false, //是否显示
               lineStyle: {
                 color: "#fff",
               },
@@ -113,10 +121,8 @@ export default {
             alignTicks: true,
             position: "left",
             axisLabel: {
-              textStyle: {
-                color: "#6d7b8e",
-                fontSize: 20,
-              },
+              color: "#6d7b8e",
+              fontSize: 20,
             },
             splitLine: {
               show: true,
@@ -126,12 +132,10 @@ export default {
                 color: "#fff",
               },
             },
-            // data: this.chartOptions.yData,
           },
           {
             type: "value",
-            name: "个数",
-            min: 0,
+            show: true,
             position: "right",
             axisLine: {
               show: false, //是否显示
@@ -145,46 +149,40 @@ export default {
               },
             },
             axisLabel: {
-              textStyle: {
-                color: "#6d7b8e",
-                fontSize: 20,
-              },
+              color: "#6d7b8e",
+              fontSize: 20,
             },
           },
         ],
         series: [
           {
             type: "bar",
-            name: "bar",
+            name: "报警次数(个)",
             tooltip: {
               show: true,
+              color: "#000",
             },
             animation: false,
             barWidth: 40,
             itemStyle: {
               color: "#207CDB",
             },
-            hoverAnimation: false,
-
             data: this.chartOptions.yData,
           },
           {
             type: "line",
+            name: "报警占比(%)",
             yAxisIndex: 1,
-            name: "报警次数",
             smooth: true,
             symbol: "circle",
-            hoverAnimation: false,
             symbolSize: 10,
             data: this.chartOptions.lineData,
             itemStyle: {
-              normal: {
+              color: "#EB5042",
+              lineStyle: {
                 color: "#EB5042",
-                lineStyle: {
-                  color: "#EB5042",
-                  width: 3,
-                  opacity: 1,
-                },
+                width: 3,
+                opacity: 1,
               },
             },
           },

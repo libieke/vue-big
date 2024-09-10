@@ -21,6 +21,7 @@
               maxlength="50"
               :placeholder="val.placeholder"
               clearable
+              @blur="getBatch"
             />
             <el-select
               v-if="val.type == 'select'"
@@ -47,7 +48,7 @@
               value-format="yyyy-MM-dd"
               :picker-options="{
                 disabledDate: (time) => {
-                  return time.getTime() > Date.now() - 3600 * 1000 * 24;
+                  return time.getTime() > Date.now();
                 },
               }"
               @change="changeTime"
@@ -92,7 +93,6 @@
 <script>
 import ContentTitle from "@/components/ContentTitle/index";
 import CustomTable from "@/components/CustomTable";
-
 import * as API from "@/axios/common.js";
 export default {
   components: {
@@ -173,20 +173,17 @@ export default {
         {
           prop: "endTime",
           label: "结束时间",
-          formatter: (row) => {
-            return row.endTime === "" ? "--" : row.endTime;
-          },
         },
         {
           prop: "durationTime",
           label: "持续时间",
         },
         {
-          prop: "deviceWarningName",
+          prop: "deviceWarningCode",
           label: "报警代码",
         },
         {
-          prop: "remark",
+          prop: "deviceWarningName",
           label: "详情说明",
         },
       ],
@@ -219,18 +216,20 @@ export default {
     },
     changeId(item) {
       // 查询机型列表
-      let deviceTypeId = item.listDeviceType;
+      this.listQuery.deviceId = item.listDeviceType;
       let version = item.listDeviceVersion;
       if (!version) {
-        API.listDeviceVersion({ deviceTypeId: deviceTypeId }).then((res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceVersion.options = res.data;
+        API.listDeviceVersion({ deviceTypeId: this.listQuery.deviceId }).then(
+          (res) => {
+            if (res.code == 200) {
+              this.listQueryFormModel.listDeviceVersion.options = res.data;
+            }
           }
-        });
+        );
       } else if (version) {
         // 查询机号列表
         API.listDeviceAssetNumber({
-          deviceTypeId: deviceTypeId,
+          deviceTypeId: this.listQuery.deviceId,
           version: version,
         }).then((res) => {
           if (res.code == 200) {
@@ -238,6 +237,15 @@ export default {
           }
         });
       }
+    },
+
+    // 批次号查询
+    getBatch() {
+      API.getBatch({ deviceId: this.listQuery.deviceId }).then((res) => {
+        if (res.code == 200) {
+          console.log("res :>> ", res);
+        }
+      });
     },
 
     // tab切换
@@ -263,8 +271,8 @@ export default {
         ...this.listQuery,
       }).then((res) => {
         this.listLoading = true;
-        if (res.code == "200") {
-          this.list = res.data.list || [];
+        if (res.code == 200) {
+          this.list = res.data.list || res.data || [];
           this.listLoading = false;
         }
         this.listLoading = false;

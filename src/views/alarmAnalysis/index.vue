@@ -21,12 +21,15 @@
               maxlength="50"
               :placeholder="val.placeholder"
               clearable
+              :fetch-suggestions="getBatchList"
+              @keyup="searchBatch"
             />
             <el-select
               v-if="val.type == 'select'"
               v-model="listQuery[key]"
               :placeholder="val.placeholder"
               :clearable="val.clearable ? val.clearable : true"
+              @change="changeId(listQuery)"
             >
               <el-option
                 v-for="(item, optionIndex) in val.options"
@@ -46,7 +49,7 @@
               value-format="yyyy-MM-dd"
               :picker-options="{
                 disabledDate: (time) => {
-                  return time.getTime() > Date.now() - 3600 * 1000 * 24;
+                  return time.getTime() > Date.now();
                 },
               }"
               @change="changeTime"
@@ -76,10 +79,15 @@
       </div>
       <div class="chartStyle">
         <BLchart
+          v-if="this.chartOptions.xData.length > 0"
           :chartOptions="chartOptions"
           height="350px"
           style="margin-bottom: 10px"
         ></BLchart>
+        <el-empty
+          v-else
+          :image="require('@/assets/images/empty.png')"
+        ></el-empty>
       </div>
       <div class="content-box">
         <div class="left-box">
@@ -89,6 +97,7 @@
             :loading-text="loadingText"
             :table-column="tableColumn"
             :selection="false"
+            :sort="sortShow"
           >
           </custom-table>
         </div>
@@ -101,6 +110,8 @@
 import ContentTitle from "@/components/ContentTitle/index";
 import CustomTable from "@/components/CustomTable";
 import BLchart from "@/components/Echart/BLchart";
+import * as API from "@/axios/common.js";
+
 export default {
   components: {
     ContentTitle,
@@ -112,10 +123,9 @@ export default {
       value: "",
       loadingText: "加载中...",
       list: [],
+      sortShow: false,
       listLoading: false,
       listQuery: {
-        pageNum: 1, // pageNum
-        pageSize: 20, // pageSize
         deviceId: null,
         listDeviceType: null,
         listDeviceVersion: null,
@@ -124,6 +134,7 @@ export default {
         endTime: null,
         pbatchNo: null,
       },
+      getBatchList: [],
       // tab
       radio1: "日期",
       dataShow: true,
@@ -172,27 +183,27 @@ export default {
       // 根据接口和设计稿设置表头
       tableColumn: [
         {
-          prop: "ranking",
-          label: "Top",
-        },
-        {
-          prop: "realName",
+          prop: "deviceWarningCode",
           label: "报警代码",
+          width: "300",
         },
         {
-          prop: "compare",
+          prop: "warningCount",
           label: "次数",
+          width: "100",
         },
         {
-          prop: "salesVolume",
+          prop: "countPer",
           label: "次数比例",
+          width: "200",
         },
         {
-          prop: "salesVolume",
+          prop: "durationTime",
           label: "持续时间",
+          width: "300",
         },
         {
-          prop: "salesVolume",
+          prop: "deviceWarningName",
           label: "报警详情",
         },
       ],
@@ -200,18 +211,61 @@ export default {
       chartOptions: {
         yData: [],
         xData: [],
+        lineData: [],
         title: "",
         subtext: "",
       },
     };
   },
   created() {
-    this.getList();
+    // this.getList();
+    this.$nextTick(() => {
+      this.getListDeviceType();
+    });
   },
   methods: {
     // 搜索
     handleQuery() {
-      this.listQuery.pageNum = 1;
+      this.getList();
+    },
+    // 工程查询项list
+    getListDeviceType() {
+      //
+      API.listDeviceType().then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceType.options = res.data;
+        }
+      });
+    },
+    changeId(item) {
+      // 查询机型列表
+      let deviceTypeId = item.listDeviceType;
+      let version = item.listDeviceVersion;
+      if (!version) {
+        API.listDeviceVersion({ deviceTypeId: deviceTypeId }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceVersion.options = res.data;
+          }
+        });
+      } else if (version) {
+        // 查询机号列表
+        API.listDeviceAssetNumber({
+          deviceTypeId: deviceTypeId,
+          version: version,
+        }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+            this.listQuery.deviceId = item.listDeviceAssetNumber;
+          }
+        });
+      }
+    },
+    searchBatch() {
+      API.getBatch({ deviceId: this.listQuery.deviceId }).then((res) => {
+        if (res.code == 200) {
+          console.log("res :>> ", res);
+        }
+      });
     },
     // tab切换
     changeTab(e) {
@@ -231,34 +285,30 @@ export default {
       }
     },
     getList() {
-      this.list = [
-        {
-          ranking: "1",
-          realName: "dsad",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "2",
-          realName: "种植f户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-      ];
-      this.chartOptions.title = "报警次数(个)";
-      this.chartOptions.subtext = "报警次数(%)";
-      this.chartOptions.yData = ["21", "33", "22", "41", "12", "13", "14"];
-      this.chartOptions.xData = [
-        "+箔切",
-        "+引线供给错误",
-        "-箔切",
-        "电解纸切1",
-        "+箔切",
-        "+引线供给错误",
-        "-箔切",
-        "电解纸切1",
-      ];
-      this.chartOptions.lineData = ["3", "6", "2", "0", "13", "11", "9"];
+      API.getAlarmAly({
+        ...this.listQuery,
+      }).then((res) => {
+        this.listLoading = true;
+        if (res.code == 200) {
+          this.list = res.data || res.data.list || [];
+          // 图表
+          this.chartOptions.title = "报警次数(个)";
+          this.chartOptions.subtext = "报警次数(%)";
+          this.chartOptions.xData = res.data.map((item) => {
+            return item.deviceWarningName;
+          });
+          this.chartOptions.yData = res.data.map((item) => {
+            return item.warningCount;
+          });
+          let result = res.data.map((item) => {
+            return item.countPer.replace(/%/, "");
+          });
+          this.chartOptions.lineData = result;
+          this.sortShow = true;
+          this.listLoading = false;
+        }
+        this.listLoading = false;
+      });
     },
     // 时间处理
     changeTime(e) {
@@ -267,13 +317,20 @@ export default {
     },
     // 数据导出
     outQuery() {
-      require.ensure([], () => {
-        const { export_json_to_excel } = require("@/excel/Export2Excel");
-        const fieldName = this.tableColumn.flatMap((item) => item.label);
-        const filterVal = this.tableColumn.flatMap((item) => item.prop);
-        const data = this.list.map((v) => filterVal.map((j) => v[j]));
-        export_json_to_excel(fieldName, data, "用户列表");
+      API.exportAlarmAly({
+        ...this.listQuery,
+      }).then((res) => {
+        if (res.code == 200) {
+          console.log("res :>> ", res);
+        }
       });
+      // require.ensure([], () => {
+      //   const { export_json_to_excel } = require("@/excel/Export2Excel");
+      //   const fieldName = this.tableColumn.flatMap((item) => item.label);
+      //   const filterVal = this.tableColumn.flatMap((item) => item.prop);
+      //   const data = this.list.map((v) => filterVal.map((j) => v[j]));
+      //   export_json_to_excel(fieldName, data, "用户列表");
+      // });
     },
   },
 };
@@ -329,5 +386,8 @@ export default {
 }
 ::v-deep .el-table {
   height: 828px !important;
+}
+::v-deep .el-empty__description p {
+  font-size: 22px;
 }
 </style>

@@ -27,6 +27,7 @@
               v-model="listQuery[key]"
               :placeholder="val.placeholder"
               :clearable="val.clearable ? val.clearable : true"
+              @change="changeId(listQuery)"
             >
               <el-option
                 v-for="(item, optionIndex) in val.options"
@@ -76,10 +77,15 @@
       </div>
       <div class="chartStyle">
         <BLchart
+          v-if="this.chartOptions.xData.length > 0"
           :chartOptions="chartOptions"
           height="350px"
           style="margin-bottom: 10px"
         ></BLchart>
+        <el-empty
+          v-else
+          :image="require('@/assets/images/empty.png')"
+        ></el-empty>
       </div>
       <div class="content-box">
         <div class="left-box">
@@ -89,6 +95,7 @@
             :loading-text="loadingText"
             :table-column="tableColumn"
             :selection="false"
+            :sort="sortShow"
           >
           </custom-table>
         </div>
@@ -125,6 +132,8 @@
 import ContentTitle from "@/components/ContentTitle/index";
 import CustomTable from "@/components/CustomTable";
 import BLchart from "@/components/Echart/BLchart";
+import * as API from "@/axios/common.js";
+
 export default {
   components: {
     ContentTitle,
@@ -136,18 +145,18 @@ export default {
       value: "",
       loadingText: "加载中...",
       list: [],
+      sortShow: false,
       listLoading: false,
       // 自定义Pagination的参数
       listQuery: {
-        pageNum: 1, // pageNum
-        pageSize: 20, // pageSize
         deviceId: null,
+        typeId: null,
         listDeviceType: null,
         listDeviceVersion: null,
         listDeviceAssetNumber: null,
         startTime: null,
         endTime: null,
-        pbatchNo: null,
+        batchNo: null,
       },
       isShowCountry: false, // 控制按钮限隐
       // tab
@@ -198,19 +207,15 @@ export default {
       // 根据接口和设计稿设置表头
       tableColumn: [
         {
-          prop: "ranking",
-          label: "排名",
-        },
-        {
-          prop: "realName",
+          prop: "context",
           label: "不良项目",
         },
         {
-          prop: "compare",
+          prop: "num",
           label: "数量",
         },
         {
-          prop: "salesVolume",
+          prop: "ngRate",
           label: "比例",
         },
       ],
@@ -218,19 +223,58 @@ export default {
       chartOptions: {
         yData: [],
         xData: [],
+        lineData: [],
         title: "",
         subtext: "",
       },
     };
   },
   created() {
-    this.getList();
+    // this.getList();
+    this.$nextTick(() => {
+      this.getListDeviceType();
+    });
   },
   methods: {
     // 搜索
     handleQuery() {
-      this.listQuery.pageNum = 1;
+      this.listQuery.listDeviceVersion = "";
+      this.listQuery.listDeviceType = "";
+      this.listQuery.listDeviceAssetNumber = "";
       this.getList();
+    },
+    // 工程查询项list
+    getListDeviceType() {
+      API.listDeviceType().then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceType.options = res.data;
+        }
+      });
+    },
+    changeId(item) {
+      // 查询机型列表
+      this.listQuery.typeId = item.listDeviceType;
+      let version = item.listDeviceVersion;
+      if (!version) {
+        API.listDeviceVersion({
+          deviceTypeId: this.listQuery.typeId,
+        }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceVersion.options = res.data;
+          }
+        });
+      } else if (version) {
+        // 查询机号列表
+        API.listDeviceAssetNumber({
+          deviceTypeId: this.listQuery.typeId,
+          version: version,
+        }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+            this.listQuery.deviceId = item.listDeviceAssetNumber;
+          }
+        });
+      }
     },
     // tab切换
     changeTab(e) {
@@ -250,69 +294,31 @@ export default {
       }
     },
     getList() {
-      // this.isShowCountry = true;
-      this.list = [
-        {
-          ranking: "1",
-          realName: "dsad",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "2",
-          realName: "种植f户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "3",
-          realName: "打发",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "4",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "5",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "6",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "7",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "8",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "9",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-        {
-          ranking: "10",
-          realName: "种植户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-      ];
+      API.getProdInfoNg({
+        ...this.listQuery,
+      }).then((res) => {
+        this.listLoading = true;
+        if (res.code == 200) {
+          this.list = res.data.list || res.data || [];
+          // 图表
+          this.chartOptions.title = "报警次数(个)";
+          this.chartOptions.subtext = "报警次数(%)";
+          this.chartOptions.xData = res.data.map((item) => {
+            return item.context;
+          });
+          this.chartOptions.yData = res.data.map((item) => {
+            return item.num;
+          });
+          let result = res.data.map((item) => {
+            return item.ngRate.replace(/%/, "");
+          });
+          this.chartOptions.lineData = result;
+          this.sortShow = true;
+          this.listLoading = false;
+        }
+        this.listLoading = false;
+      });
+
       this.chartOptions.title = "不良计数(个)";
       this.chartOptions.subtext = "不良计数(%)";
 
@@ -465,5 +471,8 @@ export default {
 }
 ::v-deep .el-table {
   height: 410px !important;
+}
+::v-deep .el-empty__description p {
+  font-size: 22px;
 }
 </style>

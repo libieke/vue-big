@@ -1,10 +1,13 @@
 <template>
-  <div ref="barChart" :style="{ height: height, width: width }"></div>
+  <div
+    ref="barChart"
+    id="barChart"
+    :style="{ height: height, width: width }"
+  ></div>
 </template>
 
 <script>
 import * as echarts from "echarts";
-import { color } from "echarts/lib/export";
 
 export default {
   props: {
@@ -35,7 +38,12 @@ export default {
   },
   methods: {
     initEcharts() {
-      var myChart = echarts.init(this.$refs.barChart);
+      let myChart = echarts.getInstanceByDom(
+        document.getElementById("barChart")
+      );
+      if (myChart == null) {
+        myChart = echarts.init(document.getElementById("barChart"));
+      }
       // 指定图表的配置项和数据
       var option = {
         // backgroundColor: "rgba(32, 124, 219, 0.1)",
@@ -65,6 +73,10 @@ export default {
           axisPointer: {
             type: "shadow",
           },
+          textStyle: {
+            fontSize: 20,
+            color: "#000",
+          },
         },
         grid: {
           left: 15,
@@ -74,9 +86,8 @@ export default {
           containLabel: true,
         },
         xAxis: {
-          // type: "category",
-          // boundaryGap: [0, 0.01],
-          boundaryGap: true,
+          type: "category",
+          boundaryGap: [0, 0.01],
           axisLine: {
             show: true,
             lineStyle: {
@@ -85,10 +96,8 @@ export default {
             },
           },
           axisLabel: {
-            textStyle: {
-              color: "#6d7b8e",
-              fontSize: 20,
-            },
+            color: "#6d7b8e",
+            fontSize: 20,
           },
           splitLine: {
             show: false,
@@ -101,7 +110,6 @@ export default {
         color: ["#207CDB", "#b5c7ff"],
         yAxis: {
           // type: "value",
-          min: 0,
           show: true,
           axisLine: {
             show: false, //是否显示
@@ -109,10 +117,8 @@ export default {
           alignTicks: true,
           position: "left",
           axisLabel: {
-            textStyle: {
-              color: "#6d7b8e",
-              fontSize: 20,
-            },
+            color: "#6d7b8e",
+            fontSize: 20,
           },
           splitLine: {
             show: true,
@@ -122,18 +128,17 @@ export default {
               color: "#fff",
             },
           },
-          // data: this.chartOptions.yData,
         },
         series: [
           {
             type: "bar",
-            name: "linedemo",
+            name: "生产计数(个)",
             tooltip: {
               show: true,
+              color: "#000",
             },
             animation: false,
             barWidth: 40,
-            hoverAnimation: false,
             data: this.chartOptions.yData,
           },
         ],

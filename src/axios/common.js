@@ -70,13 +70,13 @@ export function getProdInfo(data) {
 }
 
 // 导出
-export function exportGetProdInfo(data) {
-  return request({
-    url: `/nk/export/getProdInfo`,
-    method: "post",
-    data,
-  });
-}
+// export function getProdInfo(data) {
+//   return request({
+//     url: `/nk/export/getProdInfo`,
+//     method: "post",
+//     data,
+//   });
+// }
 
 /**
  * 生产分析
@@ -84,13 +84,13 @@ export function exportGetProdInfo(data) {
  * @returns
  */
 // 分页查询列表
-// export function getAlarmHis(data) {
-//   return request({
-//     url: `/nk/tr/getAlarmHis`,
-//     method: "post",
-//     data,
-//   });
-// }
+export function getProdInfoNg(data) {
+  return request({
+    url: `/nk/getProdInfoNg`,
+    method: "post",
+    data,
+  });
+}
 
 // 导出
 // export function getAlarmHis(data) {
@@ -133,7 +133,7 @@ export function getAlarmAly(data) {
 export function exportAlarmAly(data) {
   return request({
     url: `/nk/tr/exportAlarmAly`,
-    method: "post",
+    method: "get",
     data,
   });
 }

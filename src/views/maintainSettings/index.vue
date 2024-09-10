@@ -38,7 +38,7 @@
         </el-form>
         <div class="positonBtn">
           <el-button type="primary" size="medium" @click="handleSet"
-            >维护项设定</el-button
+            >新增维护项</el-button
           >
         </div>
       </div>
@@ -54,6 +54,18 @@
             :table-column="tableColumn"
             :selection="false"
           >
+            <template v-slot:actionColumn>
+              <el-table-column label="操作" align="center" width="200">
+                <template slot-scope="{ row }">
+                  <span class="pointer cyan mlr10" @click="handleEdit(row)"
+                    >编辑</span
+                  >
+                  <span class="pointer red mlr10" @click="handleDel(row)"
+                    >删除</span
+                  >
+                </template>
+              </el-table-column>
+            </template>
           </custom-table>
         </div>
       </div>
@@ -70,15 +82,10 @@
       >
         <div class="reset-box">
           <div class="text">输入密码确认</div>
-          <el-form
-            v-if="visible"
-            ref="formDatas"
-            v-loading="loading"
-            :model="formDatas"
-          >
-            <el-form-item prop="passWord">
+          <el-form ref="formDatas" v-loading="loading" :model="formDatas">
+            <el-form-item prop="password">
               <el-input
-                v-model="formDatas.passWord"
+                v-model="formDatas.password"
                 clearable
                 placeholder="请输入密码"
                 maxlength="320"
@@ -86,50 +93,9 @@
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="handleSubmit2">确 认</el-button>
+            <el-button type="primary" @click="handleSubmit2()">确 认</el-button>
             <el-button @click="handleCancel2">取 消</el-button>
           </div>
-        </div>
-      </el-dialog>
-      <!-- 维护项设定 -->
-      <el-dialog
-        title="维护项设定"
-        width="1440px"
-        :visible.sync="tableVisible"
-        custom-class="custom-dialog"
-        append-to-body
-        :close-on-click-modal="false"
-        top="10vh"
-      >
-        <div class="set-box">
-          <el-button
-            type="primary"
-            style="margin-bottom: 24px"
-            size="medium"
-            @click="handAddSet"
-            >新增维护项</el-button
-          >
-          <custom-table
-            :fetch-loading="listLoading"
-            :data="list"
-            maxHeight="570px"
-            :loading-text="loadingText"
-            :table-column="tableColumn"
-            :selection="false"
-          >
-            <template v-slot:actionColumn>
-              <el-table-column label="操作" align="center" width="200">
-                <template slot-scope="{ row }">
-                  <span class="pointer mlr10" @click="handleEdit(row)"
-                    >修改</span
-                  >
-                  <span class="pointer red mlr10" @click="handleDel(row)"
-                    >删除</span
-                  >
-                </template>
-              </el-table-column>
-            </template>
-          </custom-table>
         </div>
       </el-dialog>
       <!-- 新增/修改维护项 -->
@@ -162,11 +128,26 @@
             </el-form-item>
             <el-form-item label="更换回数" prop="timeNum">
               <el-input
-                v-model="dioFormData.timeNum"
+                v-model.number="dioFormData.timeNum"
                 clearable
                 placeholder="请输入更换回数"
                 maxlength="320"
               />
+            </el-form-item>
+            <el-form-item label="开始时间" prop="servicingTime">
+              <el-date-picker
+                v-model="dioFormData.servicingTime"
+                placeholder="选择开始时间"
+                value-format="yyyy-MM-dd"
+                format="yyyy-MM-dd"
+                type="date"
+                :picker-options="{
+                  disabledDate: (time) => {
+                    return time.getTime() > Date.now();
+                  },
+                }"
+              >
+              </el-date-picker>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
@@ -191,7 +172,6 @@ export default {
   },
   data() {
     return {
-      value: "",
       loadingText: "加载中...",
       list: [],
       listLoading: false,
@@ -235,23 +215,23 @@ export default {
       // 根据接口和设计稿设置表头
       tableColumn: [
         {
-          prop: "ranking",
+          prop: "partName",
           label: "名称",
           width: "530px",
         },
         {
-          prop: "realName",
+          prop: "servicingTime",
           label: "维护时间",
           width: "339px",
           isBotton: true,
         },
         {
-          prop: "compare",
+          prop: "timeNum",
           label: "更换回数",
           width: "232px",
         },
         {
-          prop: "salesVolume",
+          prop: "replacementSchedule",
           label: "更换进程",
         },
       ],
@@ -266,18 +246,23 @@ export default {
       visible: false,
       visible2: false,
       loading: false,
-      tableVisible: false,
       formDatas: {
-        passWord: null,
-        setNumber: null,
+        password: null,
       },
       dioFormData: {
         partName: null,
         timeNum: null,
+        deviceId: null,
+        servicingTime: null,
       },
+      id: null,
+      pwdId: null,
       rules: {
         partName: [
           { required: true, message: "请输入维护项名称", trigger: "change" },
+        ],
+        servicingTime: [
+          { required: true, message: "请选择日期", trigger: "change" },
         ],
         timeNum: [
           { required: true, message: "请输入更换回数", trigger: "change" },
@@ -287,7 +272,7 @@ export default {
     };
   },
   created() {
-    this.getList();
+    // this.getList();
     this.$nextTick(() => {
       this.getListDeviceType();
     });
@@ -295,7 +280,6 @@ export default {
   methods: {
     // 搜索
     handleQuery() {
-      this.listQuery.pageNum = 1;
       this.getList();
     },
     // 工程查询项list
@@ -325,6 +309,7 @@ export default {
         }).then((res) => {
           if (res.code == 200) {
             this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+            this.dioFormData.deviceId = item.listDeviceAssetNumber;
           }
         });
       }
@@ -333,35 +318,18 @@ export default {
     // 重置按钮-时间
     handleReset(row) {
       this.visible = true;
-      console.log("row :>> ", row);
-      // this.$confirm("是否要重置时间?", "提示", {
-      //   confirmButtonText: "确定",
-      //   cancelButtonText: "取消",
-      //   type: "warning",
-      // })
-      //   .then(() => {
-      //     API.resetServicingTime({}).then((res) => {
-      //       if (res.code === "200") {
-      //         this.$message.success("重置成功!");
-      //         this.getList();
-      //       } else {
-      //         this.$message.error("重置失败!");
-      //         this.getList();
-      //       }
-      //     });
-      //   })
-      //   .catch(() => {
-      //     this.$message({
-      //       type: "info",
-      //       message: "已取消",
-      //     });
-      //   });
+      this.pwdId = row.id;
+      // this.$nextTick(() => {
+      //   this.handleSubmit2();
+      // });
     },
-    // 重置操作
     // 弹窗按钮-重置密码
     handleCancel2() {
-      if (this.$refs.formDatas != undefined) this.$refs.formDatas.resetFields();
-      this.visible = false;
+      if (this.$refs.formDatas != undefined) {
+        this.$refs.formDatas.resetFields();
+        this.formDatas.password = "";
+        this.visible = false;
+      }
     },
     // 输入密码确认后提交重置借口
     handleSubmit2() {
@@ -370,20 +338,24 @@ export default {
           API.verifyPwd({
             ...this.formDatas,
           }).then((res) => {
-            if (res.code === "200") {
+            if (res.code == 200) {
               this.$confirm("是否要重置时间?", "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 type: "warning",
               })
                 .then(() => {
-                  API.resetServicingTime({}).then((res) => {
-                    if (res.code === "200") {
+                  API.resetServicingTime({
+                    id: this.pwdId,
+                  }).then((res) => {
+                    if (res.code == 200) {
                       this.$message.success("重置成功!");
                       this.getList();
+                      this.visible = false;
                     } else {
                       this.$message.error("重置失败!");
                       this.getList();
+                      this.visible = false;
                     }
                   });
                 })
@@ -401,20 +373,20 @@ export default {
         }
       });
     },
-    // 弹窗按钮-维护项设定打开
     handleSet() {
-      this.tableVisible = true;
+      this.visible2 = true;
     },
-    // 关闭新建&编辑弹框
     handleClose() {
       this.handleCancel2();
       this.handleCancel3();
     },
-    // 弹窗按钮-打开
     handleEdit(row) {
-      this.tableVisible = true;
       this.visible2 = true;
       this.dioTitle = "修改维护项";
+      this.dioFormData.partName = row.partName;
+      this.dioFormData.timeNum = row.timeNum;
+      this.dioFormData.servicingTime = row.servicingTime;
+      this.id = row.id;
     },
     handleDel(row) {
       this.$confirm("是否要删除该数据?", "提示", {
@@ -423,8 +395,10 @@ export default {
         type: "warning",
       })
         .then(() => {
-          API.removeProdLife({}).then((res) => {
-            if (res.code === "200") {
+          API.removeProdLife({
+            id: row.id,
+          }).then((res) => {
+            if (res.code == 200) {
               this.$message.success("删除成功!");
               this.getList();
             } else {
@@ -440,30 +414,35 @@ export default {
           });
         });
     },
-    // 弹窗按钮-新建打开
     handAddSet() {
       this.visible2 = true;
       this.dioTitle = "新增维护项";
     },
-    // 编辑/新建
     handleSave() {
       this.$refs.dioFormData.validate((valid) => {
         if (valid) {
           const that = this;
           if (that.dioTitle === "新增维护项") {
-            API.addProdLifeNum({ ...this.dioFormData }).then((res) => {
-              if (res.code === "200") {
+            API.addProdLifeNum({
+              ...this.dioFormData,
+            }).then((res) => {
+              if (res.code == 200) {
                 that.getList();
                 that.$message.success("新建成功！");
+                that.handleClose();
                 that.visible2 = false;
               }
             });
           }
           if (that.dioTitle === "修改维护项") {
-            API.updateProdTimeNum({}).then((res) => {
-              if (res.code === "200") {
+            API.updateProdTimeNum({
+              ...this.dioFormData,
+              id: this.id,
+            }).then((res) => {
+              if (res.code == 200) {
                 that.$message.success("编辑成功！");
                 that.getList();
+                that.handleClose();
                 that.visible2 = false;
               }
             });
@@ -472,30 +451,26 @@ export default {
       });
     },
     handleCancel3() {
-      this.visible2 = false;
-      if (this.$refs.dioFormData != undefined)
+      if (this.$refs.dioFormData != undefined) {
         this.$refs.dioFormData.resetFields();
+        this.dioFormData.partName = "";
+        this.dioFormData.timeNum = "";
+        this.dioFormData.servicingTime = "";
+        this.visible2 = false;
+      }
     },
-    // 页面数据
     getList() {
-      this.list = [
-        {
-          ranking: "2",
-          realName: "种植f户",
-          compare: "下降",
-          salesVolume: "1234",
-        },
-      ];
-      // this.listLoading = true;
-      // API.getProdLifeNum({
-      //   ...this.listQuery,
-      // }).then((res) => {
-      //   if (res.code == "200") {
-      //     this.list = res.data || [];
-      //     this.listLoading = false;
-      //   }
-      //   this.listLoading = false;
-      // });
+      this.listLoading = true;
+      API.getProdLifeNum({
+        deviceId: this.dioFormData.deviceId,
+      }).then((res) => {
+        if (res.code == 200) {
+          this.listLoading = false;
+          this.list = res.data || res.data.list || [];
+          this.listLoading = false;
+        }
+        this.listLoading = false;
+      });
     },
   },
 };

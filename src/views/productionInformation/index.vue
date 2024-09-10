@@ -20,6 +20,7 @@
               v-model="listQuery[key]"
               :placeholder="val.placeholder"
               :clearable="val.clearable ? val.clearable : true"
+              @change="changeId(listQuery)"
             >
               <el-option
                 v-for="(item, optionIndex) in val.options"
@@ -57,10 +58,15 @@
       </div>
       <div class="chartStyle">
         <BarChart
+          v-if="this.chartOptions.xData.length > 0"
           :chartOptions="chartOptions"
           height="350px"
           style="margin-bottom: 10px"
         ></BarChart>
+        <el-empty
+          v-else
+          :image="require('@/assets/images/empty.png')"
+        ></el-empty>
       </div>
       <div class="content-box">
         <div class="left-box">
@@ -128,9 +134,9 @@ export default {
       listQuery: {
         pageNo: 0,
         pageSize: 0,
-        startTime: "2024-09-05",
-        endTime: "2024-09-06",
-        deviceId: "TR_D300_117",
+        startTime: null,
+        endTime: null,
+        deviceId: null,
         listDeviceType: null,
         listDeviceVersion: null,
         listDeviceAssetNumber: null,
@@ -217,7 +223,6 @@ export default {
   created() {
     // this.listQuery.deviceId = this.$route.query.id; // 接受页面路由跳转参数
     // let id = this.listQuery.deviceId;
-    this.getList();
     this.$nextTick(() => {
       this.getListDeviceType();
     });
@@ -231,11 +236,10 @@ export default {
     // }
   },
   methods: {
-    // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
+      this.getList();
     },
-    // 工程查询项list
     getListDeviceType() {
       API.listDeviceType().then((res) => {
         if (res.code == 200) {
@@ -244,7 +248,6 @@ export default {
       });
     },
     changeId(item) {
-      // 查询机型列表
       let deviceTypeId = item.listDeviceType;
       let version = item.listDeviceVersion;
       if (!version) {
@@ -254,54 +257,38 @@ export default {
           }
         });
       } else if (version) {
-        // 查询机号列表
         API.listDeviceAssetNumber({
           deviceTypeId: deviceTypeId,
           version: version,
         }).then((res) => {
           if (res.code == 200) {
             this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+            this.listQuery.deviceId = item.listDeviceAssetNumber;
           }
         });
       }
     },
-
     // 控制图
     controlFn() {},
-    getList(id) {
-      // 获取表格详情
+    getList() {
       API.getProdInfo({
         ...this.listQuery,
       }).then((res) => {
         this.listLoading = true;
         if (res.code == "200") {
           this.list = res.data || [];
+          this.chartOptions.title = "生产计数";
+          this.chartOptions.subtext = "(个)";
+          this.chartOptions.xData = res.data.map((item) => {
+            return item.date;
+          });
+          this.chartOptions.yData = res.data.map((item) => {
+            return item.sumNum;
+          });
           this.listLoading = false;
         }
         this.listLoading = false;
       });
-
-      this.chartOptions.title = "生产计数";
-      this.chartOptions.subtext = "(个)";
-      this.chartOptions.xData = [
-        "+箔切",
-        "+引线供给错误",
-        "-箔切",
-        "电解纸切1",
-        "+箔切",
-        "+引线供给错误",
-        "-箔切",
-        "电解纸切1",
-      ];
-      this.chartOptions.yData = [
-        "134",
-        "321",
-        "323",
-        "222",
-        "145",
-        "132",
-        "132",
-      ];
     },
     // 时间处理
     changeTime(e) {
@@ -409,5 +396,8 @@ export default {
 }
 ::v-deep .el-table {
   height: 410px !important;
+}
+::v-deep .el-empty__description p {
+  font-size: 22px;
 }
 </style>

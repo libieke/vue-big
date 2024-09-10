@@ -36,6 +36,12 @@
         align="center"
         width="55"
       />
+      <el-table-column v-if="sort" label="Top" align="center" width="100">
+        <template slot-scope="scope">
+          {{ scope.$index + 1 }}
+        </template>
+      </el-table-column>
+
       <el-table-column
         v-for="(item, index) in tableTitle"
         :key="item.key ? item.key : index"
@@ -55,7 +61,23 @@
             </div>
           </template>
           <template v-else>
-            <span>{{ scope.row[scope.column.property] }} </span>
+            <span v-if="item.formatter"
+              >{{
+                item.formatter(
+                  scope.row,
+                  scope.column,
+                  scope.row[scope.column.property],
+                  scope.$index
+                )
+              }}
+            </span>
+            <span v-else
+              >{{
+                scope.row[scope.column.property]
+                  ? scope.row[scope.column.property]
+                  : "- -"
+              }}
+            </span>
           </template>
         </template>
       </el-table-column>
@@ -88,6 +110,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    sort: {
+      type: Boolean,
+      default: false,
+    },
     showSummary: {
       type: Boolean,
       default: false,
@@ -103,8 +129,7 @@ export default {
   data() {
     return {
       scrolltimer: null,
-      // data: this.data,
-      animate: false, //默认false
+      animate: false,
     };
   },
   computed: {
@@ -155,29 +180,21 @@ export default {
       this.$emit("resetFn", row);
     },
 
-    // 自动轮播效果
     autoScroll(stop) {
       const table = this.$refs.tableScroll;
-      // 拿到表格中承载数据的div元素
       const divData = table.$refs.bodyWrapper;
-      // 拿到元素后，对元素进行定时增加距离顶部距离，实现滚动效果(此配置为每100毫秒移动1像素)
       if (stop) {
-        //再通过事件监听，监听到 组件销毁 后，再执行关闭计时器。
         window.clearInterval(this.scrolltimer);
       } else {
         this.scrolltimer = window.setInterval(() => {
-          // 元素自增距离顶部1像素
           divData.scrollTop += 1;
-          // 判断元素是否滚动到底部(可视高度+距离顶部=整个高度)
           if (
             divData.clientHeight + divData.scrollTop >=
             divData.scrollHeight
           ) {
-            // 重置table距离顶部距离
-            // this.data.unshift(...this.data);
             divData.scrollTop = 0;
           }
-        }, 30); // 滚动速度
+        }, 30);
       }
     },
   },
