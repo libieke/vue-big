@@ -141,6 +141,7 @@ export default {
         listDeviceVersion: null,
         listDeviceAssetNumber: null,
       },
+      deviceId: null,
       // 查询表单对象
       listQueryFormModel: {
         listDeviceType: {
@@ -221,19 +222,13 @@ export default {
     };
   },
   created() {
-    // this.listQuery.deviceId = this.$route.query.id; // 接受页面路由跳转参数
-    // let id = this.listQuery.deviceId;
+    let deviceId = this.$route.query.deviceId;
+    if (deviceId) {
+      this.getList(deviceId);
+    } else return;
     this.$nextTick(() => {
       this.getListDeviceType();
     });
-    // if (id) {
-    //   // this.editState = true;
-    //   // this.topTitle = "编辑商品";
-    //   // this.goodsId = id;
-    //   // this.queryProxyInfo(id);
-    // } else {
-    //   this.getList(id);
-    // }
   },
   methods: {
     handleQuery() {
@@ -270,7 +265,8 @@ export default {
     },
     // 控制图
     controlFn() {},
-    getList() {
+    getList(deviceId) {
+      this.listQuery.deviceId = deviceId;
       API.getProdInfo({
         ...this.listQuery,
       }).then((res) => {
@@ -292,8 +288,8 @@ export default {
     },
     // 时间处理
     changeTime(e) {
-      this.listQuery.startDate = e[0];
-      this.listQuery.endDate = e[1];
+      this.listQuery.startTime = e[0];
+      this.listQuery.endTime = e[1];
     },
     // 数据导出
     outQuery() {

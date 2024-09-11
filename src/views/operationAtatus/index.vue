@@ -28,39 +28,58 @@
         v-for="(item, index) in dataList"
         :key="index"
         @click="toDetials(item)"
-        :v-loading="listLoading"
       >
         <div class="top-box">
           <div class="left text-green">
-            <div class="left-text1">卷取</div>
-            <div class="left-text1">S9528</div>
-            <div>
+            <!-- <div class="left-text1">{{ item.deviceName }}</div> -->
+            <div
+              :class="[
+                'left-text1',
+                item.deviceState == '1'
+                  ? 'text-green'
+                  : item.deviceState == '2'
+                  ? 'text-yellow'
+                  : 'text-red',
+              ]"
+            >
+              {{ item.deviceName }}
+            </div>
+            <div v-if="item.maintenance">
               <img src="@/assets/images/respect.png" />
             </div>
           </div>
-          <div class="pointBig green"></div>
+          <div
+            :class="[
+              'pointBig',
+              item.deviceState == '1'
+                ? 'green'
+                : item.deviceState == '2'
+                ? 'yellow'
+                : 'red',
+            ]"
+          ></div>
         </div>
         <div class="item-content">
           <div class="item">
             <div class="content-title">生产信息</div>
             <div class="item-info">
               <div class="item-goods">
-                <div class="item-num">{{ item.num }}</div>
-                <div class="item-text">{{ item.text }}</div>
-              </div>
-              <div class="line">
-                <el-divider direction="vertical"></el-divider>
-              </div>
-              <div class="item-goods">
-                <div class="item-num">9000</div>
+                <div class="item-num">{{ item.gpNum || "--" }}</div>
                 <div class="item-text">良品数</div>
               </div>
               <div class="line">
                 <el-divider direction="vertical"></el-divider>
               </div>
               <div class="item-goods">
-                <div class="item-num">9000</div>
-                <div class="item-text">良品数</div>
+                <div class="item-num">{{ item.ngNum || "--" }}</div>
+                <div class="item-text">不良数</div>
+              </div>
+              <div class="line">
+                <el-divider direction="vertical"></el-divider>
+              </div>
+              <div class="item-goods">
+                <div class="item-num">{{ item.gpRate || "--" }}</div>
+                <div class="item-text">良品率</div>
               </div>
             </div>
           </div>
@@ -68,22 +87,22 @@
             <div style="margin-top: 30px" class="content-title">稼动数据</div>
             <div class="item-info">
               <div class="item-goods">
-                <div class="item-num">9000</div>
-                <div class="item-text">良品数</div>
+                <div class="item-num">{{ item.gpUrate || "--" }}</div>
+                <div class="item-text">良品稼动率</div>
               </div>
               <div class="line">
                 <el-divider direction="vertical"></el-divider>
               </div>
               <div class="item-goods">
-                <div class="item-num">9000</div>
-                <div class="item-text">良品数</div>
+                <div class="item-num">{{ item.purate || "--" }}</div>
+                <div class="item-text">生产稼动率</div>
               </div>
               <div class="line">
                 <el-divider direction="vertical"></el-divider>
               </div>
               <div class="item-goods">
-                <div class="item-num">9000</div>
-                <div class="item-text">良品数</div>
+                <div class="item-num">{{ item.pmtbf || "--" }}</div>
+                <div class="item-text">MTBF</div>
               </div>
             </div>
           </div>
@@ -115,7 +134,6 @@ export default {
     return {
       showMoreCard: true,
       total: 0,
-      listLoading: false,
       hideOnSinglePage: false,
       listQuery: {
         pageNo: 1, // pageNum
@@ -126,59 +144,37 @@ export default {
     };
   },
   components: { SmallPagination },
-  mounted() {
+  created() {
     this.getList();
   },
   methods: {
-    // 全展示
     showMore() {
       if (this.showMoreCard) {
         this.showMoreCard = false;
         document.getElementById("cardW").style.zoom = 0.5;
-        console.log("object :>> ", document.getElementById("cardW").style);
-        this.dataList = [
-          {
-            num: "9000",
-            text: "良品数",
-          },
-          {
-            num: "9000",
-            text: "良品数",
-          },
-        ];
+        this.getList();
       } else {
         this.showMoreCard = true;
         document.getElementById("cardW").style.zoom = 1;
         this.getList();
       }
     },
-    // 页面详情
     toDetials(item) {
-      console.log("object :>> ", item);
-      // if (row.shopGoodStatus === 1 && status !== "detail") {
-      //   this.$message.warning("已上架商品无法编辑");
-      //   return false;
-      // }
       this.$router.push({
         path: "/productionInformation",
-        // query: {
-        //   id: row.goodsId ? row.goodsId : "",
-        //   status: status ? status : "",
-        // },
+        query: {
+          deviceId: item.deviceId,
+        },
       });
     },
-    // 页面数据
     getList() {
       // 获取表格详情
       API.getHome({
         ...this.listQuery,
       }).then((res) => {
-        this.listLoading = true;
         if (res.code == "200") {
-          this.dataList = res.data || {};
-          this.listLoading = false;
+          this.dataList = res.data || [];
         }
-        this.listLoading = false;
       });
     },
   },
@@ -338,9 +334,11 @@ export default {
   justify-content: center;
   background: transparent;
 }
-// ::v-deep .el-pagination {
-//   margin: -15px auto;
-// }
+
+.empty {
+  margin-top: 350px;
+}
+
 // prev和next箭头的样式
 ::v-deep .el-pagination .btn-next,
 ::v-deep .el-pagination .btn-prev {
@@ -354,5 +352,8 @@ export default {
 // active的页码样式
 ::v-deep .el-pager li.active {
   color: #003c7c !important;
+}
+::v-deep .el-empty__description p {
+  font-size: 22px;
 }
 </style>

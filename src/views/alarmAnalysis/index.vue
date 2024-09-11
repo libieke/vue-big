@@ -15,14 +15,15 @@
             :label="val.show ? val.label : ''"
             :prop="key"
           >
-            <el-input
+            <el-autocomplete
               v-if="(val.type == 'input') & (batchShow == true)"
               v-model="listQuery[key]"
-              maxlength="50"
               :placeholder="val.placeholder"
+              value-key="pbatchNo"
+              :fetch-suggestions="querySearchAsync"
+              @input="loadAll"
+              @select="handleSelect"
               clearable
-              :fetch-suggestions="getBatchList"
-              @keyup="searchBatch"
             />
             <el-select
               v-if="val.type == 'select'"
@@ -135,11 +136,9 @@ export default {
         pbatchNo: null,
       },
       getBatchList: [],
-      // tab
       radio1: "日期",
       dataShow: true,
       batchShow: false,
-      // 查询表单对象
       listQueryFormModel: {
         listDeviceType: {
           type: "select",
@@ -180,7 +179,7 @@ export default {
           show: false,
         },
       },
-      // 根据接口和设计稿设置表头
+      restaurants: [],
       tableColumn: [
         {
           prop: "deviceWarningCode",
@@ -207,7 +206,6 @@ export default {
           label: "报警详情",
         },
       ],
-      // echarts数据
       chartOptions: {
         yData: [],
         xData: [],
@@ -224,11 +222,9 @@ export default {
     });
   },
   methods: {
-    // 搜索
     handleQuery() {
       this.getList();
     },
-    // 工程查询项list
     getListDeviceType() {
       //
       API.listDeviceType().then((res) => {
@@ -238,7 +234,6 @@ export default {
       });
     },
     changeId(item) {
-      // 查询机型列表
       let deviceTypeId = item.listDeviceType;
       let version = item.listDeviceVersion;
       if (!version) {
@@ -248,7 +243,6 @@ export default {
           }
         });
       } else if (version) {
-        // 查询机号列表
         API.listDeviceAssetNumber({
           deviceTypeId: deviceTypeId,
           version: version,
@@ -260,14 +254,34 @@ export default {
         });
       }
     },
-    searchBatch() {
-      API.getBatch({ deviceId: this.listQuery.deviceId }).then((res) => {
+    loadAll() {
+      API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
         if (res.code == 200) {
-          console.log("res :>> ", res);
+          this.restaurants = res.data || [];
         }
       });
     },
-    // tab切换
+    querySearchAsync(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString
+        ? restaurants.filter(this.createStateFilter(queryString))
+        : restaurants;
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 3000 * Math.random());
+    },
+    createStateFilter(queryString) {
+      return (state) => {
+        return (
+          state.pbatchNo.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
+      };
+    },
+    handleSelect(item) {
+      console.log(item);
+    },
     changeTab(e) {
       if (e === "日期") {
         this.batchShow = false;
@@ -291,7 +305,6 @@ export default {
         this.listLoading = true;
         if (res.code == 200) {
           this.list = res.data || res.data.list || [];
-          // 图表
           this.chartOptions.title = "报警次数(个)";
           this.chartOptions.subtext = "报警次数(%)";
           this.chartOptions.xData = res.data.map((item) => {
@@ -310,12 +323,10 @@ export default {
         this.listLoading = false;
       });
     },
-    // 时间处理
     changeTime(e) {
-      this.listQuery.startDate = e[0];
-      this.listQuery.endDate = e[1];
+      this.listQuery.startTime = e[0];
+      this.listQuery.endTime = e[1];
     },
-    // 数据导出
     outQuery() {
       API.exportAlarmAly({
         ...this.listQuery,

@@ -15,13 +15,15 @@
             :label="val.show ? val.label : ''"
             :prop="key"
           >
-            <el-input
+            <el-autocomplete
               v-if="(val.type == 'input') & (batchShow == true)"
               v-model="listQuery[key]"
-              maxlength="50"
               :placeholder="val.placeholder"
+              value-key="pbatchNo"
+              :fetch-suggestions="querySearchAsync"
+              @input="loadAll"
+              @select="handleSelect"
               clearable
-              @blur="getBatch"
             />
             <el-select
               v-if="val.type == 'select'"
@@ -164,6 +166,7 @@ export default {
           show: false,
         },
       },
+      restaurants: [],
       // 根据接口和设计稿设置表头
       tableColumn: [
         {
@@ -265,7 +268,34 @@ export default {
         this.listQuery.endTime = "";
       }
     },
+    loadAll() {
+      API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
+        if (res.code == 200) {
+          this.restaurants = res.data || [];
+        }
+      });
+    },
+    querySearchAsync(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString
+        ? restaurants.filter(this.createStateFilter(queryString))
+        : restaurants;
 
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 3000 * Math.random());
+    },
+    createStateFilter(queryString) {
+      return (state) => {
+        return (
+          state.pbatchNo.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
+      };
+    },
+    handleSelect(item) {
+      console.log(item);
+    },
     getList() {
       API.getAlarmHis({
         ...this.listQuery,

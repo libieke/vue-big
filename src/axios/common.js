@@ -33,10 +33,10 @@ export function listDeviceAssetNumber(data) {
   });
 }
 
-// 查询批次号
-export function getBatch(data) {
+// 查询设备批次号
+export function listPBatchNo(data) {
   return request({
-    url: `/nk/tr/getBatch`,
+    url: `/nk/tr/listPBatchNo`,
     method: "post",
     data,
   });
@@ -70,20 +70,20 @@ export function getProdInfo(data) {
 }
 
 // 导出
-// export function getProdInfo(data) {
-//   return request({
-//     url: `/nk/export/getProdInfo`,
-//     method: "post",
-//     data,
-//   });
-// }
+export function exportGetProdInfo(data) {
+  return request({
+    url: `/nk/export/getProdInfo`,
+    method: "post",
+    data,
+  });
+}
 
 /**
  * 生产分析
  * @param {*} data
  * @returns
  */
-// 分页查询列表
+// 不良品的查询
 export function getProdInfoNg(data) {
   return request({
     url: `/nk/getProdInfoNg`,

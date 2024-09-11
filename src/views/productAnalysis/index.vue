@@ -15,11 +15,14 @@
             :label="val.show ? val.label : ''"
             :prop="key"
           >
-            <el-input
+            <el-autocomplete
               v-if="(val.type == 'input') & (batchShow == true)"
               v-model="listQuery[key]"
-              maxlength="50"
               :placeholder="val.placeholder"
+              value-key="pbatchNo"
+              :fetch-suggestions="querySearchAsync"
+              @input="loadAll"
+              @select="handleSelect"
               clearable
             />
             <el-select
@@ -204,6 +207,7 @@ export default {
           show: false,
         },
       },
+      restaurants: [],
       // 根据接口和设计稿设置表头
       tableColumn: [
         {
@@ -342,6 +346,34 @@ export default {
         "电解纸切1",
       ];
       this.chartOptions.lineData = ["3", "6", "2", "0", "13", "11", "9"];
+    },
+    loadAll() {
+      API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
+        if (res.code == 200) {
+          this.restaurants = res.data || [];
+        }
+      });
+    },
+    querySearchAsync(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString
+        ? restaurants.filter(this.createStateFilter(queryString))
+        : restaurants;
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 3000 * Math.random());
+    },
+    createStateFilter(queryString) {
+      return (state) => {
+        return (
+          state.pbatchNo.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
+      };
+    },
+    handleSelect(item) {
+      console.log(item);
     },
     // 时间处理
     changeTime(e) {

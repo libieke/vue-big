@@ -10,7 +10,7 @@ module.exports = {
   publicPath: "./",
   lintOnSave: false,
   devServer: {
-    host: "10.12.58.168",
+    // host: "10.12.58.168",
     hot: true,
     port: port,
     open: true,
