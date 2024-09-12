@@ -97,7 +97,7 @@
             :loading-text="loadingText"
             :table-column="tableColumn"
             :selection="false"
-            :sort="sortShow"
+            :sort="this.list.length > 0 ? true : false"
           >
           </custom-table>
         </div>
@@ -123,7 +123,6 @@ export default {
       value: "",
       loadingText: "加载中...",
       list: [],
-      sortShow: false,
       listLoading: false,
       listQuery: {
         deviceId: null,
@@ -301,9 +300,6 @@ export default {
         this.listLoading = true;
         if (res.code == 200) {
           this.list = res.data || res.data.list || [];
-          if (this.list && this.list.length > 0) {
-            this.sortShow = false;
-          }
           this.chartOptions.title = "报警次数(个)";
           this.chartOptions.subtext = "报警次数(%)";
           this.chartOptions.xData = res.data.map((item) => {
@@ -316,7 +312,6 @@ export default {
             return item.countPer.replace(/%/, "");
           });
           this.chartOptions.lineData = result;
-          this.sortShow = true;
           this.listLoading = false;
         }
         this.listLoading = false;
