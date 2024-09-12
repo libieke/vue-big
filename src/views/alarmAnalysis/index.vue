@@ -22,7 +22,6 @@
               value-key="pbatchNo"
               :fetch-suggestions="querySearchAsync"
               @input="loadAll"
-              @select="handleSelect"
               clearable
             />
             <el-select
@@ -279,9 +278,6 @@ export default {
         );
       };
     },
-    handleSelect(item) {
-      console.log(item);
-    },
     changeTab(e) {
       if (e === "日期") {
         this.batchShow = false;
@@ -305,6 +301,9 @@ export default {
         this.listLoading = true;
         if (res.code == 200) {
           this.list = res.data || res.data.list || [];
+          if (this.list && this.list.length > 0) {
+            this.sortShow = false;
+          }
           this.chartOptions.title = "报警次数(个)";
           this.chartOptions.subtext = "报警次数(%)";
           this.chartOptions.xData = res.data.map((item) => {
@@ -330,18 +329,27 @@ export default {
     outQuery() {
       API.exportAlarmAly({
         ...this.listQuery,
-      }).then((res) => {
-        if (res.code == 200) {
-          console.log("res :>> ", res);
-        }
-      });
-      // require.ensure([], () => {
-      //   const { export_json_to_excel } = require("@/excel/Export2Excel");
-      //   const fieldName = this.tableColumn.flatMap((item) => item.label);
-      //   const filterVal = this.tableColumn.flatMap((item) => item.prop);
-      //   const data = this.list.map((v) => filterVal.map((j) => v[j]));
-      //   export_json_to_excel(fieldName, data, "用户列表");
-      // });
+      })
+        .then((res) => {
+          let fileName = decodeURIComponent(
+            res.headers["content-disposition"].split("'")[2]
+          );
+          let url = window.URL.createObjectURL(
+            new Blob([res.data], { type: "application/vnd.xlsx" })
+          );
+          let a = document.createElement("a");
+          a.style.display = "none";
+          a.href = url;
+          a.setAttribute("download", `${fileName}`);
+          document.body.appendChild(a);
+          a.click();
+          url = window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          this.$message.error("导出失败");
+        });
     },
   },
 };

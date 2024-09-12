@@ -73,11 +73,11 @@ export function getProdInfo(data) {
 export function exportGetProdInfo(data) {
   return request({
     url: `/nk/export/getProdInfo`,
-    method: "post",
+    method: "POST",
     data,
+    responseType: "blob",
   });
 }
-
 /**
  * 生产分析
  * @param {*} data
@@ -96,7 +96,7 @@ export function getProdInfoNg(data) {
 // export function getAlarmHis(data) {
 //   return request({
 //     url: `/nk/tr/getAlarmHis`,
-//     method: "post",
+//     method: "get",
 //     data,
 //   });
 // }
@@ -130,11 +130,12 @@ export function getAlarmAly(data) {
 }
 
 // 导出报警分析列表
-export function exportAlarmAly(data) {
+export function exportAlarmAly(params) {
   return request({
     url: `/nk/tr/exportAlarmAly`,
     method: "get",
-    data,
+    params: params,
+    responseType: "blob",
   });
 }
 

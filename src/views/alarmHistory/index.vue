@@ -241,17 +241,13 @@ export default {
         });
       }
     },
-
-    // 批次号查询
     getBatch() {
-      API.getBatch({ deviceId: this.listQuery.deviceId }).then((res) => {
+      API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
         if (res.code == 200) {
           console.log("res :>> ", res);
         }
       });
     },
-
-    // tab切换
     changeTab(e) {
       if (e === "日期") {
         this.batchShow = false;

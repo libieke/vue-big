@@ -225,7 +225,7 @@ export default {
     let deviceId = this.$route.query.deviceId;
     if (deviceId) {
       this.getList(deviceId);
-    } else return;
+    }
     this.$nextTick(() => {
       this.getListDeviceType();
     });
@@ -233,6 +233,10 @@ export default {
   methods: {
     handleQuery() {
       this.listQuery.pageNum = 1;
+      // this.listQuery.listDeviceType = "";
+      // this.listQuery.listDeviceVersion = "";
+      // this.listQuery.listDeviceAssetNumber = "";
+      // this.listQuery.deviceId = "";
       this.getList();
     },
     getListDeviceType() {
@@ -295,18 +299,27 @@ export default {
     outQuery() {
       API.exportGetProdInfo({
         ...this.listQuery,
-      }).then((res) => {
-        if (res.code == 200) {
-          console.log("res :>> ", res);
-        }
-      });
-      // require.ensure([], () => {
-      //   const { export_json_to_excel } = require("@/excel/Export2Excel");
-      //   const fieldName = this.tableColumn.flatMap((item) => item.label);
-      //   const filterVal = this.tableColumn.flatMap((item) => item.prop);
-      //   const data = this.list.map((v) => filterVal.map((j) => v[j]));
-      //   export_json_to_excel(fieldName, data, "用户列表");
-      // });
+      })
+        .then((res) => {
+          let fileName = decodeURIComponent(
+            res.headers["content-disposition"].split("'")[2]
+          );
+          let url = window.URL.createObjectURL(
+            new Blob([res.data], { type: "application/vnd.xlsx" })
+          );
+          let a = document.createElement("a");
+          a.style.display = "none";
+          a.href = url;
+          a.setAttribute("download", `${fileName}`);
+          document.body.appendChild(a);
+          a.click();
+          url = window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          this.$message.error("导出失败");
+        });
     },
   },
 };

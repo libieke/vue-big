@@ -54,7 +54,7 @@
             :table-column="tableColumn"
             :selection="false"
           >
-            <template v-slot:actionColumn>
+            <template v-if="list.length > 0 && list" v-slot:actionColumn>
               <el-table-column label="操作" align="center" width="200">
                 <template slot-scope="{ row }">
                   <span class="pointer cyan mlr10" @click="handleEdit(row)"

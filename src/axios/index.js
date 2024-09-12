@@ -24,6 +24,9 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   (response) => {
     const res = response.data;
+    if (response.config.responseType === "blob") {
+      return response;
+    }
     if (res.code !== 200) {
       Message({
         message: res.msg || "Error",
@@ -31,9 +34,8 @@ service.interceptors.response.use(
         duration: 5 * 1000,
       });
       return Promise.reject(new Error(res.msg || "Error"));
-    } else {
-      return res;
     }
+    return res;
   },
   (error) => {
     Message({

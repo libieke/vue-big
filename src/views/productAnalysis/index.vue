@@ -322,30 +322,6 @@ export default {
         }
         this.listLoading = false;
       });
-
-      this.chartOptions.title = "不良计数(个)";
-      this.chartOptions.subtext = "不良计数(%)";
-
-      this.chartOptions.yData = [
-        "20210126",
-        "20210127",
-        "20210128",
-        "20210129",
-        "20210130",
-        "20210131",
-        "20210201",
-      ];
-      this.chartOptions.xData = [
-        "+箔切",
-        "+引线供给错误",
-        "-箔切",
-        "电解纸切1",
-        "+箔切",
-        "+引线供给错误",
-        "-箔切",
-        "电解纸切1",
-      ];
-      this.chartOptions.lineData = ["3", "6", "2", "0", "13", "11", "9"];
     },
     loadAll() {
       API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
@@ -382,13 +358,29 @@ export default {
     },
     // 数据导出
     outQuery() {
-      require.ensure([], () => {
-        const { export_json_to_excel } = require("@/excel/Export2Excel");
-        const fieldName = this.tableColumn.flatMap((item) => item.label);
-        const filterVal = this.tableColumn.flatMap((item) => item.prop);
-        const data = this.list.map((v) => filterVal.map((j) => v[j]));
-        export_json_to_excel(fieldName, data, "用户列表");
-      });
+      API.exportGetProdInfo({
+        ...this.listQuery,
+      })
+        .then((res) => {
+          let fileName = decodeURIComponent(
+            res.headers["content-disposition"].split("'")[2]
+          );
+          let url = window.URL.createObjectURL(
+            new Blob([res.data], { type: "application/vnd.xlsx" })
+          );
+          let a = document.createElement("a");
+          a.style.display = "none";
+          a.href = url;
+          a.setAttribute("download", `${fileName}`);
+          document.body.appendChild(a);
+          a.click();
+          url = window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          this.$message.error("导出失败");
+        });
     },
   },
 };
