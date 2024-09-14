@@ -126,6 +126,7 @@ export default {
       listLoading: false,
       listQuery: {
         deviceId: null,
+        deviceTypeId: null,
         listDeviceType: null,
         listDeviceVersion: null,
         listDeviceAssetNumber: null,
@@ -226,10 +227,8 @@ export default {
   watch: {
     listQueryFn: {
       handler(newVal, oldVal) {
-        let newRes = newVal.deviceId;
-        let oldRes = oldVal.deviceId;
-        console.log("newRes :>> ", newRes);
-        console.log("oldRes :>> ", oldRes);
+        let newRes = newVal.deviceTypeId;
+        let oldRes = oldVal.deviceTypeId;
         if (newRes != oldRes) {
           this.listQuery.listDeviceVersion = "";
           this.listQuery.listDeviceAssetNumber = "";
@@ -250,23 +249,24 @@ export default {
       });
     },
     changeId(item) {
-      this.listQuery.deviceId = item.listDeviceType;
+      this.listQuery.deviceTypeId = item.listDeviceType;
       let version = item.listDeviceVersion;
       if (!version) {
-        API.listDeviceVersion({ deviceTypeId: this.listQuery.deviceId }).then(
-          (res) => {
-            if (res.code == 200) {
-              this.listQueryFormModel.listDeviceVersion.options = res.data;
-            }
+        API.listDeviceVersion({
+          deviceTypeId: this.listQuery.deviceTypeId,
+        }).then((res) => {
+          if (res.code == 200) {
+            this.listQueryFormModel.listDeviceVersion.options = res.data;
           }
-        );
+        });
       } else if (version) {
         API.listDeviceAssetNumber({
-          deviceTypeId: this.listQuery.deviceId,
+          deviceTypeId: this.listQuery.deviceTypeId,
           version: version,
         }).then((res) => {
           if (res.code == 200) {
             this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+            this.listQuery.deviceId = item.listDeviceAssetNumber;
           }
         });
       }

@@ -70,11 +70,11 @@ export function getProdInfo(data) {
 }
 
 // 导出
-export function exportGetProdInfo(data) {
+export function exportGetProdInfo(params) {
   return request({
     url: `/nk/export/getProdInfo`,
-    method: "POST",
-    data,
+    method: "get",
+    params,
     responseType: "blob",
   });
 }

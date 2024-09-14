@@ -172,8 +172,9 @@ export default {
       API.getHome({
         ...this.listQuery,
       }).then((res) => {
-        if (res.code == "200") {
-          this.dataList = res.data || [];
+        if (res.code == 200) {
+          this.dataList = res.data.list || [];
+          this.total = res.data.pageNo;
         }
       });
     },

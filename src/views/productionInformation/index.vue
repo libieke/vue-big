@@ -137,11 +137,11 @@ export default {
         startTime: null,
         endTime: null,
         deviceId: null,
+        typeId: null,
         listDeviceType: null,
         listDeviceVersion: null,
         listDeviceAssetNumber: null,
       },
-      deviceId: null,
       // 查询表单对象
       listQueryFormModel: {
         listDeviceType: {
@@ -222,9 +222,10 @@ export default {
     };
   },
   created() {
-    let deviceId = this.$route.query.deviceId;
-    if (deviceId) {
-      this.getList(deviceId);
+    // let deviceId = this.$route.query.deviceId;
+    this.listQuery.deviceId = this.$route.query.deviceId;
+    if (this.listQuery.deviceId) {
+      this.getList();
     }
     this.$nextTick(() => {
       this.getListDeviceType();
@@ -285,8 +286,7 @@ export default {
     },
     // 控制图
     controlFn() {},
-    getList(deviceId) {
-      this.listQuery.deviceId = deviceId;
+    getList() {
       API.getProdInfo({
         ...this.listQuery,
       }).then((res) => {
