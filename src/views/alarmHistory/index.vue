@@ -203,6 +203,25 @@ export default {
       this.getListDeviceType();
     });
   },
+  computed: {
+    listQueryFn() {
+      return JSON.parse(JSON.stringify(this.listQuery));
+    },
+  },
+  watch: {
+    listQueryFn: {
+      handler(newVal, oldVal) {
+        let newRes = newVal.deviceId;
+        let oldRes = oldVal.deviceId;
+        if (newRes != oldRes) {
+          this.listQuery.listDeviceVersion = "";
+          this.listQuery.listDeviceAssetNumber = "";
+        }
+      },
+      deep: true, // 深度侦听(对象里面层的值改变)
+    },
+  },
+
   methods: {
     // 搜索
     handleQuery() {
@@ -241,10 +260,11 @@ export default {
         });
       }
     },
+
     getBatch() {
       API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
         if (res.code == 200) {
-          console.log("res :>> ", res);
+          // console.log("res :>> ", res);
         }
       });
     },
