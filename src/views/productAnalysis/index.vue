@@ -19,7 +19,7 @@
               v-if="(val.type == 'input') & (batchShow == true)"
               v-model="listQuery[key]"
               :placeholder="val.placeholder"
-              value-key="pbatchNo"
+              value-key="patchNo"
               :fetch-suggestions="querySearchAsync"
               @input="loadAll"
               @select="handleSelect"
@@ -105,23 +105,23 @@
         <div class="right-box">
           <div class="right-item">
             <div class="item-box">
-              <div class="item-num">0</div>
+              <div class="item-num">{{ this.otherData.okNumL || 0 }}</div>
               <div class="item-text">OK总数</div>
             </div>
             <div class="item-box">
-              <div class="item-num">0</div>
+              <div class="item-num">{{ this.otherData.ngNum || 0 }}</div>
               <div class="item-text">NG总数</div>
             </div>
             <div class="item-box">
-              <div class="item-num">0</div>
+              <div class="item-num">{{ this.otherData.okRate || "NaN%" }}</div>
               <div class="item-text">OK总数总比例</div>
             </div>
             <div class="item-box">
-              <div class="item-num">0</div>
+              <div class="item-num">{{ this.otherData.ngRate || "NaN%" }}</div>
               <div class="item-text">NG总数总比例</div>
             </div>
             <div v-if="!isShowCountry" class="item-box">
-              <div class="item-num">0</div>
+              <div class="item-num">{{ this.otherData.fjNum || 0 }}</div>
               <div class="item-text">外观机返检数</div>
             </div>
           </div>
@@ -148,6 +148,13 @@ export default {
       value: "",
       loadingText: "加载中...",
       list: [],
+      otherData: {
+        okNumL: "",
+        ngNum: "",
+        fjNum: "",
+        okRate: "",
+        ngRate: "",
+      },
       sortShow: false,
       listLoading: false,
       // 自定义Pagination的参数
@@ -159,7 +166,7 @@ export default {
         listDeviceAssetNumber: null,
         startTime: null,
         endTime: null,
-        batchNo: null,
+        patchNo: null,
       },
       isShowCountry: false, // 控制按钮限隐
       // tab
@@ -200,7 +207,7 @@ export default {
           label: "日期",
           show: true,
         },
-        pbatchNo: {
+        patchNo: {
           type: "input",
           label: "批次号",
           placeholder: "请输入批次号",
@@ -234,7 +241,6 @@ export default {
     };
   },
   created() {
-    // this.getList();
     this.$nextTick(() => {
       this.getListDeviceType();
     });
@@ -298,13 +304,13 @@ export default {
         this.batchShow = false;
         this.dataShow = true;
         this.listQueryFormModel.startDate.show = true;
-        this.listQueryFormModel.pbatchNo.show = false;
-        this.listQuery.pbatchNo = "";
+        this.listQueryFormModel.patchNo.show = false;
+        this.listQuery.patchNo = "";
       } else if (e === "批次") {
         this.dataShow = false;
         this.batchShow = true;
         this.listQueryFormModel.startDate.show = false;
-        this.listQueryFormModel.pbatchNo.show = true;
+        this.listQueryFormModel.patchNo.show = true;
         this.listQuery.startTime = "";
         this.listQuery.endTime = "";
       }
@@ -315,17 +321,18 @@ export default {
       }).then((res) => {
         this.listLoading = true;
         if (res.code == 200) {
-          this.list = res.data.list || res.data || [];
+          this.list = res.data.nkNgEnumRespList || [];
+          Object.assign(this.otherData, res.data);
           // 图表
           this.chartOptions.title = "报警次数(个)";
           this.chartOptions.subtext = "报警次数(%)";
-          this.chartOptions.xData = res.data.map((item) => {
+          this.chartOptions.xData = res.data.nkNgEnumRespList.map((item) => {
             return item.context;
           });
-          this.chartOptions.yData = res.data.map((item) => {
+          this.chartOptions.yData = res.data.nkNgEnumRespList.map((item) => {
             return item.num;
           });
-          let result = res.data.map((item) => {
+          let result = res.data.nkNgEnumRespList.map((item) => {
             return item.ngRate.replace(/%/, "");
           });
           this.chartOptions.lineData = result;
@@ -336,7 +343,7 @@ export default {
       });
     },
     loadAll() {
-      API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
+      API.listPatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
         if (res.code == 200) {
           this.restaurants = res.data || [];
         }
@@ -356,7 +363,7 @@ export default {
     createStateFilter(queryString) {
       return (state) => {
         return (
-          state.pbatchNo.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+          state.patchNo.toLowerCase().indexOf(queryString.toLowerCase()) === 0
         );
       };
     },

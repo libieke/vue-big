@@ -213,8 +213,7 @@ export default {
       },
     };
   },
-  created() {
-    // this.getList();
+  mounted() {
     this.$nextTick(() => {
       this.getListDeviceType();
     });

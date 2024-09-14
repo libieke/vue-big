@@ -82,27 +82,27 @@
         <div class="right-box">
           <div class="right-item">
             <div class="item-box">
-              <div class="item-num">0</div>
+              <div class="item-num">{{ this.otherData.okNumL || 0 }}</div>
               <div class="item-text">OK总数</div>
             </div>
             <div class="item-box">
-              <div class="item-num">0</div>
+              <div class="item-num">{{ this.otherData.ngNum || 0 }}</div>
               <div class="item-text">NG总数</div>
             </div>
             <div class="item-box">
-              <div class="item-num">0</div>
+              <div class="item-num">{{ this.otherData.okRate || "NaN%" }}</div>
               <div class="item-text">OK总数总比例</div>
             </div>
             <div class="item-box">
-              <div class="item-num">0</div>
+              <div class="item-num">{{ this.otherData.ngRate || "NaN%" }}</div>
               <div class="item-text">NG总数总比例</div>
             </div>
-            <div v-if="isShowCountry" class="item-box">
-              <div class="item-num">0</div>
+            <div v-if="!isShowCountry" class="item-box">
+              <div class="item-num">{{ this.otherData.fjNum || 0 }}</div>
               <div class="item-text">外观机返检数</div>
             </div>
           </div>
-          <div v-if="!isShowCountry" class="btn-contro" @click="controlFn()">
+          <div v-if="ngObject != 1" class="btn-contro" @click="controlFn()">
             控制图
           </div>
         </div>
@@ -127,6 +127,14 @@ export default {
       value: "",
       loadingText: "加载中...",
       list: [],
+      otherData: {
+        okNumL: "",
+        ngNum: "",
+        fjNum: "",
+        okRate: "",
+        ngRate: "",
+      },
+      ngObject: {},
       isShowCountry: false, // 控制按钮限隐
       listLoading: false,
       // 自定义Pagination的参数
@@ -222,11 +230,11 @@ export default {
     };
   },
   created() {
-    // let deviceId = this.$route.query.deviceId;
     this.listQuery.deviceId = this.$route.query.deviceId;
     if (this.listQuery.deviceId) {
       this.getList();
     }
+    this.getAgeing();
     this.$nextTick(() => {
       this.getListDeviceType();
     });
@@ -293,6 +301,7 @@ export default {
         this.listLoading = true;
         if (res.code == "200") {
           this.list = res.data || [];
+          Object.assign(this.otherData, res.data);
           this.chartOptions.title = "生产计数";
           this.chartOptions.subtext = "(个)";
           this.chartOptions.xData = res.data.map((item) => {
@@ -304,6 +313,13 @@ export default {
           this.listLoading = false;
         }
         this.listLoading = false;
+      });
+    },
+    getAgeing() {
+      API.getAgeing().then((res) => {
+        if (res.code == 200) {
+          this.ngObject = res.data;
+        }
       });
     },
     // 时间处理

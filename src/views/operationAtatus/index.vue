@@ -144,7 +144,7 @@ export default {
     };
   },
   components: { SmallPagination },
-  created() {
+  mounted() {
     this.getList();
   },
   methods: {

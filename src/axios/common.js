@@ -42,6 +42,15 @@ export function listPBatchNo(data) {
   });
 }
 
+// 不良品的控制图
+export function getAgeing(data) {
+  return request({
+    url: `/nk/getAgeing`,
+    method: "post",
+    data,
+  });
+}
+
 /**
  * 运行状况
  * @param {*} data

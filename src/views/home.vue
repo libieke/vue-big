@@ -16,7 +16,6 @@
           <Menu
             mode="horizontal"
             @on-select="(name) => $route.name !== name && $router.push(name)"
-            v-if="$route.name"
             :active-name="$route.name"
           >
             <MenuItem class="menu-item" name="operationAtatus">

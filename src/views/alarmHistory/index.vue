@@ -196,7 +196,7 @@ export default {
       },
     };
   },
-  created() {
+  mounted() {
     this.getList();
     this.$nextTick(() => {
       this.getListDeviceType();
