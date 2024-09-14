@@ -124,7 +124,6 @@ export default {
       radio1: "日期",
       dataShow: true,
       batchShow: false,
-      deviceTypeId: null,
       // 查询表单对象
       listQueryFormModel: {
         listDeviceType: {
@@ -221,14 +220,11 @@ export default {
       deep: true, // 深度侦听(对象里面层的值改变)
     },
   },
-
   methods: {
-    // 搜索
     handleQuery() {
       this.listQuery.pageNum = 1;
       this.getList();
     },
-    // 工程查询项list
     getListDeviceType() {
       API.listDeviceType().then((res) => {
         if (res.code == 200) {
@@ -237,7 +233,6 @@ export default {
       });
     },
     changeId(item) {
-      // 查询机型列表
       this.listQuery.deviceId = item.listDeviceType;
       let version = item.listDeviceVersion;
       if (!version) {
@@ -249,7 +244,6 @@ export default {
           }
         );
       } else if (version) {
-        // 查询机号列表
         API.listDeviceAssetNumber({
           deviceTypeId: this.listQuery.deviceId,
           version: version,

@@ -133,7 +133,6 @@ export default {
         endTime: null,
         pbatchNo: null,
       },
-      getBatchList: [],
       radio1: "日期",
       dataShow: true,
       batchShow: false,
@@ -219,12 +218,31 @@ export default {
       this.getListDeviceType();
     });
   },
+  computed: {
+    listQueryFn() {
+      return JSON.parse(JSON.stringify(this.listQuery));
+    },
+  },
+  watch: {
+    listQueryFn: {
+      handler(newVal, oldVal) {
+        let newRes = newVal.deviceId;
+        let oldRes = oldVal.deviceId;
+        console.log("newRes :>> ", newRes);
+        console.log("oldRes :>> ", oldRes);
+        if (newRes != oldRes) {
+          this.listQuery.listDeviceVersion = "";
+          this.listQuery.listDeviceAssetNumber = "";
+        }
+      },
+      deep: true,
+    },
+  },
   methods: {
     handleQuery() {
       this.getList();
     },
     getListDeviceType() {
-      //
       API.listDeviceType().then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceType.options = res.data;
@@ -232,22 +250,23 @@ export default {
       });
     },
     changeId(item) {
-      let deviceTypeId = item.listDeviceType;
+      this.listQuery.deviceId = item.listDeviceType;
       let version = item.listDeviceVersion;
       if (!version) {
-        API.listDeviceVersion({ deviceTypeId: deviceTypeId }).then((res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceVersion.options = res.data;
+        API.listDeviceVersion({ deviceTypeId: this.listQuery.deviceId }).then(
+          (res) => {
+            if (res.code == 200) {
+              this.listQueryFormModel.listDeviceVersion.options = res.data;
+            }
           }
-        });
+        );
       } else if (version) {
         API.listDeviceAssetNumber({
-          deviceTypeId: deviceTypeId,
+          deviceTypeId: this.listQuery.deviceId,
           version: version,
         }).then((res) => {
           if (res.code == 200) {
             this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
-            this.listQuery.deviceId = item.listDeviceAssetNumber;
           }
         });
       }

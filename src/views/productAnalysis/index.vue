@@ -239,15 +239,28 @@ export default {
       this.getListDeviceType();
     });
   },
+  computed: {
+    listQueryFn() {
+      return JSON.parse(JSON.stringify(this.listQuery));
+    },
+  },
+  watch: {
+    listQueryFn: {
+      handler(newVal, oldVal) {
+        let newRes = newVal.typeId;
+        let oldRes = oldVal.typeId;
+        if (newRes != oldRes) {
+          this.listQuery.listDeviceVersion = "";
+          this.listQuery.listDeviceAssetNumber = "";
+        }
+      },
+      deep: true,
+    },
+  },
   methods: {
-    // 搜索
     handleQuery() {
-      this.listQuery.listDeviceVersion = "";
-      this.listQuery.listDeviceType = "";
-      this.listQuery.listDeviceAssetNumber = "";
       this.getList();
     },
-    // 工程查询项list
     getListDeviceType() {
       API.listDeviceType().then((res) => {
         if (res.code == 200) {
@@ -256,7 +269,6 @@ export default {
       });
     },
     changeId(item) {
-      // 查询机型列表
       this.listQuery.typeId = item.listDeviceType;
       let version = item.listDeviceVersion;
       if (!version) {

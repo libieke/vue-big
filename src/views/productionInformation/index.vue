@@ -230,13 +230,27 @@ export default {
       this.getListDeviceType();
     });
   },
+  computed: {
+    listQueryFn() {
+      return JSON.parse(JSON.stringify(this.listQuery));
+    },
+  },
+  watch: {
+    listQueryFn: {
+      handler(newVal, oldVal) {
+        let newRes = newVal.typeId;
+        let oldRes = oldVal.typeId;
+        if (newRes != oldRes) {
+          this.listQuery.listDeviceVersion = "";
+          this.listQuery.listDeviceAssetNumber = "";
+        }
+      },
+      deep: true, // 深度侦听(对象里面层的值改变)
+    },
+  },
   methods: {
     handleQuery() {
       this.listQuery.pageNum = 1;
-      // this.listQuery.listDeviceType = "";
-      // this.listQuery.listDeviceVersion = "";
-      // this.listQuery.listDeviceAssetNumber = "";
-      // this.listQuery.deviceId = "";
       this.getList();
     },
     getListDeviceType() {
@@ -247,17 +261,19 @@ export default {
       });
     },
     changeId(item) {
-      let deviceTypeId = item.listDeviceType;
+      this.listQuery.typeId = item.listDeviceType;
       let version = item.listDeviceVersion;
       if (!version) {
-        API.listDeviceVersion({ deviceTypeId: deviceTypeId }).then((res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceVersion.options = res.data;
+        API.listDeviceVersion({ deviceTypeId: this.listQuery.typeId }).then(
+          (res) => {
+            if (res.code == 200) {
+              this.listQueryFormModel.listDeviceVersion.options = res.data;
+            }
           }
-        });
+        );
       } else if (version) {
         API.listDeviceAssetNumber({
-          deviceTypeId: deviceTypeId,
+          deviceTypeId: this.listQuery.typeId,
           version: version,
         }).then((res) => {
           if (res.code == 200) {

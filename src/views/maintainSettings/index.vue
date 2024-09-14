@@ -179,6 +179,7 @@ export default {
         pageNum: 1, // pageNum
         pageSize: 20, // pageSize
         listDeviceType: null,
+        deviceId: null,
         listDeviceVersion: null,
         listDeviceAssetNumber: null,
       },
@@ -272,17 +273,32 @@ export default {
     };
   },
   created() {
-    // this.getList();
     this.$nextTick(() => {
       this.getListDeviceType();
     });
   },
+  computed: {
+    listQueryFn() {
+      return JSON.parse(JSON.stringify(this.listQuery));
+    },
+  },
+  watch: {
+    listQueryFn: {
+      handler(newVal, oldVal) {
+        let newRes = newVal.deviceId;
+        let oldRes = oldVal.deviceId;
+        if (newRes != oldRes) {
+          this.listQuery.listDeviceVersion = "";
+          this.listQuery.listDeviceAssetNumber = "";
+        }
+      },
+      deep: true,
+    },
+  },
   methods: {
-    // 搜索
     handleQuery() {
       this.getList();
     },
-    // 工程查询项list
     getListDeviceType() {
       //
       API.listDeviceType().then((res) => {
@@ -292,24 +308,25 @@ export default {
       });
     },
     changeId(item) {
-      // 查询机型列表
-      let deviceTypeId = item.listDeviceType;
+      this.listQuery.deviceId = item.listDeviceType;
+
       let version = item.listDeviceVersion;
       if (!version) {
-        API.listDeviceVersion({ deviceTypeId: deviceTypeId }).then((res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceVersion.options = res.data;
+        API.listDeviceVersion({ deviceTypeId: this.listQuery.deviceId }).then(
+          (res) => {
+            if (res.code == 200) {
+              this.listQueryFormModel.listDeviceVersion.options = res.data;
+            }
           }
-        });
+        );
       } else if (version) {
         // 查询机号列表
         API.listDeviceAssetNumber({
-          deviceTypeId: deviceTypeId,
+          deviceTypeId: this.listQuery.deviceId,
           version: version,
         }).then((res) => {
           if (res.code == 200) {
             this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
-            this.dioFormData.deviceId = item.listDeviceAssetNumber;
           }
         });
       }
