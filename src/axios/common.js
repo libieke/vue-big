@@ -102,13 +102,14 @@ export function getProdInfoNg(data) {
 }
 
 // 导出
-// export function getAlarmHis(data) {
-//   return request({
-//     url: `/nk/tr/getAlarmHis`,
-//     method: "get",
-//     data,
-//   });
-// }
+export function exportProdInfoNg(params) {
+  return request({
+    url: `/nk/export/getProdInfoNg`,
+    method: "get",
+    params,
+    responseType: "blob",
+  });
+}
 
 /**
  * 报警历史

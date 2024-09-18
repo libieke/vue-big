@@ -272,25 +272,22 @@ export default {
     changeId(item) {
       this.listQuery.typeId = item.listDeviceType;
       let version = item.listDeviceVersion;
-      if (!version) {
-        API.listDeviceVersion({ deviceTypeId: this.listQuery.typeId }).then(
-          (res) => {
-            if (res.code == 200) {
-              this.listQueryFormModel.listDeviceVersion.options = res.data;
-            }
-          }
-        );
-      } else if (version) {
-        API.listDeviceAssetNumber({
-          deviceTypeId: this.listQuery.typeId,
-          version: version,
-        }).then((res) => {
+      API.listDeviceVersion({ deviceTypeId: this.listQuery.typeId }).then(
+        (res) => {
           if (res.code == 200) {
-            this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
-            this.listQuery.deviceId = item.listDeviceAssetNumber;
+            this.listQueryFormModel.listDeviceVersion.options = res.data;
           }
-        });
-      }
+        }
+      );
+      API.listDeviceAssetNumber({
+        deviceTypeId: this.listQuery.typeId,
+        version: version,
+      }).then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+          this.listQuery.deviceId = item.listDeviceAssetNumber;
+        }
+      });
     },
     // 控制图
     controlFn() {},

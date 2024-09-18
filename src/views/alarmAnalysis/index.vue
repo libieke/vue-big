@@ -250,25 +250,22 @@ export default {
     changeId(item) {
       this.listQuery.deviceTypeId = item.listDeviceType;
       let version = item.listDeviceVersion;
-      if (!version) {
-        API.listDeviceVersion({
-          deviceTypeId: this.listQuery.deviceTypeId,
-        }).then((res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceVersion.options = res.data;
-          }
-        });
-      } else if (version) {
-        API.listDeviceAssetNumber({
-          deviceTypeId: this.listQuery.deviceTypeId,
-          version: version,
-        }).then((res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
-            this.listQuery.deviceId = item.listDeviceAssetNumber;
-          }
-        });
-      }
+      API.listDeviceVersion({
+        deviceTypeId: this.listQuery.deviceTypeId,
+      }).then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceVersion.options = res.data;
+        }
+      });
+      API.listDeviceAssetNumber({
+        deviceTypeId: this.listQuery.deviceTypeId,
+        version: version,
+      }).then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+          this.listQuery.deviceId = item.listDeviceAssetNumber;
+        }
+      });
     },
     loadAll() {
       API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {

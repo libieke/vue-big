@@ -277,28 +277,23 @@ export default {
     changeId(item) {
       this.listQuery.typeId = item.listDeviceType;
       let version = item.listDeviceVersion;
-      if (!version) {
-        API.listDeviceVersion({
-          deviceTypeId: this.listQuery.typeId,
-        }).then((res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceVersion.options = res.data;
-          }
-        });
-      } else if (version) {
-        // 查询机号列表
-        API.listDeviceAssetNumber({
-          deviceTypeId: this.listQuery.typeId,
-          version: version,
-        }).then((res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
-            this.listQuery.deviceId = item.listDeviceAssetNumber;
-          }
-        });
-      }
+      API.listDeviceVersion({
+        deviceTypeId: this.listQuery.typeId,
+      }).then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceVersion.options = res.data;
+        }
+      });
+      API.listDeviceAssetNumber({
+        deviceTypeId: this.listQuery.typeId,
+        version: version,
+      }).then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+          this.listQuery.deviceId = item.listDeviceAssetNumber;
+        }
+      });
     },
-    // tab切换
     changeTab(e) {
       if (e === "日期") {
         this.batchShow = false;
@@ -377,7 +372,7 @@ export default {
     },
     // 数据导出
     outQuery() {
-      API.exportGetProdInfo({
+      API.exportProdInfoNg({
         ...this.listQuery,
       })
         .then((res) => {
@@ -434,25 +429,11 @@ export default {
 .chartStyle {
   width: 100%;
   height: 400px;
-  // margin-top: -10px;
   padding: 24px 20px;
   background: #00102a;
   border-radius: 16px 16px 16px 16px;
   border: 2px solid #003b7a;
 }
-// .content-box {
-//   display: flex;
-//   margin-top: 24px;
-//   .left-box {
-//     height: 463px;
-//     padding: 24px;
-//     text-align: center;
-//     background: rgba(32, 124, 219, 0.1);
-//     border-radius: 16px 16px 16px 16px;
-//     border: 2px solid #003b7a;
-//     overflow: hidden;
-//   }
-// }
 .content-box {
   display: flex;
   margin-top: 24px;

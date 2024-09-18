@@ -37,7 +37,7 @@
           </el-form-item>
         </el-form>
         <div class="positonBtn">
-          <el-button type="primary" size="medium" @click="handleSet"
+          <el-button type="primary" size="medium" @click="handleAdd"
             >新增维护项</el-button
           >
         </div>
@@ -72,7 +72,7 @@
       <!-- 重置维护时间 -->
       <el-dialog
         width="790px"
-        title="重置维护时间"
+        :title="title2"
         :visible.sync="visible"
         custom-class="custom-dialog"
         append-to-body
@@ -178,8 +178,9 @@ export default {
       listQuery: {
         pageNum: 1, // pageNum
         pageSize: 20, // pageSize
-        listDeviceType: null,
         deviceId: null,
+        deviceTypeId: null,
+        listDeviceType: null,
         listDeviceVersion: null,
         listDeviceAssetNumber: null,
       },
@@ -244,6 +245,7 @@ export default {
       },
       // 弹窗
       dioTitle: "新增维护项",
+      title2: "",
       visible: false,
       visible2: false,
       loading: false,
@@ -251,22 +253,23 @@ export default {
         password: null,
       },
       dioFormData: {
-        partName: null,
+        partName: "",
         timeNum: null,
         deviceId: null,
-        servicingTime: null,
+        servicingTime: "",
       },
       id: null,
+      delId: null,
       pwdId: null,
       rules: {
         partName: [
-          { required: true, message: "请输入维护项名称", trigger: "change" },
+          { required: true, message: "请输入维护项名称", trigger: ["blur"] },
         ],
         servicingTime: [
-          { required: true, message: "请选择日期", trigger: "change" },
+          { required: true, message: "请选择日期", trigger: ["blur"] },
         ],
         timeNum: [
-          { required: true, message: "请输入更换回数", trigger: "change" },
+          { required: true, message: "请输入更换回数", trigger: ["blur"] },
           { pattern: REGEX_age, message: "请输入正整数" },
         ],
       },
@@ -285,8 +288,8 @@ export default {
   watch: {
     listQueryFn: {
       handler(newVal, oldVal) {
-        let newRes = newVal.deviceId;
-        let oldRes = oldVal.deviceId;
+        let newRes = newVal.deviceTypeId;
+        let oldRes = oldVal.deviceTypeId;
         if (newRes != oldRes) {
           this.listQuery.listDeviceVersion = "";
           this.listQuery.listDeviceAssetNumber = "";
@@ -300,7 +303,6 @@ export default {
       this.getList();
     },
     getListDeviceType() {
-      //
       API.listDeviceType().then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceType.options = res.data;
@@ -308,37 +310,31 @@ export default {
       });
     },
     changeId(item) {
-      this.listQuery.deviceId = item.listDeviceType;
-
+      this.listQuery.deviceTypeId = item.listDeviceType;
       let version = item.listDeviceVersion;
-      if (!version) {
-        API.listDeviceVersion({ deviceTypeId: this.listQuery.deviceId }).then(
-          (res) => {
-            if (res.code == 200) {
-              this.listQueryFormModel.listDeviceVersion.options = res.data;
-            }
-          }
-        );
-      } else if (version) {
-        // 查询机号列表
-        API.listDeviceAssetNumber({
-          deviceTypeId: this.listQuery.deviceId,
-          version: version,
-        }).then((res) => {
+      API.listDeviceVersion({ deviceTypeId: this.listQuery.deviceTypeId }).then(
+        (res) => {
           if (res.code == 200) {
-            this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+            this.listQueryFormModel.listDeviceVersion.options = res.data;
           }
-        });
-      }
+        }
+      );
+      API.listDeviceAssetNumber({
+        deviceTypeId: this.listQuery.deviceTypeId,
+        version: version,
+      }).then((res) => {
+        if (res.code == 200) {
+          this.listQuery.deviceId = item.listDeviceAssetNumber;
+          this.dioFormData.deviceId = item.listDeviceAssetNumber;
+          this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+        }
+      });
     },
 
-    // 重置按钮-时间
     handleReset(row) {
       this.visible = true;
+      this.title2 = "重置维护时间";
       this.pwdId = row.id;
-      // this.$nextTick(() => {
-      //   this.handleSubmit2();
-      // });
     },
     // 弹窗按钮-重置密码
     handleCancel2() {
@@ -348,7 +344,7 @@ export default {
         this.visible = false;
       }
     },
-    // 输入密码确认后提交重置借口
+    // 输入密码确认后提交
     handleSubmit2() {
       this.$refs.formDatas.validate((valid) => {
         if (valid) {
@@ -356,12 +352,12 @@ export default {
             ...this.formDatas,
           }).then((res) => {
             if (res.code == 200) {
-              this.$confirm("是否要重置时间?", "提示", {
-                confirmButtonText: "确定",
-                cancelButtonText: "取消",
-                type: "warning",
-              })
-                .then(() => {
+              if (this.title2 == "重置维护时间") {
+                this.$confirm("是否要重置时间?", "提示", {
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                  type: "warning",
+                }).then(() => {
                   API.resetServicingTime({
                     id: this.pwdId,
                   }).then((res) => {
@@ -375,13 +371,44 @@ export default {
                       this.visible = false;
                     }
                   });
-                })
-                .catch(() => {
-                  this.$message({
-                    type: "info",
-                    message: "已取消",
-                  });
                 });
+              } else if (
+                this.title2 == "新增维护信息验证" &&
+                this.dioTitle === "新增维护项"
+              ) {
+                this.visible2 = true;
+                this.$refs.dioFormData.clearValidate();
+                this.handleSave();
+              } else if (this.title2 == "修改维护信息验证") {
+                this.visible2 = true;
+              } else if (this.title2 == "删除维护信息验证") {
+                this.$confirm("是否要删除该数据?", "提示", {
+                  confirmButtonText: "确定",
+                  cancelButtonText: "取消",
+                  type: "warning",
+                })
+                  .then(() => {
+                    API.removeProdLife({
+                      id: this.delId,
+                    }).then((res) => {
+                      if (res.code == 200) {
+                        this.$message.success("删除成功!");
+                        this.visible = false;
+                        this.getList();
+                      } else {
+                        this.$message.error("删除失败!");
+                        this.visible = false;
+                        this.getList();
+                      }
+                    });
+                  })
+                  .catch(() => {
+                    this.$message({
+                      type: "info",
+                      message: "已取消",
+                    });
+                  });
+              }
             }
           });
         } else {
@@ -390,15 +417,19 @@ export default {
         }
       });
     },
-    handleSet() {
-      this.visible2 = true;
+    handleAdd() {
+      this.formDatas.password = "";
+      this.visible = true;
+      this.title2 = "新增维护信息验证";
     },
     handleClose() {
       this.handleCancel2();
       this.handleCancel3();
     },
     handleEdit(row) {
-      this.visible2 = true;
+      this.formDatas.password = "";
+      this.visible = true;
+      this.title2 = "修改维护信息验证";
       this.dioTitle = "修改维护项";
       this.dioFormData.partName = row.partName;
       this.dioFormData.timeNum = row.timeNum;
@@ -406,67 +437,67 @@ export default {
       this.id = row.id;
     },
     handleDel(row) {
-      this.$confirm("是否要删除该数据?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          API.removeProdLife({
-            id: row.id,
-          }).then((res) => {
-            if (res.code == 200) {
-              this.$message.success("删除成功!");
-              this.getList();
-            } else {
-              this.$message.error("删除失败!");
-              this.getList();
-            }
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消",
-          });
-        });
+      this.visible = true;
+      this.title2 = "删除维护信息验证";
+      this.delId = row.id;
     },
     handAddSet() {
       this.visible2 = true;
       this.dioTitle = "新增维护项";
     },
     handleSave() {
-      this.$refs.dioFormData.validate((valid) => {
+      this.$refs.formDatas.validate((valid) => {
         if (valid) {
-          const that = this;
-          if (that.dioTitle === "新增维护项") {
-            API.addProdLifeNum({
-              ...this.dioFormData,
-            }).then((res) => {
-              if (res.code == 200) {
-                that.getList();
-                that.$message.success("新建成功！");
-                that.handleClose();
-                that.visible2 = false;
-              }
-            });
-          }
-          if (that.dioTitle === "修改维护项") {
-            API.updateProdTimeNum({
-              ...this.dioFormData,
-              id: this.id,
-            }).then((res) => {
-              if (res.code == 200) {
-                that.$message.success("编辑成功！");
-                that.getList();
-                that.handleClose();
-                that.visible2 = false;
-              }
-            });
-          }
+          API.verifyPwd({
+            ...this.formDatas,
+          }).then((res) => {
+            if (res.code == 200) {
+              this.visible2 = true;
+              this.$refs.dioFormData.validate((valid) => {
+                if (valid) {
+                  const that = this;
+                  if (that.dioTitle === "新增维护项") {
+                    API.addProdLifeNum({
+                      ...this.dioFormData,
+                    }).then((res) => {
+                      if (res.code == 200) {
+                        that.getList();
+                        that.$message.success("新建成功！");
+                        that.handleClose();
+                        that.visible2 = false;
+                      }
+                    });
+                  }
+                  if (that.dioTitle === "修改维护项") {
+                    API.updateProdTimeNum({
+                      ...this.dioFormData,
+                      id: this.id,
+                    }).then((res) => {
+                      if (res.code == 200) {
+                        this.$confirm("是否确认该操作?", "提示", {
+                          confirmButtonText: "确定",
+                          cancelButtonText: "取消",
+                          type: "warning",
+                        }).then(() => {
+                          that.$message.success("编辑成功！");
+                          that.getList();
+                          that.handleClose();
+                          that.visible2 = false;
+                        });
+                      }
+                    });
+                  }
+                }
+              });
+            }
+          });
+        } else {
+          console.log("error message!!");
+          return false;
         }
       });
     },
+
     handleCancel3() {
       if (this.$refs.dioFormData != undefined) {
         this.$refs.dioFormData.resetFields();

@@ -12,14 +12,14 @@
       :header-cell-style="{
         borderColor: '#003B7A',
         color: '#fff',
-        height: '54px',
+        height: '53px',
       }"
       :row-style="{
         color: '#fff',
       }"
       :cell-style="{
-        padding: '5px',
-        height: '52px',
+        padding: '3px',
+        height: '50.8px',
         borderColor: '#00539F',
       }"
       row-class-name="tableRowClassName"
@@ -250,11 +250,6 @@ export default {
   width: 100% !important;
 }
 
-::v-deep .el-table__body tr,
-::v-deep .el-table__body td {
-  padding: 0;
-  height: 34px;
-}
 // 显示的颜色
 ::v-deep .el-table__body tr.el-table__row--striped td {
   background-color: #043272 !important;

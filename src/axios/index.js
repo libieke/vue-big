@@ -29,17 +29,17 @@ service.interceptors.response.use(
     }
     if (res.code !== 200) {
       Message({
-        message: res.msg || "Error",
+        message: res.message || "Error",
         type: "error",
         duration: 5 * 1000,
       });
-      return Promise.reject(new Error(res.msg || "Error"));
+      return Promise.reject(new Error(res.message || "Error"));
     }
     return res;
   },
   (error) => {
     Message({
-      message: error.msg,
+      message: error.message,
       type: "error",
       duration: 5 * 1000,
     });
