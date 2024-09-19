@@ -87,7 +87,6 @@ export default {
         },
         xAxis: {
           type: "category",
-          boundaryGap: [0, 0.01],
           axisLine: {
             show: true,
             lineStyle: {

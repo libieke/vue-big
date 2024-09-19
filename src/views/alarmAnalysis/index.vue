@@ -79,7 +79,7 @@
       </div>
       <div class="chartStyle">
         <BLchart
-          v-if="this.chartOptions.xData.length > 0"
+          v-if="this.list.length > 0"
           :chartOptions="chartOptions"
           height="350px"
           style="margin-bottom: 10px"

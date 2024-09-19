@@ -1,5 +1,5 @@
 <template>
-  <ContentTitle title="">
+  <ContentTitle>
     <div class="agent-container padding-top-20">
       <div class="relative">
         <el-form
@@ -58,7 +58,7 @@
       </div>
       <div class="chartStyle">
         <BarChart
-          v-if="this.chartOptions.xData.length > 0"
+          v-if="this.$route.query.deviceId"
           :chartOptions="chartOptions"
           height="350px"
           style="margin-bottom: 10px"
@@ -68,6 +68,7 @@
           :image="require('@/assets/images/empty.png')"
         ></el-empty>
       </div>
+
       <div class="content-box">
         <div class="left-box">
           <custom-table
@@ -254,7 +255,7 @@ export default {
           this.listQuery.listDeviceAssetNumber = "";
         }
       },
-      deep: true, // 深度侦听(对象里面层的值改变)
+      deep: true,
     },
   },
   methods: {
@@ -319,12 +320,10 @@ export default {
         }
       });
     },
-    // 时间处理
     changeTime(e) {
       this.listQuery.startTime = e[0];
       this.listQuery.endTime = e[1];
     },
-    // 数据导出
     outQuery() {
       API.exportGetProdInfo({
         ...this.listQuery,

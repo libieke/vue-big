@@ -144,7 +144,7 @@ export default {
     };
   },
   components: { SmallPagination },
-  mounted() {
+  created() {
     this.getList();
   },
   methods: {
@@ -168,13 +168,12 @@ export default {
       });
     },
     getList() {
-      // 获取表格详情
       API.getHome({
         ...this.listQuery,
       }).then((res) => {
         if (res.code == 200) {
           this.dataList = res.data.list || [];
-          this.total = res.data.pageNo;
+          this.total = res.data.pageMax;
         }
       });
     },
