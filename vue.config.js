@@ -23,7 +23,8 @@ module.exports = {
       "/api": {
         // target: "http://10.12.58.53:8081/wire",
         // target: "http://10.12.58.160:8081/wire",
-        target: "http://10.12.58.213:8080/wire/",
+        // target: "http://10.12.58.213:8080/wire/",
+        target: "http://10.12.58.213:8080/",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "",

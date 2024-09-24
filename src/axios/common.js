@@ -1,5 +1,5 @@
 import request from "./index";
-// const API = `/api`;
+const API = `/wire`;
 
 /**
  * 通用请求
@@ -9,7 +9,7 @@ import request from "./index";
 // 查询工程列表
 export function listDeviceType(data) {
   return request({
-    url: `/nk/tr/listDeviceType`,
+    url: `${API}/nk/tr/listDeviceType`,
     method: "post",
     data,
   });
@@ -18,7 +18,7 @@ export function listDeviceType(data) {
 // 查询机型列表
 export function listDeviceVersion(data) {
   return request({
-    url: `/nk/tr/listDeviceVersion`,
+    url: `${API}/nk/tr/listDeviceVersion`,
     method: "post",
     data,
   });
@@ -27,7 +27,7 @@ export function listDeviceVersion(data) {
 // 查询机号列表
 export function listDeviceAssetNumber(data) {
   return request({
-    url: `/nk/tr/listDeviceAssetNumber`,
+    url: `${API}/nk/tr/listDeviceAssetNumber`,
     method: "post",
     data,
   });
@@ -36,7 +36,7 @@ export function listDeviceAssetNumber(data) {
 // 查询设备批次号
 export function listPBatchNo(data) {
   return request({
-    url: `/nk/tr/listPBatchNo`,
+    url: `${API}/nk/tr/listPBatchNo`,
     method: "post",
     data,
   });
@@ -45,7 +45,7 @@ export function listPBatchNo(data) {
 // 不良品的控制图
 export function getAgeing(data) {
   return request({
-    url: `/nk/getAgeing`,
+    url: `${API}/nk/getAgeing`,
     method: "post",
     data,
   });
@@ -58,7 +58,7 @@ export function getAgeing(data) {
  */
 export function getHome(data) {
   return request({
-    url: `/nk/getHome`,
+    url: `${API}/nk/getHome`,
     method: "post",
     data,
   });
@@ -72,7 +72,7 @@ export function getHome(data) {
 // 分页查询列表
 export function getProdInfo(data) {
   return request({
-    url: `/nk/getProdInfo`,
+    url: `${API}/nk/getProdInfo`,
     method: "post",
     data,
   });
@@ -81,7 +81,7 @@ export function getProdInfo(data) {
 // 导出
 export function exportGetProdInfo(params) {
   return request({
-    url: `/nk/export/getProdInfo`,
+    url: `${API}/nk/export/getProdInfo`,
     method: "get",
     params,
     responseType: "blob",
@@ -95,7 +95,7 @@ export function exportGetProdInfo(params) {
 // 不良品的查询
 export function getProdInfoNg(data) {
   return request({
-    url: `/nk/getProdInfoNg`,
+    url: `${API}/nk/getProdInfoNg`,
     method: "post",
     data,
   });
@@ -104,7 +104,7 @@ export function getProdInfoNg(data) {
 // 导出
 export function exportProdInfoNg(params) {
   return request({
-    url: `/nk/export/getProdInfoNg`,
+    url: `${API}/nk/export/getProdInfoNg`,
     method: "get",
     params,
     responseType: "blob",
@@ -119,7 +119,7 @@ export function exportProdInfoNg(params) {
 // 分页查询报警历史记录列表
 export function getAlarmHis(data) {
   return request({
-    url: `/nk/tr/getAlarmHis`,
+    url: `${API}/nk/tr/getAlarmHis`,
     method: "post",
     data,
   });
@@ -133,7 +133,7 @@ export function getAlarmHis(data) {
 // 分页查询报警分析列表
 export function getAlarmAly(data) {
   return request({
-    url: `/nk/tr/getAlarmAly`,
+    url: `${API}/nk/tr/getAlarmAly`,
     method: "post",
     data,
   });
@@ -142,7 +142,7 @@ export function getAlarmAly(data) {
 // 导出报警分析列表
 export function exportAlarmAly(params) {
   return request({
-    url: `/nk/tr/exportAlarmAly`,
+    url: `${API}/nk/tr/exportAlarmAly`,
     method: "get",
     params: params,
     responseType: "blob",
@@ -157,7 +157,7 @@ export function exportAlarmAly(params) {
 // 查询维护设置列表
 export function getProdLifeNum(data) {
   return request({
-    url: `/nk/tr/getProdLifeNum`,
+    url: `${API}/nk/tr/getProdLifeNum`,
     method: "post",
     data,
   });
@@ -166,7 +166,7 @@ export function getProdLifeNum(data) {
 // 维护设置重置维护时间;
 export function resetServicingTime(data) {
   return request({
-    url: `/nk/tr/resetServicingTime`,
+    url: `${API}/nk/tr/resetServicingTime`,
     method: "post",
     data,
   });
@@ -175,7 +175,7 @@ export function resetServicingTime(data) {
 // 维护设置密码校验
 export function verifyPwd(data) {
   return request({
-    url: `/nk/tr/verifyPwd`,
+    url: `${API}/nk/tr/verifyPwd`,
     method: "post",
     data,
   });
@@ -184,7 +184,7 @@ export function verifyPwd(data) {
 // 新增维护设置;
 export function addProdLifeNum(data) {
   return request({
-    url: `/nk/tr/addProdLifeNum`,
+    url: `${API}/nk/tr/addProdLifeNum`,
     method: "post",
     data,
   });
@@ -193,7 +193,7 @@ export function addProdLifeNum(data) {
 // 更新维护设置
 export function updateProdTimeNum(data) {
   return request({
-    url: `/nk/tr/updateProdTimeNum`,
+    url: `${API}/nk/tr/updateProdTimeNum`,
     method: "post",
     data,
   });
@@ -202,7 +202,7 @@ export function updateProdTimeNum(data) {
 // 删除维护设置
 export function removeProdLife(data) {
   return request({
-    url: `/nk/tr/removeProdLife`,
+    url: `${API}/nk/tr/removeProdLife`,
     method: "post",
     data,
   });

@@ -47,28 +47,20 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" size="medium" @click="handleQuery"
-              >查询</el-button
-            >
-            <el-button type="primary" size="medium" @click="outQuery"
-              >数据导出</el-button
-            >
+            <el-button type="primary" size="medium" @click="handleQuery">查询</el-button>
+            <el-button type="primary" size="medium" @click="outQuery">数据导出</el-button>
           </el-form-item>
         </el-form>
       </div>
       <div class="chartStyle">
         <BarChart
-          v-if="this.$route.query.deviceId"
+          v-if="this.list.length > 0"
           :chartOptions="chartOptions"
           height="350px"
           style="margin-bottom: 10px"
         ></BarChart>
-        <el-empty
-          v-else
-          :image="require('@/assets/images/empty.png')"
-        ></el-empty>
+        <el-empty v-else :image="require('@/assets/images/empty.png')"></el-empty>
       </div>
-
       <div class="content-box">
         <div class="left-box">
           <custom-table
@@ -103,9 +95,7 @@
               <div class="item-text">外观机返检数</div>
             </div>
           </div>
-          <div v-if="ngObject != 1" class="btn-contro" @click="controlFn()">
-            控制图
-          </div>
+          <div v-if="ngObject != 1" class="btn-contro" @click="controlFn()">控制图</div>
         </div>
       </div>
     </div>
@@ -125,6 +115,7 @@ export default {
   },
   data() {
     return {
+      // showEmpty: true,
       value: "",
       loadingText: "加载中...",
       list: [],
@@ -234,8 +225,8 @@ export default {
     this.listQuery.deviceId = this.$route.query.deviceId;
     if (this.listQuery.deviceId) {
       this.getList();
+      this.getAgeing();
     }
-    this.getAgeing();
     this.$nextTick(() => {
       this.getListDeviceType();
     });
@@ -273,13 +264,11 @@ export default {
     changeId(item) {
       this.listQuery.typeId = item.listDeviceType;
       let version = item.listDeviceVersion;
-      API.listDeviceVersion({ deviceTypeId: this.listQuery.typeId }).then(
-        (res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceVersion.options = res.data;
-          }
+      API.listDeviceVersion({ deviceTypeId: this.listQuery.typeId }).then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceVersion.options = res.data;
         }
-      );
+      });
       API.listDeviceAssetNumber({
         deviceTypeId: this.listQuery.typeId,
         version: version,
@@ -300,6 +289,9 @@ export default {
         if (res.code == "200") {
           this.list = res.data || [];
           Object.assign(this.otherData, res.data);
+          // if (res.data.length <= 0 || res.data.length <= 0) {
+          //   this.showEmpty = false;
+          // }
           this.chartOptions.title = "生产计数";
           this.chartOptions.subtext = "(个)";
           this.chartOptions.xData = res.data.map((item) => {

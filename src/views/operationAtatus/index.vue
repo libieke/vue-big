@@ -111,7 +111,7 @@
     </div>
     <div v-if="showMoreCard" class="pagination">
       <SmallPagination
-        v-show="total > 0"
+        v-show="total > 2"
         :total="total"
         :page.sync="listQuery.pageNo"
         :limit.sync="listQuery.pageSize"
@@ -144,7 +144,7 @@ export default {
     };
   },
   components: { SmallPagination },
-  created() {
+  mounted() {
     this.getList();
   },
   methods: {
@@ -167,15 +167,14 @@ export default {
         },
       });
     },
-    getList() {
-      API.getHome({
+    async getList() {
+      const res = await API.getHome({
         ...this.listQuery,
-      }).then((res) => {
-        if (res.code == 200) {
-          this.dataList = res.data.list || [];
-          this.total = res.data.pageMax;
-        }
       });
+      if (res.code == 200) {
+        this.dataList = res.data.list || [];
+        this.total = res.data.pageMax;
+      }
     },
   },
 };

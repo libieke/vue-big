@@ -15,6 +15,7 @@
         <div class="selectRange">
           <Menu
             mode="horizontal"
+            ref="menus"
             @on-select="(name) => $route.name !== name && $router.push(name)"
             :active-name="$route.name"
           >
@@ -22,6 +23,7 @@
               运行状况
             </MenuItem>
             <MenuItem name="productionInformation"> 生产信息 </MenuItem>
+
             <MenuItem name="productAnalysis"> 生产分析 </MenuItem>
           </Menu>
         </div>

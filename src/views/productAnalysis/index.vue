@@ -78,18 +78,15 @@
           </el-radio-group>
         </div>
       </div>
-      <div class="chartStyle">
+
+      <div v-if="this.showEmpty" class="chartStyle">
         <BLchart
-          v-if="this.chartOptions.xData.length > 0"
           :chartOptions="chartOptions"
           height="350px"
           style="margin-bottom: 10px"
         ></BLchart>
-        <el-empty
-          v-else
-          :image="require('@/assets/images/empty.png')"
-        ></el-empty>
       </div>
+      <el-empty v-else :image="require('@/assets/images/empty.png')"></el-empty>
       <div class="content-box">
         <div class="left-box">
           <custom-table
@@ -147,6 +144,7 @@ export default {
     return {
       value: "",
       loadingText: "加载中...",
+      showEmpty: false,
       list: [],
       otherData: {
         okNumL: "",
@@ -319,6 +317,7 @@ export default {
           this.list = res.data.nkNgEnumRespList || [];
           Object.assign(this.otherData, res.data);
           // 图表
+
           this.chartOptions.title = "报警次数(个)";
           this.chartOptions.subtext = "报警次数(%)";
           this.chartOptions.xData = res.data.nkNgEnumRespList.map((item) => {
@@ -338,7 +337,7 @@ export default {
       });
     },
     loadAll() {
-      API.listPatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
+      API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
         if (res.code == 200) {
           this.restaurants = res.data || [];
         }

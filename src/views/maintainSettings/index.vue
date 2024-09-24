@@ -31,9 +31,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" size="medium" @click="handleQuery"
-              >查询</el-button
-            >
+            <el-button type="primary" size="medium" @click="handleQuery">查询</el-button>
           </el-form-item>
         </el-form>
         <div class="positonBtn">
@@ -57,12 +55,8 @@
             <template v-if="list.length > 0 && list" v-slot:actionColumn>
               <el-table-column label="操作" align="center" width="200">
                 <template slot-scope="{ row }">
-                  <span class="pointer cyan mlr10" @click="handleEdit(row)"
-                    >编辑</span
-                  >
-                  <span class="pointer red mlr10" @click="handleDel(row)"
-                    >删除</span
-                  >
+                  <span class="pointer cyan mlr10" @click="handleEdit(row)">编辑</span>
+                  <span class="pointer red mlr10" @click="handleDel(row)">删除</span>
                 </template>
               </el-table-column>
             </template>
@@ -262,12 +256,8 @@ export default {
       delId: null,
       pwdId: null,
       rules: {
-        partName: [
-          { required: true, message: "请输入维护项名称", trigger: ["blur"] },
-        ],
-        servicingTime: [
-          { required: true, message: "请选择日期", trigger: ["blur"] },
-        ],
+        partName: [{ required: true, message: "请输入维护项名称", trigger: ["blur"] }],
+        servicingTime: [{ required: true, message: "请选择日期", trigger: ["blur"] }],
         timeNum: [
           { required: true, message: "请输入更换回数", trigger: ["blur"] },
           { pattern: REGEX_age, message: "请输入正整数" },
@@ -312,13 +302,11 @@ export default {
     changeId(item) {
       this.listQuery.deviceTypeId = item.listDeviceType;
       let version = item.listDeviceVersion;
-      API.listDeviceVersion({ deviceTypeId: this.listQuery.deviceTypeId }).then(
-        (res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceVersion.options = res.data;
-          }
+      API.listDeviceVersion({ deviceTypeId: this.listQuery.deviceTypeId }).then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceVersion.options = res.data;
         }
-      );
+      });
       API.listDeviceAssetNumber({
         deviceTypeId: this.listQuery.deviceTypeId,
         version: version,
