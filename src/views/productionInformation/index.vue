@@ -53,12 +53,13 @@
         </el-form>
       </div>
       <div class="chartStyle">
-        <BarChart
-          v-if="this.list.length > 0"
-          :chartOptions="chartOptions"
-          height="350px"
-          style="margin-bottom: 10px"
-        ></BarChart>
+        <div v-if="this.$route.query.deviceId">
+          <BarChart
+            :chartOptions="chartOptions"
+            height="350px"
+            style="margin-bottom: 10px"
+          ></BarChart>
+        </div>
         <el-empty v-else :image="require('@/assets/images/empty.png')"></el-empty>
       </div>
       <div class="content-box">

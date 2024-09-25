@@ -1,9 +1,5 @@
 <template>
-  <div
-    ref="barChart"
-    id="barChart"
-    :style="{ height: height, width: width }"
-  ></div>
+  <div ref="barChart" id="barChart" :style="{ height: height, width: width }"></div>
 </template>
 
 <script>
@@ -38,9 +34,7 @@ export default {
   },
   methods: {
     initEcharts() {
-      let myChart = echarts.getInstanceByDom(
-        document.getElementById("barChart")
-      );
+      let myChart = echarts.getInstanceByDom(document.getElementById("barChart"));
       if (myChart == null) {
         myChart = echarts.init(document.getElementById("barChart"));
       }

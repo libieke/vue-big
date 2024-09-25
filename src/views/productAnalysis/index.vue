@@ -75,14 +75,15 @@
         </div>
       </div>
 
-      <div v-if="this.showEmpty" class="chartStyle">
+      <div class="chartStyle">
         <BLchart
+          v-if="this.chartOptions.xData.length > 0"
           :chartOptions="chartOptions"
           height="350px"
           style="margin-bottom: 10px"
         ></BLchart>
+        <el-empty v-else :image="require('@/assets/images/empty.png')"></el-empty>
       </div>
-      <el-empty v-else :image="require('@/assets/images/empty.png')"></el-empty>
       <div class="content-box">
         <div class="left-box">
           <custom-table
@@ -140,7 +141,6 @@ export default {
     return {
       value: "",
       loadingText: "加载中...",
-      showEmpty: false,
       list: [],
       otherData: {
         okNumL: "",
