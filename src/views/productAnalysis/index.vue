@@ -50,7 +50,7 @@
               value-format="yyyy-MM-dd"
               :picker-options="{
                 disabledDate: (time) => {
-                  return time.getTime() > Date.now() - 3600 * 1000 * 24;
+                  return time.getTime() > Date.now();
                 },
               }"
               @change="changeTime"
@@ -58,12 +58,8 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" size="medium" @click="handleQuery"
-              >查询</el-button
-            >
-            <el-button type="primary" size="medium" @click="outQuery"
-              >数据导出</el-button
-            >
+            <el-button type="primary" size="medium" @click="handleQuery">查询</el-button>
+            <el-button type="primary" size="medium" @click="outQuery">数据导出</el-button>
           </el-form-item>
         </el-form>
         <div class="positonBtn">
@@ -356,9 +352,7 @@ export default {
     },
     createStateFilter(queryString) {
       return (state) => {
-        return (
-          state.patchNo.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-        );
+        return state.patchNo.toLowerCase().indexOf(queryString.toLowerCase()) === 0;
       };
     },
     handleSelect(item) {

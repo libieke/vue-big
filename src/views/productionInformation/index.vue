@@ -39,7 +39,7 @@
               value-format="yyyy-MM-dd"
               :picker-options="{
                 disabledDate: (time) => {
-                  return time.getTime() > Date.now() - 3600 * 1000 * 24;
+                  return time.getTime() > Date.now();
                 },
               }"
               @change="changeTime"
