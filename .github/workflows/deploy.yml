@@ -32,27 +32,9 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: |
-          set +e
-          node -v
-          npm -v
-          npm config get registry
-          npm install --no-audit --no-fund > "$RUNNER_TEMP/npm-install.log" 2>&1
-          status=$?
-          if [ "$status" -ne 0 ]; then
-            tail -n 80 "$RUNNER_TEMP/npm-install.log"
-            summary=$(tail -n 25 "$RUNNER_TEMP/npm-install.log" | tr -d '\r' | tr '\n' '~' | sed -e 's/%/%25/g' | cut -c1-3000)
-            echo "::error title=npm install failed::$summary"
-            {
-              echo "### npm install log"
-              echo '```'
-              tail -n 120 "$RUNNER_TEMP/npm-install.log"
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
-          fi
-          exit $status
+        run: npm install --no-audit --no-fund
         env:
-          NPM_CONFIG_REGISTRY: https://registry.npmjs.org/ # <--- 再加一道保险
+          NPM_CONFIG_REGISTRY: https://registry.npmjs.org/ # 强制使用官方源
 
       - name: Build
         run: npm run build
