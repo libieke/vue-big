@@ -2,9 +2,9 @@ name: Deploy Vue App to GitHub Pages
 
 on:
   push:
-    branches: ["main"] # 只要推送到 main 分支就触发
+    branches: [ "main" ]
 
-  workflow_dispatch: # 允许在 GitHub 网页上手动点击触发部署
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -25,22 +25,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 9
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18 # 与你本地版本一致
-          cache: "pnpm"
+          node-version: 18
+          cache: 'npm'  # 这里改成 npm 缓存
 
       - name: Install dependencies
-        run: pnpm install
+        run: npm install  # 改成 npm 安装
 
       - name: Build
-        run: pnpm build
+        run: npm run build  # 改成 npm 打包
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -48,7 +43,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "./vue-big" # Vue 打包后的目录
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment
