@@ -2,7 +2,7 @@ name: Deploy Vue App to GitHub Pages
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
   workflow_dispatch:
 
@@ -29,10 +29,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
-          cache: 'npm'  # 这里改成 npm 缓存
+          cache: "npm"
+          registry-url: "https://registry.npmjs.org/" # <--- 加上这一行，强制使用官方源
 
       - name: Install dependencies
-        run: npm install  # 改成 npm 安装
+        run: npm install
+        env:
+          NPM_CONFIG_REGISTRY: https://registry.npmjs.org/ # <--- 再加一道保险
 
       - name: Build
         run: npm run build
@@ -46,7 +49,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: "./dist"
 
       - name: Deploy to GitHub Pages
         id: deployment
