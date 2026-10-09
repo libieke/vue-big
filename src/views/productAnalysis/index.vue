@@ -235,9 +235,7 @@ export default {
     };
   },
   created() {
-    this.$nextTick(() => {
-      this.getListDeviceType();
-    });
+    this.loadInitialData();
   },
   computed: {
     listQueryFn() {
@@ -258,35 +256,57 @@ export default {
     },
   },
   methods: {
+    loadInitialData() {
+      return this.getListDeviceType()
+        .then(() => {
+          const firstType = this.listQueryFormModel.listDeviceType.options[0];
+          if (!firstType) {
+            return null;
+          }
+          this.listQuery.listDeviceType = firstType.id;
+          this.listQuery.typeId = firstType.id;
+          return this.changeId(this.listQuery);
+        })
+        .then(() => this.getList())
+        .catch(() => {});
+    },
     handleQuery() {
       this.getList();
     },
     getListDeviceType() {
-      API.listDeviceType().then((res) => {
+      return API.listDeviceType().then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceType.options = res.data;
         }
+        return this.listQueryFormModel.listDeviceType.options;
       });
     },
     changeId(item) {
       this.listQuery.typeId = item.listDeviceType;
       let version = item.listDeviceVersion;
-      API.listDeviceVersion({
+      const versionRequest = API.listDeviceVersion({
         deviceTypeId: this.listQuery.typeId,
       }).then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceVersion.options = res.data;
         }
       });
-      API.listDeviceAssetNumber({
+      const assetRequest = API.listDeviceAssetNumber({
         deviceTypeId: this.listQuery.typeId,
         version: version,
       }).then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
-          this.listQuery.deviceId = item.listDeviceAssetNumber;
+          const deviceId =
+            item.listDeviceAssetNumber ||
+            (res.data && res.data[0] && res.data[0].deviceId);
+          if (deviceId) {
+            this.listQuery.listDeviceAssetNumber = deviceId;
+            this.listQuery.deviceId = deviceId;
+          }
         }
       });
+      return Promise.all([versionRequest, assetRequest]);
     },
     changeTab(e) {
       if (e === "日期") {
@@ -305,10 +325,10 @@ export default {
       }
     },
     getList() {
-      API.getProdInfoNg({
+      this.listLoading = true;
+      return API.getProdInfoNg({
         ...this.listQuery,
       }).then((res) => {
-        this.listLoading = true;
         if (res.code == 200) {
           this.list = res.data.nkNgEnumRespList || [];
           Object.assign(this.otherData, res.data);
@@ -327,8 +347,8 @@ export default {
           });
           this.chartOptions.lineData = result;
           this.sortShow = true;
-          this.listLoading = false;
         }
+      }).catch(() => {}).then(() => {
         this.listLoading = false;
       });
     },

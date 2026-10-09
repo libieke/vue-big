@@ -214,9 +214,7 @@ export default {
     };
   },
   mounted() {
-    this.$nextTick(() => {
-      this.getListDeviceType();
-    });
+    this.loadInitialData();
   },
   computed: {
     listQueryFn() {
@@ -237,35 +235,57 @@ export default {
     },
   },
   methods: {
+    loadInitialData() {
+      return this.getListDeviceType()
+        .then(() => {
+          const firstType = this.listQueryFormModel.listDeviceType.options[0];
+          if (!firstType) {
+            return null;
+          }
+          this.listQuery.listDeviceType = firstType.id;
+          this.listQuery.deviceTypeId = firstType.id;
+          return this.changeId(this.listQuery);
+        })
+        .then(() => this.getList())
+        .catch(() => {});
+    },
     handleQuery() {
       this.getList();
     },
     getListDeviceType() {
-      API.listDeviceType().then((res) => {
+      return API.listDeviceType().then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceType.options = res.data;
         }
+        return this.listQueryFormModel.listDeviceType.options;
       });
     },
     changeId(item) {
       this.listQuery.deviceTypeId = item.listDeviceType;
       let version = item.listDeviceVersion;
-      API.listDeviceVersion({
+      const versionRequest = API.listDeviceVersion({
         deviceTypeId: this.listQuery.deviceTypeId,
       }).then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceVersion.options = res.data;
         }
       });
-      API.listDeviceAssetNumber({
+      const assetRequest = API.listDeviceAssetNumber({
         deviceTypeId: this.listQuery.deviceTypeId,
         version: version,
       }).then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
-          this.listQuery.deviceId = item.listDeviceAssetNumber;
+          const deviceId =
+            item.listDeviceAssetNumber ||
+            (res.data && res.data[0] && res.data[0].deviceId);
+          if (deviceId) {
+            this.listQuery.listDeviceAssetNumber = deviceId;
+            this.listQuery.deviceId = deviceId;
+          }
         }
       });
+      return Promise.all([versionRequest, assetRequest]);
     },
     loadAll() {
       API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
@@ -309,26 +329,29 @@ export default {
       }
     },
     getList() {
-      API.getAlarmAly({
+      this.listLoading = true;
+      return API.getAlarmAly({
         ...this.listQuery,
       }).then((res) => {
-        this.listLoading = true;
         if (res.code == 200) {
-          this.list = res.data || res.data.list || [];
+          const data = Array.isArray(res.data)
+            ? res.data
+            : (res.data && res.data.list) || [];
+          this.list = data;
           this.chartOptions.title = "报警次数(个)";
           this.chartOptions.subtext = "报警次数(%)";
-          this.chartOptions.xData = res.data.map((item) => {
+          this.chartOptions.xData = data.map((item) => {
             return item.deviceWarningName;
           });
-          this.chartOptions.yData = res.data.map((item) => {
+          this.chartOptions.yData = data.map((item) => {
             return item.warningCount;
           });
-          let result = res.data.map((item) => {
-            return item.countPer.replace(/%/, "");
+          let result = data.map((item) => {
+            return String(item.countPer || 0).replace(/%/, "");
           });
           this.chartOptions.lineData = result;
-          this.listLoading = false;
         }
+      }).catch(() => {}).then(() => {
         this.listLoading = false;
       });
     },

@@ -53,7 +53,7 @@
         </el-form>
       </div>
       <div class="chartStyle">
-        <div v-if="this.$route.query.deviceId">
+        <div v-if="list.length > 0">
           <BarChart
             :chartOptions="chartOptions"
             height="350px"
@@ -133,8 +133,8 @@ export default {
       // 自定义Pagination的参数
       hideOnSinglePage: false,
       listQuery: {
-        pageNo: 0,
-        pageSize: 0,
+        pageNo: 1,
+        pageSize: 20,
         startTime: null,
         endTime: null,
         deviceId: null,
@@ -228,9 +228,20 @@ export default {
       this.getList();
       this.getAgeing();
     }
-    this.$nextTick(() => {
-      this.getListDeviceType();
-    });
+    this.getListDeviceType()
+      .then(() => {
+        if (this.listQuery.deviceId) {
+          return null;
+        }
+        const firstType = this.listQueryFormModel.listDeviceType.options[0];
+        if (!firstType) {
+          return null;
+        }
+        this.listQuery.listDeviceType = firstType.id;
+        this.listQuery.typeId = firstType.id;
+        return this.changeId(this.listQuery).then(() => this.getList());
+      })
+      .catch(() => {});
   },
   computed: {
     listQueryFn() {
@@ -256,53 +267,79 @@ export default {
       this.getList();
     },
     getListDeviceType() {
-      API.listDeviceType().then((res) => {
+      return API.listDeviceType().then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceType.options = res.data;
         }
+        return this.listQueryFormModel.listDeviceType.options;
       });
     },
     changeId(item) {
       this.listQuery.typeId = item.listDeviceType;
       let version = item.listDeviceVersion;
-      API.listDeviceVersion({ deviceTypeId: this.listQuery.typeId }).then((res) => {
+      const versionRequest = API.listDeviceVersion({
+        deviceTypeId: this.listQuery.typeId,
+      }).then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceVersion.options = res.data;
         }
       });
-      API.listDeviceAssetNumber({
+      const assetRequest = API.listDeviceAssetNumber({
         deviceTypeId: this.listQuery.typeId,
         version: version,
       }).then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
-          this.listQuery.deviceId = item.listDeviceAssetNumber;
+          const deviceId =
+            item.listDeviceAssetNumber ||
+            (res.data && res.data[0] && res.data[0].deviceId);
+          if (deviceId) {
+            this.listQuery.listDeviceAssetNumber = deviceId;
+            this.listQuery.deviceId = deviceId;
+          }
         }
       });
+      return Promise.all([versionRequest, assetRequest]);
     },
     // 控制图
     controlFn() {},
     getList() {
-      API.getProdInfo({
+      this.listLoading = true;
+      return API.getProdInfo({
         ...this.listQuery,
       }).then((res) => {
-        this.listLoading = true;
         if (res.code == "200") {
-          this.list = res.data || [];
-          Object.assign(this.otherData, res.data);
-          // if (res.data.length <= 0 || res.data.length <= 0) {
-          //   this.showEmpty = false;
-          // }
+          const data = Array.isArray(res.data) ? res.data : [];
+          this.list = data;
+          const summary = data.reduce(
+            (result, item) => {
+              result.sumNum += Number(item.sumNum) || 0;
+              result.okNumL += Number(item.gpNum) || 0;
+              result.ngNum += Number(item.ngNum) || 0;
+              result.fjNum += Number(item.fjNum) || 0;
+              return result;
+            },
+            { sumNum: 0, okNumL: 0, ngNum: 0, fjNum: 0 }
+          );
+          this.otherData.okNumL = summary.okNumL;
+          this.otherData.ngNum = summary.ngNum;
+          this.otherData.fjNum = summary.fjNum;
+          this.otherData.okRate = summary.sumNum
+            ? `${((summary.okNumL / summary.sumNum) * 100).toFixed(2)}%`
+            : "0.00%";
+          this.otherData.ngRate = summary.sumNum
+            ? `${((summary.ngNum / summary.sumNum) * 100).toFixed(2)}%`
+            : "0.00%";
           this.chartOptions.title = "生产计数";
           this.chartOptions.subtext = "(个)";
-          this.chartOptions.xData = res.data.map((item) => {
+          this.chartOptions.xData = data.map((item) => {
             return item.date;
           });
-          this.chartOptions.yData = res.data.map((item) => {
+          this.chartOptions.yData = data.map((item) => {
             return item.sumNum;
           });
-          this.listLoading = false;
         }
+      }).catch(() => {}).then(() => {
         this.listLoading = false;
       });
     },

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import * as echarts from "echarts";
+import echarts from "@/lib/echarts";
 
 export default {
   props: {
@@ -22,6 +22,22 @@ export default {
   },
   mounted() {
     this.initEcharts();
+    this.resizeHandler = () => {
+      if (this.chart) {
+        this.chart.resize();
+      }
+    };
+    window.addEventListener("resize", this.resizeHandler);
+  },
+  beforeDestroy() {
+    if (this.resizeHandler) {
+      window.removeEventListener("resize", this.resizeHandler);
+      this.resizeHandler = null;
+    }
+    if (this.chart) {
+      this.chart.dispose();
+      this.chart = null;
+    }
   },
   watch: {
     chartOptions: {
@@ -34,9 +50,12 @@ export default {
   },
   methods: {
     initEcharts() {
-      let myChart = echarts.getInstanceByDom(document.getElementById("barChart"));
-      if (myChart == null) {
-        myChart = echarts.init(document.getElementById("barChart"));
+      const chartDom = this.$refs.barChart;
+      if (!chartDom) {
+        return;
+      }
+      if (!this.chart) {
+        this.chart = echarts.init(chartDom);
       }
       // 指定图表的配置项和数据
       var option = {
@@ -137,10 +156,7 @@ export default {
         ],
       };
       // 使用刚指定的配置项和数据显示图表。
-      myChart.setOption(option);
-      window.addEventListener("resize", () => {
-        myChart.resize();
-      });
+      this.chart.setOption(option);
     },
   },
 };

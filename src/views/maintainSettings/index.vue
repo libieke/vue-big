@@ -266,9 +266,7 @@ export default {
     };
   },
   mounted() {
-    this.$nextTick(() => {
-      this.getListDeviceType();
-    });
+    this.loadInitialData();
   },
   computed: {
     listQueryFn() {
@@ -289,34 +287,58 @@ export default {
     },
   },
   methods: {
+    loadInitialData() {
+      return this.getListDeviceType()
+        .then(() => {
+          const firstType = this.listQueryFormModel.listDeviceType.options[0];
+          if (!firstType) {
+            return null;
+          }
+          this.listQuery.listDeviceType = firstType.id;
+          this.listQuery.deviceTypeId = firstType.id;
+          return this.changeId(this.listQuery);
+        })
+        .then(() => this.handleQuery())
+        .catch(() => {});
+    },
     handleQuery() {
       this.getList();
     },
     getListDeviceType() {
-      API.listDeviceType().then((res) => {
+      return API.listDeviceType().then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceType.options = res.data;
         }
+        return this.listQueryFormModel.listDeviceType.options;
       });
     },
     changeId(item) {
       this.listQuery.deviceTypeId = item.listDeviceType;
       let version = item.listDeviceVersion;
-      API.listDeviceVersion({ deviceTypeId: this.listQuery.deviceTypeId }).then((res) => {
+      const versionRequest = API.listDeviceVersion({
+        deviceTypeId: this.listQuery.deviceTypeId,
+      }).then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceVersion.options = res.data;
         }
       });
-      API.listDeviceAssetNumber({
+      const assetRequest = API.listDeviceAssetNumber({
         deviceTypeId: this.listQuery.deviceTypeId,
         version: version,
       }).then((res) => {
         if (res.code == 200) {
-          this.listQuery.deviceId = item.listDeviceAssetNumber;
-          this.dioFormData.deviceId = item.listDeviceAssetNumber;
           this.listQueryFormModel.listDeviceAssetNumber.options = res.data;
+          const deviceId =
+            item.listDeviceAssetNumber ||
+            (res.data && res.data[0] && res.data[0].deviceId);
+          if (deviceId) {
+            this.listQuery.listDeviceAssetNumber = deviceId;
+            this.listQuery.deviceId = deviceId;
+            this.dioFormData.deviceId = deviceId;
+          }
         }
       });
+      return Promise.all([versionRequest, assetRequest]);
     },
 
     handleReset(row) {
@@ -497,14 +519,13 @@ export default {
     },
     getList() {
       this.listLoading = true;
-      API.getProdLifeNum({
-        deviceId: this.dioFormData.deviceId,
+      return API.getProdLifeNum({
+        deviceId: this.listQuery.deviceId,
       }).then((res) => {
         if (res.code == 200) {
-          this.listLoading = false;
           this.list = res.data || res.data.list || [];
-          this.listLoading = false;
         }
+      }).catch(() => {}).then(() => {
         this.listLoading = false;
       });
     },
