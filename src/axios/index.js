@@ -8,7 +8,9 @@ const service = axios.create({
 
 // 如果启用了 mock 模式，则使用 mock 服务
 // 可通过 process.env.VUE_APP_MOCK 或 localStorage 的 'useMock' 控制
-const useMock = process.env.VUE_APP_MOCK === 'true' || (typeof localStorage !== 'undefined' && localStorage.getItem('useMock') === 'true');
+// localStorage 优先级更高，便于在线上演示环境临时切回真实接口
+const storedMock = typeof localStorage !== 'undefined' ? localStorage.getItem('useMock') : null;
+const useMock = storedMock !== null ? storedMock === 'true' : process.env.VUE_APP_MOCK === 'true';
 if (useMock) {
   try {
     const mockService = require('@/mock/index').default;
