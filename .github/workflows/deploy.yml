@@ -33,13 +33,22 @@ jobs:
 
       - name: Install dependencies
         run: |
+          set +e
+          node -v
+          npm -v
+          npm config get registry
           npm install --no-audit --no-fund > "$RUNNER_TEMP/npm-install.log" 2>&1
           status=$?
           if [ "$status" -ne 0 ]; then
-            echo "npm install failed with exit code $status"
-            while IFS= read -r line; do
-              echo "::error::$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r$//')"
-            done < <(tail -n 40 "$RUNNER_TEMP/npm-install.log")
+            tail -n 80 "$RUNNER_TEMP/npm-install.log"
+            summary=$(tail -n 25 "$RUNNER_TEMP/npm-install.log" | tr -d '\r' | tr '\n' '~' | sed -e 's/%/%25/g' | cut -c1-3000)
+            echo "::error title=npm install failed::$summary"
+            {
+              echo "### npm install log"
+              echo '```'
+              tail -n 120 "$RUNNER_TEMP/npm-install.log"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
           fi
           exit $status
         env:
