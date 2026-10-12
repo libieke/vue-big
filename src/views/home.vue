@@ -1,54 +1,46 @@
 <template>
-  <!-- <div
-    style="height: 100%; height: 100%; background: #00102a"
-    class="unselectable-text"
-  > -->
-  <v-scale-screen
-    width="1920"
-    height="1080"
-    style="margin-bottom: 10px"
-    :fullScreen="false"
-  >
+  <div id="home-container" class="unselectable-text">
     <div class="header-top">
-      <div class="top-time">{{ NowTime }}</div>
-      <div class="header">
-        <div class="selectRange">
-          <Menu
-            mode="horizontal"
-            ref="menus"
-            @on-select="(name) => $route.name !== name && $router.push(name)"
-            :active-name="$route.name"
-          >
-            <MenuItem class="menu-item" name="operationAtatus">
-              运行状况
-            </MenuItem>
-            <MenuItem name="productionInformation"> 生产信息 </MenuItem>
+    <div class="top-time">{{ NowTime }}</div>
+    <div class="header">
+      <div class="selectRange">
+        <Menu
+          mode="horizontal"
+          ref="menus"
+          @on-select="(name) => $route.name !== name && $router.push(name)"
+          :active-name="$route.name"
+        >
+          <MenuItem class="menu-item" name="operationAtatus">
+            运行状况
+          </MenuItem>
+          <MenuItem name="productionInformation"> 生产信息 </MenuItem>
 
-            <MenuItem name="productAnalysis"> 生产分析 </MenuItem>
-          </Menu>
-        </div>
-        <!-- <div class="header-title">nichicon IOT SYSTEM</div> -->
-        <div class="selectRange2">
-          <Menu
-            mode="horizontal"
-            @on-select="(name) => $route.name !== name && $router.push(name)"
-            :active-name="$route.name"
-          >
-            <MenuItem name="alarmHistory"> 报警历史 </MenuItem>
-            <MenuItem name="alarmAnalysis"> 报警分析 </MenuItem>
-            <MenuItem name="maintainSettings"> 维护设置 </MenuItem>
-          </Menu>
-        </div>
+          <MenuItem name="productAnalysis"> 生产分析 </MenuItem>
+        </Menu>
+      </div>
+      <!-- <div class="header-title">nichicon IOT SYSTEM</div> -->
+      <div class="selectRange2">
+        <Menu
+          mode="horizontal"
+          @on-select="(name) => $route.name !== name && $router.push(name)"
+          :active-name="$route.name"
+        >
+          <MenuItem name="alarmHistory"> 报警历史 </MenuItem>
+          <MenuItem name="alarmAnalysis"> 报警分析 </MenuItem>
+          <MenuItem name="maintainSettings"> 维护设置 </MenuItem>
+        </Menu>
       </div>
     </div>
+  </div>
     <div class="page">
       <router-view></router-view>
     </div>
-    <!-- </div> -->
-  </v-scale-screen>
+  </div>
 </template>
 
 <script>
+import autofit from "autofit.js";
+
 import { parseTime } from "@/utils";
 
 export default {
@@ -59,7 +51,17 @@ export default {
     };
   },
   mounted() {
+    // autofit 大屏自适应：设计稿 1920*1080
+    autofit.init({
+      dh: 1080,
+      dw: 1920,
+      el: "#home-container",
+      resize: true,
+    });
     this.getTime();
+  },
+  beforeDestroy() {
+    autofit.off("#home-container");
   },
   methods: {
     getTime() {
@@ -75,6 +77,15 @@ export default {
 <style lang="scss" scoped>
 @import "~@/styles/mixin.scss";
 @import "~@/styles/variables.scss";
+
+// autofit 需要容器为设计稿固定尺寸，由库负责整体缩放
+#home-container {
+  width: 1920px;
+  height: 1080px;
+  background: #00102a;
+  overflow: hidden;
+}
+
 .header-top {
   height: 90px;
   background: url("../assets/images/header.png") no-repeat;
