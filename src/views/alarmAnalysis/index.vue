@@ -38,6 +38,16 @@
                 :value="item[val.optionValue]"
               />
             </el-select>
+            <el-radio-group
+              v-if="val.type == 'radio'"
+              v-model="radio1"
+              size="medium"
+              fill="#00D8F4"
+              @input="changeTab"
+            >
+              <el-radio-button label="日期"></el-radio-button>
+              <el-radio-button label="批次"></el-radio-button>
+            </el-radio-group>
             <el-date-picker
               v-if="(val.type == 'picker') & (dataShow == true)"
               v-model="value"
@@ -65,17 +75,6 @@
             >
           </el-form-item>
         </el-form>
-        <div class="positonBtn">
-          <el-radio-group
-            v-model="radio1"
-            size="medium"
-            fill="#00D8F4"
-            @input="changeTab"
-          >
-            <el-radio-button label="日期"></el-radio-button>
-            <el-radio-button label="批次"></el-radio-button>
-          </el-radio-group>
-        </div>
       </div>
       <div class="chartStyle">
         <BLchart
@@ -133,6 +132,7 @@ export default {
         startTime: null,
         endTime: null,
         pbatchNo: null,
+        radio1: "日期",
       },
       radio1: "日期",
       dataShow: true,
@@ -163,6 +163,12 @@ export default {
           options: [],
           optionLable: "assetNumber",
           optionValue: "deviceId",
+          show: true,
+        },
+        radio1: {
+          type: "radio",
+          label: "查询方式",
+          options: ["日期", "批次"],
           show: true,
         },
         startDate: {
@@ -313,6 +319,7 @@ export default {
       };
     },
     changeTab(e) {
+      this.listQuery.radio1 = e;
       if (e === "日期") {
         this.batchShow = false;
         this.dataShow = true;
@@ -332,28 +339,31 @@ export default {
       this.listLoading = true;
       return API.getAlarmAly({
         ...this.listQuery,
-      }).then((res) => {
-        if (res.code == 200) {
-          const data = Array.isArray(res.data)
-            ? res.data
-            : (res.data && res.data.list) || [];
-          this.list = data;
-          this.chartOptions.title = "报警次数(个)";
-          this.chartOptions.subtext = "报警次数(%)";
-          this.chartOptions.xData = data.map((item) => {
-            return item.deviceWarningName;
-          });
-          this.chartOptions.yData = data.map((item) => {
-            return item.warningCount;
-          });
-          let result = data.map((item) => {
-            return String(item.countPer || 0).replace(/%/, "");
-          });
-          this.chartOptions.lineData = result;
-        }
-      }).catch(() => {}).then(() => {
-        this.listLoading = false;
-      });
+      })
+        .then((res) => {
+          if (res.code == 200) {
+            const data = Array.isArray(res.data)
+              ? res.data
+              : (res.data && res.data.list) || [];
+            this.list = data;
+            this.chartOptions.title = "报警次数(个)";
+            this.chartOptions.subtext = "报警次数(%)";
+            this.chartOptions.xData = data.map((item) => {
+              return item.deviceWarningName;
+            });
+            this.chartOptions.yData = data.map((item) => {
+              return item.warningCount;
+            });
+            let result = data.map((item) => {
+              return String(item.countPer || 0).replace(/%/, "");
+            });
+            this.chartOptions.lineData = result;
+          }
+        })
+        .catch(() => {})
+        .then(() => {
+          this.listLoading = false;
+        });
     },
     changeTime(e) {
       this.listQuery.startTime = e[0];
@@ -365,10 +375,10 @@ export default {
       })
         .then((res) => {
           let fileName = decodeURIComponent(
-            res.headers["content-disposition"].split("'")[2]
+            res.headers["content-disposition"].split("'")[2],
           );
           let url = window.URL.createObjectURL(
-            new Blob([res.data], { type: "application/vnd.xlsx" })
+            new Blob([res.data], { type: "application/vnd.xlsx" }),
           );
           let a = document.createElement("a");
           a.style.display = "none";
@@ -389,31 +399,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.agent-container {
-  .relative {
-    padding-right: 100px;
-    height: 44px;
-    margin-bottom: 18px;
-    .positonBtn {
-      position: absolute;
-      display: flex;
-      align-items: center;
-      bottom: 40px;
-      top: 19px;
-      left: 46%;
-      .tab-text {
-        font-size: 20px;
-        color: #ffffff;
-        padding-right: 8px;
-      }
-    }
-  }
-}
-::v-deep .el-form-item {
-  &:nth-child(3) {
-    margin-right: 180px !important;
-  }
-}
 .chartStyle {
   width: 100%;
   height: 400px;

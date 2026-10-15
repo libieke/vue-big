@@ -39,6 +39,16 @@
                 :value="item[val.optionValue]"
               />
             </el-select>
+            <el-radio-group
+              v-if="val.type == 'radio'"
+              v-model="radio1"
+              size="medium"
+              fill="#00D8F4"
+              @input="changeTab"
+            >
+              <el-radio-button label="日期"></el-radio-button>
+              <el-radio-button label="批次"></el-radio-button>
+            </el-radio-group>
             <el-date-picker
               v-if="(val.type == 'picker') & (dataShow == true)"
               v-model="value"
@@ -58,11 +68,15 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" size="medium" @click="handleQuery">查询</el-button>
-            <el-button type="primary" size="medium" @click="outQuery">数据导出</el-button>
+            <el-button type="primary" size="medium" @click="handleQuery"
+              >查询</el-button
+            >
+            <el-button type="primary" size="medium" @click="outQuery"
+              >数据导出</el-button
+            >
           </el-form-item>
         </el-form>
-        <div class="positonBtn">
+        <!-- <div class="positonBtn">
           <el-radio-group
             v-model="radio1"
             size="medium"
@@ -72,7 +86,7 @@
             <el-radio-button label="日期"></el-radio-button>
             <el-radio-button label="批次"></el-radio-button>
           </el-radio-group>
-        </div>
+        </div> -->
       </div>
 
       <div class="chartStyle">
@@ -82,7 +96,10 @@
           height="350px"
           style="margin-bottom: 10px"
         ></BLchart>
-        <el-empty v-else :image="require('@/assets/images/empty.png')"></el-empty>
+        <el-empty
+          v-else
+          :image="require('@/assets/images/empty.png')"
+        ></el-empty>
       </div>
       <div class="content-box">
         <div class="left-box">
@@ -161,10 +178,12 @@ export default {
         startTime: null,
         endTime: null,
         patchNo: null,
+        radio1: "日期",
       },
+      radio1: "日期",
+
       isShowCountry: false, // 控制按钮限隐
       // tab
-      radio1: "日期",
       dataShow: true,
       batchShow: false,
       // 查询表单对象
@@ -194,6 +213,12 @@ export default {
           options: [],
           optionLable: "assetNumber",
           optionValue: "deviceId",
+          show: true,
+        },
+        radio1: {
+          type: "radio",
+          label: "查询方式",
+          options: ["日期", "批次"],
           show: true,
         },
         startDate: {
@@ -309,6 +334,7 @@ export default {
       return Promise.all([versionRequest, assetRequest]);
     },
     changeTab(e) {
+      this.listQuery.radio1 = e;
       if (e === "日期") {
         this.batchShow = false;
         this.dataShow = true;
@@ -328,29 +354,32 @@ export default {
       this.listLoading = true;
       return API.getProdInfoNg({
         ...this.listQuery,
-      }).then((res) => {
-        if (res.code == 200) {
-          this.list = res.data.nkNgEnumRespList || [];
-          Object.assign(this.otherData, res.data);
-          // 图表
+      })
+        .then((res) => {
+          if (res.code == 200) {
+            this.list = res.data.nkNgEnumRespList || [];
+            Object.assign(this.otherData, res.data);
+            // 图表
 
-          this.chartOptions.title = "报警次数(个)";
-          this.chartOptions.subtext = "报警次数(%)";
-          this.chartOptions.xData = res.data.nkNgEnumRespList.map((item) => {
-            return item.context;
-          });
-          this.chartOptions.yData = res.data.nkNgEnumRespList.map((item) => {
-            return item.num;
-          });
-          let result = res.data.nkNgEnumRespList.map((item) => {
-            return item.ngRate.replace(/%/, "");
-          });
-          this.chartOptions.lineData = result;
-          this.sortShow = true;
-        }
-      }).catch(() => {}).then(() => {
-        this.listLoading = false;
-      });
+            this.chartOptions.title = "报警次数(个)";
+            this.chartOptions.subtext = "报警次数(%)";
+            this.chartOptions.xData = res.data.nkNgEnumRespList.map((item) => {
+              return item.context;
+            });
+            this.chartOptions.yData = res.data.nkNgEnumRespList.map((item) => {
+              return item.num;
+            });
+            let result = res.data.nkNgEnumRespList.map((item) => {
+              return item.ngRate.replace(/%/, "");
+            });
+            this.chartOptions.lineData = result;
+            this.sortShow = true;
+          }
+        })
+        .catch(() => {})
+        .then(() => {
+          this.listLoading = false;
+        });
     },
     loadAll() {
       API.listPBatchNo({ deviceId: this.listQuery.deviceId }).then((res) => {
@@ -372,7 +401,9 @@ export default {
     },
     createStateFilter(queryString) {
       return (state) => {
-        return state.patchNo.toLowerCase().indexOf(queryString.toLowerCase()) === 0;
+        return (
+          state.patchNo.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
       };
     },
     handleSelect(item) {
@@ -390,10 +421,10 @@ export default {
       })
         .then((res) => {
           let fileName = decodeURIComponent(
-            res.headers["content-disposition"].split("'")[2]
+            res.headers["content-disposition"].split("'")[2],
           );
           let url = window.URL.createObjectURL(
-            new Blob([res.data], { type: "application/vnd.xlsx" })
+            new Blob([res.data], { type: "application/vnd.xlsx" }),
           );
           let a = document.createElement("a");
           a.style.display = "none";
@@ -414,31 +445,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.agent-container {
-  .relative {
-    padding-right: 100px;
-    height: 44px;
-    margin-bottom: 18px;
-    .positonBtn {
-      position: absolute;
-      display: flex;
-      align-items: center;
-      bottom: 40px;
-      top: 18px;
-      left: 46%;
-      .tab-text {
-        font-size: 20px;
-        color: #ffffff;
-        padding-right: 8px;
-      }
-    }
-  }
-}
-::v-deep .el-form-item {
-  &:nth-child(3) {
-    margin-right: 180px !important;
-  }
-}
 .chartStyle {
   width: 100%;
   height: 400px;

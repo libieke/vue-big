@@ -39,6 +39,16 @@
                 :value="item[val.optionValue]"
               />
             </el-select>
+            <el-radio-group
+              v-if="val.type == 'radio'"
+              v-model="radio1"
+              size="medium"
+              fill="#00D8F4"
+              @input="changeTab"
+            >
+              <el-radio-button label="日期"></el-radio-button>
+              <el-radio-button label="批次"></el-radio-button>
+            </el-radio-group>
             <el-date-picker
               v-if="(val.type == 'picker') & (dataShow == true)"
               v-model="value"
@@ -63,17 +73,6 @@
             >
           </el-form-item>
         </el-form>
-        <div class="positonBtn">
-          <el-radio-group
-            v-model="radio1"
-            size="medium"
-            fill="#00D8F4"
-            @input="changeTab"
-          >
-            <el-radio-button label="日期"></el-radio-button>
-            <el-radio-button label="批次"></el-radio-button>
-          </el-radio-group>
-        </div>
       </div>
       <div class="content-box">
         <div class="left-box">
@@ -120,6 +119,7 @@ export default {
         startTime: null,
         endTime: null,
         pbatchNo: null,
+        radio1: "日期",
       },
       // tab
       radio1: "日期",
@@ -152,6 +152,12 @@ export default {
           options: [],
           optionLable: "assetNumber",
           optionValue: "deviceId",
+          show: true,
+        },
+        radio1: {
+          type: "radio",
+          label: "查询方式",
+          options: ["日期", "批次"],
           show: true,
         },
         startDate: {
@@ -251,13 +257,11 @@ export default {
       let version = item.listDeviceVersion;
       const versionRequest = API.listDeviceVersion({
         deviceTypeId: this.listQuery.deviceTypeId,
-      }).then(
-        (res) => {
-          if (res.code == 200) {
-            this.listQueryFormModel.listDeviceVersion.options = res.data;
-          }
+      }).then((res) => {
+        if (res.code == 200) {
+          this.listQueryFormModel.listDeviceVersion.options = res.data;
         }
-      );
+      });
       const assetRequest = API.listDeviceAssetNumber({
         deviceTypeId: this.listQuery.deviceTypeId,
         version: version,
@@ -284,6 +288,7 @@ export default {
       });
     },
     changeTab(e) {
+      this.listQuery.radio1 = e;
       if (e === "日期") {
         this.batchShow = false;
         this.dataShow = true;
@@ -331,13 +336,16 @@ export default {
       this.listLoading = true;
       return API.getAlarmHis({
         ...this.listQuery,
-      }).then((res) => {
-        if (res.code == 200) {
-          this.list = res.data.list || res.data || [];
-        }
-      }).catch(() => {}).then(() => {
-        this.listLoading = false;
-      });
+      })
+        .then((res) => {
+          if (res.code == 200) {
+            this.list = res.data.list || res.data || [];
+          }
+        })
+        .catch(() => {})
+        .then(() => {
+          this.listLoading = false;
+        });
     },
 
     // 时间处理
@@ -350,31 +358,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.agent-container {
-  .relative {
-    padding-right: 100px;
-    height: 44px;
-    margin-bottom: 18px;
-    .positonBtn {
-      position: absolute;
-      display: flex;
-      align-items: center;
-      bottom: 40px;
-      top: 19px;
-      left: 46%;
-      .tab-text {
-        font-size: 20px;
-        color: #ffffff;
-        padding-right: 8px;
-      }
-    }
-  }
-}
-::v-deep .el-form-item {
-  &:nth-child(3) {
-    margin-right: 180px !important;
-  }
-}
 .chartStyle {
   width: 100%;
   height: 400px;
