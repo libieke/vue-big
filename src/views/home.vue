@@ -18,7 +18,7 @@
           <MenuItem name="productAnalysis"> 生产分析 </MenuItem>
         </Menu>
       </div>
-      <!-- <div class="header-title">nichicon IOT SYSTEM</div> -->
+      <!-- <div class="header-title">FACTORY IOT SYSTEM</div> -->
       <div class="selectRange2">
         <Menu
           mode="horizontal"
