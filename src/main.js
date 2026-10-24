@@ -7,6 +7,7 @@ import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import "@/styles/index.scss";
 import "@/icons"; // icon
+import { initUmami, trackPageview } from "@/utils/umami";
 // 屏幕适配
 // import VScaleScreen from "v-scale-screen";
 
@@ -24,6 +25,13 @@ Vue.config.productionTip = false;
 Vue.use(iView);
 // Vue.use(VScaleScreen);
 Vue.use(ElementUI);
+
+// 注入 Umami 埋点脚本；hash 路由切换时手动补一次 pageview
+initUmami();
+router.afterEach(() => {
+  trackPageview();
+});
+
 new Vue({
   router,
   render: (h) => h(App),

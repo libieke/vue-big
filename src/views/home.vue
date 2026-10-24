@@ -1,37 +1,40 @@
 <template>
   <div id="home-container" class="unselectable-text">
     <div class="header-top">
-    <div class="top-time">{{ NowTime }}</div>
-    <div class="header">
-      <div class="selectRange">
-        <Menu
-          mode="horizontal"
-          ref="menus"
-          @on-select="(name) => $route.name !== name && $router.push(name)"
-          :active-name="$route.name"
-        >
-          <MenuItem class="menu-item" name="operationAtatus">
-            运行状况
-          </MenuItem>
-          <MenuItem name="productionInformation"> 生产信息 </MenuItem>
-
-          <MenuItem name="productAnalysis"> 生产分析 </MenuItem>
-        </Menu>
+      <div class="top-time">
+        <div>实时访问数：{{ number }}</div>
+        {{ NowTime }}
       </div>
-      <!-- <div class="header-title">FACTORY IOT SYSTEM</div> -->
-      <div class="selectRange2">
-        <Menu
-          mode="horizontal"
-          @on-select="(name) => $route.name !== name && $router.push(name)"
-          :active-name="$route.name"
-        >
-          <MenuItem name="alarmHistory"> 报警历史 </MenuItem>
-          <MenuItem name="alarmAnalysis"> 报警分析 </MenuItem>
-          <MenuItem name="maintainSettings"> 维护设置 </MenuItem>
-        </Menu>
+      <div class="header">
+        <div class="selectRange">
+          <Menu
+            mode="horizontal"
+            ref="menus"
+            @on-select="(name) => $route.name !== name && $router.push(name)"
+            :active-name="$route.name"
+          >
+            <MenuItem class="menu-item" name="operationAtatus">
+              运行状况
+            </MenuItem>
+            <MenuItem name="productionInformation"> 生产信息 </MenuItem>
+
+            <MenuItem name="productAnalysis"> 生产分析 </MenuItem>
+          </Menu>
+        </div>
+        <!-- <div class="header-title">FACTORY IOT SYSTEM</div> -->
+        <div class="selectRange2">
+          <Menu
+            mode="horizontal"
+            @on-select="(name) => $route.name !== name && $router.push(name)"
+            :active-name="$route.name"
+          >
+            <MenuItem name="alarmHistory"> 报警历史 </MenuItem>
+            <MenuItem name="alarmAnalysis"> 报警分析 </MenuItem>
+            <MenuItem name="maintainSettings"> 维护设置 </MenuItem>
+          </Menu>
+        </div>
       </div>
     </div>
-  </div>
     <div class="page">
       <router-view></router-view>
     </div>
@@ -42,12 +45,18 @@
 import autofit from "autofit.js";
 
 import { parseTime } from "@/utils";
+import { fetchActiveVisitors, umamiEnabled } from "@/utils/umami";
+
+// 实时访问数刷新间隔
+const VISITORS_REFRESH_INTERVAL = 30 * 1000;
 
 export default {
   name: "home",
   data() {
     return {
       NowTime: "",
+      number: 0,
+      visitorsTimer: null,
     };
   },
   mounted() {
@@ -59,9 +68,17 @@ export default {
       resize: true,
     });
     this.getTime();
+    this.getVisitors();
+    if (umamiEnabled) {
+      this.visitorsTimer = setInterval(
+        this.getVisitors,
+        VISITORS_REFRESH_INTERVAL
+      );
+    }
   },
   beforeDestroy() {
     autofit.off("#home-container");
+    clearInterval(this.visitorsTimer);
   },
   methods: {
     getTime() {
@@ -69,6 +86,17 @@ export default {
       setTimeout(() => {
         this.getTime();
       }, 1000);
+    },
+    async getVisitors() {
+      if (!umamiEnabled) return;
+      try {
+        const count = await fetchActiveVisitors();
+        if (typeof count === "number") {
+          this.number = count;
+        }
+      } catch (error) {
+        console.warn("获取 Umami 实时访问数失败:", error.message);
+      }
     },
   },
 };
@@ -95,11 +123,11 @@ export default {
 
 .top-time {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   font-size: 18px;
   color: #dbfaff;
-  padding: 2px 31px;
+  padding: 3px 31px;
 }
 
 .header {

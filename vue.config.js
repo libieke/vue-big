@@ -30,6 +30,14 @@ module.exports = {
           "^/api": "",
         },
       },
+      // Umami 统计接口代理，避免本地开发跨域
+      "/umami-api": {
+        target: process.env.VUE_APP_UMAMI_API_HOST || "http://localhost:3000",
+        changeOrigin: true,
+        pathRewrite: {
+          "^/umami-api": "",
+        },
+      },
     },
   },
   configureWebpack: {
