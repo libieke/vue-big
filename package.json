@@ -8,6 +8,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
     "autofit.js": "^3.2.8",
     "axios": "^1.7.7",
     "core-js": "^3.6.5",

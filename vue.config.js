@@ -8,6 +8,7 @@ const port = process.env.port || process.env.npm_config_port || 8080; // dev por
 
 module.exports = {
   publicPath: "./",
+  outputDir: "dist",
   lintOnSave: false,
   devServer: {
     // host: "10.12.58.168",

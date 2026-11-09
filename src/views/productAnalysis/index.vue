@@ -299,7 +299,7 @@ export default {
       this.getList();
     },
     getListDeviceType() {
-      return API.listDeviceType().then((res) => {
+      return API.listDeviceType(10000).then((res) => {
         if (res.code == 200) {
           this.listQueryFormModel.listDeviceType.options = res.data;
         }

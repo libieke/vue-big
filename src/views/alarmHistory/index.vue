@@ -77,12 +77,14 @@
       <div class="content-box">
         <div class="left-box">
           <custom-table
-            :fetch-loading="listLoading"
+            :columns="tableColumn"
             :data="list"
-            maxHeight="828px"
-            :loading-text="loadingText"
-            :table-column="tableColumn"
-            :selection="false"
+            :height="750"
+            :row-height="42"
+            :speed="30"
+            :buffer="8"
+            :auto-scroll="true"
+            row-key="id"
           >
           </custom-table>
         </div>
@@ -93,7 +95,7 @@
 
 <script>
 import ContentTitle from "@/components/ContentTitle/index";
-import CustomTable from "@/components/CustomTable";
+import CustomTable from "@/components/CustomTable/elVirtualTable.vue";
 import * as API from "@/axios/common.js";
 export default {
   components: {
@@ -334,12 +336,11 @@ export default {
     },
     getList() {
       this.listLoading = true;
-      return API.getAlarmHis({
-        ...this.listQuery,
-      })
+      return API.getAlarmHis()
         .then((res) => {
           if (res.code == 200) {
             this.list = res.data.list || res.data || [];
+            console.log("this.list :>> ", this.list);
           }
         })
         .catch(() => {})

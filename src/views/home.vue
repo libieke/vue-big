@@ -2,7 +2,7 @@
   <div id="home-container" class="unselectable-text">
     <div class="header-top">
       <div class="top-time">
-        <div>实时访问数：{{ number }}</div>
+        <!-- <div>实时访问数：{{ number }}</div> -->
         {{ NowTime }}
       </div>
       <div class="header">
@@ -72,7 +72,7 @@ export default {
     if (umamiEnabled) {
       this.visitorsTimer = setInterval(
         this.getVisitors,
-        VISITORS_REFRESH_INTERVAL
+        VISITORS_REFRESH_INTERVAL,
       );
     }
   },
@@ -123,7 +123,7 @@ export default {
 
 .top-time {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   font-size: 18px;
   color: #dbfaff;
