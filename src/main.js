@@ -10,6 +10,9 @@ import "@/icons"; // icon
 import { initUmami, trackPageview } from "@/utils/umami";
 // 屏幕适配
 // import VScaleScreen from "v-scale-screen";
+// 虚拟万数据加载
+import VueVirtualScroller from "vue-virtual-scroller";
+import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 
 // Mock 工具 - 仅在开发环境暴露
 if (process.env.NODE_ENV === "development") {
@@ -25,7 +28,7 @@ Vue.config.productionTip = false;
 Vue.use(iView);
 // Vue.use(VScaleScreen);
 Vue.use(ElementUI);
-
+Vue.use(VueVirtualScroller);
 // 注入 Umami 埋点脚本；hash 路由切换时手动补一次 pageview
 initUmami();
 router.afterEach(() => {

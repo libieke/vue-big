@@ -90,7 +90,7 @@
       </div>
 
       <div class="chartStyle">
-        <BLchart
+        <!-- <BLchart
           v-if="this.chartOptions.xData.length > 0"
           :chartOptions="chartOptions"
           height="350px"
@@ -99,17 +99,29 @@
         <el-empty
           v-else
           :image="require('@/assets/images/empty.png')"
-        ></el-empty>
+        ></el-empty> -->
+        <BarLineWebGL
+          :chart-options="chartOptions"
+          width="100%"
+          height="450px"
+          chart-width="1fr"
+          legend-width="220px"
+          :max-visible-points="10000"
+        />
       </div>
       <div class="content-box">
         <div class="left-box">
           <custom-table
-            :fetch-loading="listLoading"
+            :columns="tableColumn"
             :data="list"
-            :loading-text="loadingText"
-            :table-column="tableColumn"
-            :selection="false"
-            :sort="sortShow"
+            :height="750"
+            :row-height="42"
+            :speed="30"
+            :buffer="8"
+            :auto-scroll="true"
+            :list-loading="listLoading"
+            loading-text="加载中..."
+            row-key="id"
           >
           </custom-table>
         </div>
@@ -144,8 +156,9 @@
 
 <script>
 import ContentTitle from "@/components/ContentTitle/index";
-import CustomTable from "@/components/CustomTable";
+import CustomTable from "@/components/CustomTable/elVirtualTable.vue";
 import BLchart from "@/components/Echart/BLchart";
+import BarLineWebGL from "@/components/Echart/BarLineWebGL.vue";
 import * as API from "@/axios/common.js";
 
 export default {
@@ -153,6 +166,7 @@ export default {
     ContentTitle,
     CustomTable,
     BLchart,
+    BarLineWebGL,
   },
   data() {
     return {
@@ -254,8 +268,8 @@ export default {
         yData: [],
         xData: [],
         lineData: [],
-        title: "",
-        subtext: "",
+        title: "报警趋势",
+        subtext: "近7日报警统计",
       },
     };
   },

@@ -171,7 +171,7 @@ export const generateProdInfoNgList = (pageNo = 1, pageSize = 10) => {
   const startIndex = (pageNo - 1) * pageSize;
   const ngTypes = ["漏焊", "虚焊", "短路", "开路", "器件反装", "器件遗漏"];
 
-  for (let i = startIndex; i < startIndex + pageSize; i++) {
+  for (let i = 0; i < 10000 + pageSize; i++) {
     const quantity = Math.floor(Math.random() * 20) + 1;
     const percentage = ((quantity / 100) * 100).toFixed(2);
 

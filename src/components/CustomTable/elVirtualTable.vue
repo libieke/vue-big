@@ -1,7 +1,17 @@
 <template>
   <div class="virtual-table">
-    <!-- 表头：保持父页面传入的 columns 不变 -->
+    <!-- 表头 -->
     <div class="table-header">
+      <!-- 第一列：序号 / ID -->
+      <div
+        v-if="showIndex"
+        class="table-cell header-cell index-cell"
+        :style="getIndexColumnStyle()"
+      >
+        {{ indexType === "id" ? indexLabel : indexLabel }}
+      </div>
+
+      <!-- 业务表头 -->
       <div
         v-for="(column, index) in columns"
         :key="column.prop || index"
@@ -17,6 +27,9 @@
       ref="scrollBody"
       class="table-body"
       :style="{ height: height + 'px' }"
+      v-loading="listLoading"
+      :element-loading-text="loadingText"
+      element-loading-background="rgba(3, 26, 60, 0.65)"
       @scroll="handleScroll"
       @mouseenter="pauseScroll"
       @mouseleave="resumeScroll"
@@ -33,11 +46,24 @@
           v-for="item in visibleRows"
           :key="getRowKey(item.row, item.index)"
           class="table-row"
+          :class="{
+            'row-odd': item.index % 2 !== 0,
+          }"
           :style="{
             height: rowHeight + 'px',
             transform: 'translateY(' + item.top + 'px)',
           }"
         >
+          <!-- 第一列：序号 / ID -->
+          <div
+            v-if="showIndex"
+            class="table-cell index-cell"
+            :style="getIndexColumnStyle()"
+          >
+            {{ getIndexValue(item) }}
+          </div>
+
+          <!-- 业务数据列 -->
           <div
             v-for="(column, colIndex) in columns"
             :key="column.prop || colIndex"
@@ -49,6 +75,7 @@
               :name="'column-' + column.prop"
               :row="item.row"
               :value="item.row[column.prop]"
+              :index="item.index"
             >
               {{ formatCell(item.row, column) }}
             </slot>
@@ -60,7 +87,12 @@
     <!-- 状态 -->
     <div class="table-footer">
       <span>数据总数：{{ data.length }}</span>
-      <span>
+
+      <span v-if="listLoading">
+        {{ loadingText }}
+      </span>
+
+      <span v-else>
         {{ isPaused ? "鼠标悬停，已暂停" : "自动滚动中" }}
       </span>
     </div>
@@ -72,16 +104,61 @@ export default {
   name: "CustomTable",
 
   props: {
-    // 父页面表头
+    // 表头配置
     columns: {
       type: Array,
       default: () => [],
     },
 
-    // 父页面接口数据
+    // 表格数据
     data: {
       type: Array,
       default: () => [],
+    },
+
+    // 加载状态
+    listLoading: {
+      type: Boolean,
+      default: false,
+    },
+
+    // 加载提示
+    loadingText: {
+      type: String,
+      default: "加载中...",
+    },
+
+    // 是否显示第一列
+    showIndex: {
+      type: Boolean,
+      default: true,
+    },
+
+    // 第一列类型：index 或 id
+    indexType: {
+      type: String,
+      default: "index",
+      validator(value) {
+        return ["index", "id"].includes(value);
+      },
+    },
+
+    // ID 对应的数据字段
+    indexProp: {
+      type: String,
+      default: "id",
+    },
+
+    // 第一列标题
+    indexLabel: {
+      type: String,
+      default: "序号",
+    },
+
+    // 第一列宽度
+    indexWidth: {
+      type: Number,
+      default: 70,
     },
 
     // 表格高度
@@ -149,7 +226,7 @@ export default {
       );
     },
 
-    // 仅渲染可视区域
+    // 可视区域数据
     visibleRows() {
       const result = [];
 
@@ -166,11 +243,21 @@ export default {
   },
 
   watch: {
-    // 接口重新返回数据时，从第一行开始
+    // 数据更新，回到顶部
     data() {
       this.resetScroll();
     },
 
+    // 加载结束后重新计算时间
+    listLoading(value) {
+      if (!value) {
+        this.lastTime = 0;
+      } else {
+        this.lastTime = 0;
+      }
+    },
+
+    // 自动滚动开关
     autoScroll(value) {
       if (value) {
         this.startAnimation();
@@ -179,8 +266,19 @@ export default {
       }
     },
 
+    // 滚动速度变化
     speed() {
       this.lastTime = 0;
+    },
+
+    // 表格高度变化
+    height() {
+      this.lastTime = 0;
+    },
+
+    // 行高变化
+    rowHeight() {
+      this.resetScroll();
     },
   },
 
@@ -193,12 +291,34 @@ export default {
   },
 
   methods: {
+    // 获取行唯一标识
     getRowKey(row, index) {
       const value = row && row[this.rowKey];
 
       return value !== undefined && value !== null ? value : index;
     },
 
+    // 获取第一列样式
+    getIndexColumnStyle() {
+      return {
+        width: this.indexWidth + "px",
+        flex: "0 0 " + this.indexWidth + "px",
+        textAlign: "center",
+      };
+    },
+
+    // 获取第一列值
+    getIndexValue(item) {
+      if (this.indexType === "id") {
+        const value = item.row && item.row[this.indexProp];
+
+        return value === undefined || value === null ? "--" : value;
+      }
+
+      return item.index + 1;
+    },
+
+    // 列宽样式
     getColumnStyle(column) {
       const width = column.width || 150;
 
@@ -209,12 +329,14 @@ export default {
       };
     },
 
+    // 获取单元格内容
     getCellValue(row, column) {
       const value = row[column.prop];
 
       return value === undefined || value === null ? "" : String(value);
     },
 
+    // 格式化单元格
     formatCell(row, column) {
       const value = row[column.prop];
 
@@ -227,22 +349,24 @@ export default {
 
     // 滚动同步
     handleScroll(event) {
-      this.scrollTop = event.target.scrollTop;
+      const body = this.$refs.scrollBody;
+      if (!body) return;
+
+      this.scrollTop = body.scrollTop;
     },
 
-    // 鼠标进入表格
+    // 鼠标进入
     pauseScroll() {
       this.isPaused = true;
-      this.lastTime = 0;
     },
 
-    // 鼠标离开表格
+    // 鼠标离开
     resumeScroll() {
       this.isPaused = false;
       this.lastTime = 0;
     },
 
-    // 数据更新，回到顶部
+    // 数据更新回到顶部
     resetScroll() {
       this.$nextTick(() => {
         const body = this.$refs.scrollBody;
@@ -258,41 +382,46 @@ export default {
 
     // 开始滚动
     startAnimation() {
-      if (this.animationId || !this.autoScroll) return;
+      if (this.animationId) return;
 
-      const animate = (time) => {
-        if (!this.autoScroll) {
-          this.animationId = null;
-          return;
-        }
+      const animate = (timestamp) => {
+        this.animationId = requestAnimationFrame(animate);
 
         const body = this.$refs.scrollBody;
 
-        if (body && !this.isPaused) {
-          if (this.lastTime) {
-            const delta = Math.min(time - this.lastTime, 50);
-
-            const maxScroll = body.scrollHeight - body.clientHeight;
-
-            if (maxScroll > 0) {
-              let nextTop = body.scrollTop + (this.speed * delta) / 1000;
-
-              // 到底后回到顶部
-              if (nextTop >= maxScroll) {
-                nextTop = 0;
-              }
-
-              body.scrollTop = nextTop;
-              this.scrollTop = nextTop;
-            }
-          }
-
-          this.lastTime = time;
-        } else {
+        if (
+          !body ||
+          !this.autoScroll ||
+          this.isPaused ||
+          this.listLoading ||
+          this.data.length === 0
+        ) {
           this.lastTime = 0;
+          return;
         }
 
-        this.animationId = requestAnimationFrame(animate);
+        if (!this.lastTime) {
+          this.lastTime = timestamp;
+          return;
+        }
+
+        const delta = timestamp - this.lastTime;
+        this.lastTime = timestamp;
+
+        // speed 单位：像素/秒
+        const distance = (this.speed * delta) / 1000;
+
+        const maxScrollTop = body.scrollHeight - body.clientHeight;
+
+        if (maxScrollTop <= 0) return;
+
+        if (body.scrollTop >= maxScrollTop - 1) {
+          body.scrollTop = 0;
+        } else {
+          body.scrollTop += distance;
+        }
+
+        this.scrollTop = body.scrollTop;
       };
 
       this.animationId = requestAnimationFrame(animate);
@@ -300,7 +429,7 @@ export default {
 
     // 停止滚动
     stopAnimation() {
-      if (this.animationId) {
+      if (this.animationId !== null) {
         cancelAnimationFrame(this.animationId);
         this.animationId = null;
       }
@@ -358,6 +487,10 @@ export default {
   transition: background 0.15s ease;
 }
 
+.table-row.row-odd {
+  background: rgba(4, 50, 114, 0.45);
+}
+
 .table-row:hover {
   background: rgba(128, 128, 128, 0.4);
 }
@@ -379,6 +512,11 @@ export default {
   font-weight: bold;
   color: #fff;
   background: rgba(0, 75, 150, 0.3);
+}
+
+.index-cell {
+  border-right: 1px solid rgba(0, 110, 200, 0.3);
+  color: #00d8f4;
 }
 
 .table-footer {

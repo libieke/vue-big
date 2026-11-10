@@ -84,6 +84,8 @@
             :speed="30"
             :buffer="8"
             :auto-scroll="true"
+            :list-loading="listLoading"
+            loading-text="加载中..."
             row-key="id"
           >
           </custom-table>
